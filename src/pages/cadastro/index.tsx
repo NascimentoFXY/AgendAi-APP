@@ -46,6 +46,8 @@ export default function Cadastro() {
 
                         <Text>Senha</Text>
                         <TextInput style={styles.input} placeholder="Digite sua senha"></TextInput>
+                        <Text>Confirme sua senha</Text>
+                        <TextInput style={styles.input} placeholder="Digite sua senha"></TextInput>
 
                     </View>
 

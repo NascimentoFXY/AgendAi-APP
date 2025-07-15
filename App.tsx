@@ -5,8 +5,8 @@ import Cadastro from './src/pages/cadastro';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Login/>
-      {/* <Cadastro/> */}
+      {/* <Login/> */}
+      <Cadastro/>
       <StatusBar style="auto" />
     </View>
   );
