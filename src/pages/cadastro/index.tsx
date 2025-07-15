@@ -51,7 +51,7 @@ export default function Cadastro() {
 
                     <View style={{ flexDirection: "row", marginBottom: 40, alignItems: "center" }}><Checkbox /><Text>Concordo com os <Text style={styles.link}>Termos e condicoes</Text></Text></View>
                     <TouchableOpacity style={styles.button}>
-                        <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Entrar</Text>
+                        <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Cadastrar</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -75,9 +75,9 @@ export default function Cadastro() {
                     </View>
 
                     <View style={{ flexDirection: "row", marginTop: 20, alignItems: "center" }}>
-                        <Text>Não tem uma conta? </Text>
+                        <Text>Já tem uma conta? </Text>
                         <TouchableOpacity>
-                            <Text style={{ color: colors.primary }}>Cadastre-se</Text>
+                            <Text style={{ color: colors.primary }}>Entrar</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
