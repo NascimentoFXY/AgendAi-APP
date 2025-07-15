@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import colors from "../../configs/colors";
+
 export const styles = StyleSheet.create({
 
     mainContainer: {
@@ -72,6 +73,21 @@ export const styles = StyleSheet.create({
         borderTopLeftRadius: "100%",
         borderTopRightRadius: "100%",
     },
+    backButtonContainer: {
+        position: "absolute",
+        top: 50,
+        left: 20,
+        width: 50,
+        height: 50,
+        backgroundColor: colors.background,
+        borderRadius: "100%",
+        borderColor: "#ccc",
+        borderWidth: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 2,
+    }
+
 
 
 });

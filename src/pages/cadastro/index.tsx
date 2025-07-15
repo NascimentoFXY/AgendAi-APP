@@ -18,10 +18,14 @@ import { Ionicons } from '@expo/vector-icons'; // Ícone do check
 import Checkbox from "../../components/checkbox/checkbox";
 import { Input } from "../../components/input";
 
-export default function Cadastro() {
+export default function Cadastro({ navigation }: any) {
     return (
         <SafeAreaView style={styles.mainContainer}>
-
+    
+                <TouchableOpacity style={styles.backButtonContainer} onPress={() => navigation.navigate("Initial")}>
+                    <Text>O</Text>
+                </TouchableOpacity>
+         
             <ScrollView style={styles.contentContainer}
                 showsVerticalScrollIndicator={false}>
                 <View style={styles.header}>
@@ -37,23 +41,23 @@ export default function Cadastro() {
                     <View style={styles.inputContainer}>
 
                         <Input
-                        title="Nome Completo"
-                        placeholder="Digite seu nome completo"
-                        
+                            title="Nome Completo"
+                            placeholder="Digite seu nome completo"
+
                         />
                         <Input
-                        title="Email"
-                        placeholder="Digite seu Email"
+                            title="Email"
+                            placeholder="Digite seu Email"
                         />
                         <Input
-                        title="Senha"
-                        placeholder="Digite sua senha"
+                            title="Senha"
+                            placeholder="Digite sua senha"
                         />
                         <Input
-                        title="Confirme sua senha"
-                        placeholder="Confirme sua senha"
+                            title="Confirme sua senha"
+                            placeholder="Confirme sua senha"
                         />
-                       
+
 
                     </View>
 
@@ -84,7 +88,7 @@ export default function Cadastro() {
 
                     <View style={{ flexDirection: "row", marginTop: 20, alignItems: "center" }}>
                         <Text>Já tem uma conta? </Text>
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
                             <Text style={{ color: colors.primary }}>Entrar</Text>
                         </TouchableOpacity>
                     </View>

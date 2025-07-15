@@ -41,7 +41,8 @@ export const Input = forwardRef((Props: InputProps, ref: Ref<TextInput> | null) 
                         height: height ?? "auto",
                     },
                 ]}
-                {...rest}>
+                {...rest}
+                secureTextEntry={secureTextEntry}>
             </TextInput >
 
         </Fragment >

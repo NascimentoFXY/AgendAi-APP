@@ -82,6 +82,20 @@ export const styles = StyleSheet.create({
         color: "#7F3F3F",
         textDecorationLine: "underline",
         fontWeight: "500",
+    },
+    backButtonContainer: {
+        position: "absolute",
+        top: 50,
+        left: 20,
+        width: 50,
+        height: 50,
+        backgroundColor: colors.background,
+        borderRadius: "100%",
+        borderColor: "#ccc",
+        borderWidth: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 2,
     }
 
 });
