@@ -15,14 +15,15 @@ import colors from "../../configs/colors";
 
 import { useState } from "react";
 import { Ionicons } from '@expo/vector-icons'; // Ícone do check
-import Checkbox from "../../components/checkbox";
+import Checkbox from "../../components/checkbox/checkbox";
+import { Input } from "../../components/input";
 
 export default function Cadastro() {
     return (
         <SafeAreaView style={styles.mainContainer}>
 
             <ScrollView style={styles.contentContainer}
-            showsVerticalScrollIndicator={false}>
+                showsVerticalScrollIndicator={false}>
                 <View style={styles.header}>
 
                     <Text style={styles.bold}>Crie sua conta</Text>
@@ -35,21 +36,28 @@ export default function Cadastro() {
 
                     <View style={styles.inputContainer}>
 
-                        <Text>Nome Completo</Text>
-                        <TextInput style={styles.input} placeholder="Nome"></TextInput>
-
-                        <Text>Email</Text>
-                        <TextInput style={styles.input} placeholder="Email@gmail.com"></TextInput>
-
-                        <Text>Senha</Text>
-                        <TextInput style={styles.input} placeholder="Digite sua senha"></TextInput>
-
-                        <Text>Confirme sua senha</Text>
-                        <TextInput style={styles.input} placeholder="Digite sua senha"></TextInput>
+                        <Input
+                        title="Nome Completo"
+                        placeholder="Digite seu nome completo"
+                        
+                        />
+                        <Input
+                        title="Email"
+                        placeholder="Digite seu Email"
+                        />
+                        <Input
+                        title="Senha"
+                        placeholder="Digite sua senha"
+                        />
+                        <Input
+                        title="Confirme sua senha"
+                        placeholder="Confirme sua senha"
+                        />
+                       
 
                     </View>
 
-                    <View style={{ flexDirection: "row", marginBottom: 40, alignItems: "center" }}><Checkbox /><Text>Concordo com os <Text style={styles.link}>Termos e condicoes</Text></Text></View>
+                    <View style={{ flexDirection: "row", marginBottom: 40, alignItems: "center" }}><Checkbox /><Text>Concordo com os <Text style={styles.link}>Termos e condicões</Text></Text></View>
                     <TouchableOpacity style={styles.button}>
                         <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Cadastrar</Text>
                     </TouchableOpacity>

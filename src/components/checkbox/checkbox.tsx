@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useState } from "react";
 import { Ionicons } from '@expo/vector-icons'; // Ícone do check
-import colors from "../configs/colors";
+import colors from "../../configs/colors";
 
 export default function Checkbox() {
     const [checked, setChecked] = useState(false);
