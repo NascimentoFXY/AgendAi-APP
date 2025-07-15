@@ -77,7 +77,7 @@ export default function Cadastro() {
                     <View style={{ flexDirection: "row", marginTop: 20, alignItems: "center" }}>
                         <Text>Não tem uma conta? </Text>
                         <TouchableOpacity>
-                            <Text style={{ color: colors.primary }}>Cadastre-seee</Text>
+                            <Text style={{ color: colors.primary }}>Cadastre-se</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
