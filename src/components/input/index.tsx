@@ -28,8 +28,7 @@ export const Input = forwardRef((Props: InputProps, ref: Ref<TextInput> | null) 
     const { value, title, secureTextEntry, onIconPress, padding, margin, fontSize, width, height, ...rest } = Props;
     return (
         <Fragment>
-            <Text>{title}</Text>
-
+            {title && <Text>{title}</Text>}
             <TextInput
                 ref={ref}
                 style={[
