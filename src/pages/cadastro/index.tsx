@@ -35,11 +35,8 @@ export default function Cadastro() {
 
                     <View style={styles.inputContainer}>
 
-                        <Text>Nome</Text>
+                        <Text>Nome Completo</Text>
                         <TextInput style={styles.input} placeholder="Nome"></TextInput>
-
-                        <Text>Sobrenome</Text>
-                        <TextInput style={styles.input} placeholder="Sobrenome"></TextInput>
 
                         <Text>Email</Text>
                         <TextInput style={styles.input} placeholder="Email@gmail.com"></TextInput>
