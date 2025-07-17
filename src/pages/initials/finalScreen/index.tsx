@@ -18,10 +18,12 @@ export default function FinalScreen({ navigation }: any) {
     <SafeAreaView style={Styles2.container}>
       {/* Imagem do celular */}
 
+      <View style={{justifyContent: "center", alignItems:"center", marginBottom: 200}}>
 
-      <View style={{ width: 280, height: 570 }}>
 
-        <MainScreen />
+        <View style={{ width: 280, height: 570, }}>
+          <MainScreen />
+        </View>
       </View>
 
 

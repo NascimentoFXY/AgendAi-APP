@@ -14,7 +14,10 @@ export default function Loading({navigation}:any) {
     const delay = 2000; // Tempo de espera em milissegundos
     const screenChange = () => {
      
+        const timer = setTimeout(() => {
             navigation.navigate("Initial");
+        }, delay);
+        return () => clearTimeout(timer);
      
     }
 

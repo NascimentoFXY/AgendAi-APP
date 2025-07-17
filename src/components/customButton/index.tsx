@@ -76,7 +76,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 
   return (
     <TouchableOpacity onPress={onPress} style={buttonStyle} {...rest}>
-      {Icon && IconName && <Icon name={IconName} size={IconSize} color={color} />}
+      {Icon && IconName && <Icon name={IconName as any} size={IconSize} color={color} />}
       {text !== '' && <Text style={textStyle}>{text}</Text>}
     </TouchableOpacity>
   );
