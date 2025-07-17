@@ -9,14 +9,20 @@ import {
 import { styles } from "./style";
 import colors from "../../configs/colors";
 import { Input } from "../../components/input";
+import CustomButton from "../../components/customButton";
+import AntDesign from '@expo/vector-icons/AntDesign';
 export default function Login({ navigation }: any) {
     return (
         <SafeAreaView style={styles.mainContainer}>
 
-            <TouchableOpacity style={styles.backButtonContainer} onPress={() => navigation.navigate("Initial")}>
-                <Text>O</Text>
-            </TouchableOpacity>
+            <CustomButton
+                Icon={AntDesign}
+                IconName="arrowleft"
+                IconSize={30}
+                onPress={()=> navigation.goBack()}
+                style={styles.backButtonContainer}
 
+            />
             <View style={styles.contentContainer}>
                 <View style={styles.header}>
 

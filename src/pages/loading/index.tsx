@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
+import MainScreen from "../../components/MainScreenLogo";
 
 export default function Loading({navigation}:any) {
     const delay = 2000; // Tempo de espera em milissegundos
@@ -22,7 +23,7 @@ export default function Loading({navigation}:any) {
     }, []);
     return (
         <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#f5f5f5" }}>
-            <Text style={{ fontSize: 24, fontWeight: "bold" }}>Carregando...</Text>
+            <MainScreen/>
         </SafeAreaView>
     );
 }

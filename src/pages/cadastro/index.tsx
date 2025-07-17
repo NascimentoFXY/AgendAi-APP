@@ -17,15 +17,21 @@ import { useState } from "react";
 import { Ionicons } from '@expo/vector-icons'; // Ícone do check
 import Checkbox from "../../components/checkbox/checkbox";
 import { Input } from "../../components/input";
-
+import CustomButton from "../../components/customButton";
+import AntDesign from '@expo/vector-icons/AntDesign';
 export default function Cadastro({ navigation }: any) {
     return (
         <SafeAreaView style={styles.mainContainer}>
-    
-                <TouchableOpacity style={styles.backButtonContainer} onPress={() => navigation.navigate("Initial")}>
-                    <Text>O</Text>
-                </TouchableOpacity>
-         
+
+            <CustomButton
+                Icon={AntDesign}
+                IconName="arrowleft"
+                IconSize={30}
+                onPress={() => navigation.goBack()}
+                style={styles.backButtonContainer}
+
+            />
+
             <ScrollView style={styles.contentContainer}
                 showsVerticalScrollIndicator={false}>
                 <View style={styles.header}>

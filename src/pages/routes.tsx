@@ -9,17 +9,21 @@ import Cadastro from "./cadastro";
 import Login from "./login";
 import Loading from "./loading";
 import Initial from "./initials/initial";
+import FinalScreen from "./initials/finalScreen";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 export default function Routes() {
-    const Drawer = createDrawerNavigator();
+   const Stack = createNativeStackNavigator();
+
     return (
         <View style={{ flex: 1 }}>
-            <Drawer.Navigator initialRouteName="Loading">
-                <Drawer.Screen name="Loading" component={Loading} options={{headerShown:false}} />
-                <Drawer.Screen name="Initial" component={Initial} options={{headerShown:false}} />
-                <Drawer.Screen name="Login" component={Login} options={{headerShown:false}} />
-                <Drawer.Screen name="Cadastro" component={Cadastro} options={{headerShown:false}}/>
-            </Drawer.Navigator>
+            <Stack.Navigator initialRouteName="Loading" screenOptions={{headerShown: false}}>
+                <Stack.Screen name="Loading" component={Loading}/>
+                <Stack.Screen name="Initial" component={Initial}/>
+                <Stack.Screen name="Login" component={Login}/>
+                <Stack.Screen name="Cadastro" component={Cadastro}/>
+                <Stack.Screen name="Fscreen" component={FinalScreen}/>
+            </Stack.Navigator>
         </View>
 
 
