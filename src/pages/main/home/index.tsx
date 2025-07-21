@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
     ScrollView
 } from 'react-native';
-import { Ionicons, Feather, Entypo } from '@expo/vector-icons';
+import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from './style';
 import { Input } from '../../../components/input'; // Você pode manter esse se já estiver estilizado
 import CustomButton from '../../../components/customButton';
@@ -132,7 +132,7 @@ export default function Home() {
 
                 </View>
 
-                <View style={[styles.contatiner, {flexDirection: "row", gap: 5, justifyContent: "space-between"}]}>
+                <View style={{flexDirection: "row", gap: 5, justifyContent: "space-between", paddingHorizontal: 20}}>
 
                     <ServicesCards
                         icon={
@@ -145,7 +145,7 @@ export default function Home() {
                     />
                     <ServicesCards
                         icon={
-                            <Entypo name='scissors' size={40} color={"#3b000084"} />
+                            <MaterialCommunityIcons name="face-mask" size={40} color={"#3b000084"} />
                         }
                         width={75}
                         textSize={10}
@@ -153,7 +153,7 @@ export default function Home() {
                     />
                     <ServicesCards
                         icon={
-                            <Entypo name='scissors' size={40} color={"#3b000084"} />
+                           <FontAwesome5 name="brush" size={40} color={"#3b000084"} />
                         }
                         width={75}
                         textSize={10}
@@ -161,7 +161,7 @@ export default function Home() {
                     />
                     <ServicesCards
                         icon={
-                            <Entypo name='scissors' size={40} color={"#3b000084"} />
+                           <Ionicons name="people" size={40} color={"#3b000084"}/>
                         }
                         width={75}
                         textSize={10}

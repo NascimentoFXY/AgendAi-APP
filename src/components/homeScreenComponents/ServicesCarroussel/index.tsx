@@ -34,7 +34,7 @@ const ServicesCards: React.FC<ServicesProps> = ({
 }) => {
     return (
         <>
-                <TouchableOpacity activeOpacity={0.6} style={{ width: width, borderRadius: 30, padding: 12, alignItems: "center"}}>
+                <TouchableOpacity activeOpacity={0.6} style={{ width: width, borderRadius: 30, alignItems: "center"}}>
 
                     <View style={{ backgroundColor: "#deb49f", width: width, height: width, borderRadius: 1000, alignItems: "center", justifyContent: "center" }}>
                         {icon}
