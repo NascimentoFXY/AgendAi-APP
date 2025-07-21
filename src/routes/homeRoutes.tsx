@@ -1,0 +1,31 @@
+import React from "react";
+import {
+    View,
+    Text
+} from "react-native";
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { NavigationContainer } from '@react-navigation/native';
+import Cadastro from "../pages/cadastro";
+import Login from "../pages/login";
+import Loading from "../pages/loading";
+import Initial from "../pages/initials/initial";
+import FinalScreen from "../pages/initials/finalScreen";
+import Home from "../pages/main/home";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+export default function MainRoutes({navigation}: any) {
+   const Stack = createNativeStackNavigator();
+
+    return (
+        <View style={{ flex: 1 }}>
+            <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
+                <Stack.Screen name="Home" component={Home}/>
+            </Stack.Navigator>
+        </View>
+
+
+
+
+
+    );
+}

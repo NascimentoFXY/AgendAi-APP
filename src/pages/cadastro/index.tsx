@@ -68,7 +68,7 @@ export default function Cadastro({ navigation }: any) {
                     </View>
 
                     <View style={{ flexDirection: "row", marginBottom: 40, alignItems: "center" }}><Checkbox /><Text>Concordo com os <Text style={styles.link}>Termos e condicões</Text></Text></View>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('Main')}>
                         <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Cadastrar</Text>
                     </TouchableOpacity>
                 </View>

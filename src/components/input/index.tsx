@@ -6,7 +6,9 @@ import {
     TextInputProps,
     TouchableHighlight,
     TouchableOpacity,
-    View
+    View,
+    StyleProp,
+    ViewStyle
 } from "react-native";
 import { styles } from "./style";
 import colors from "../../configs/colors";
@@ -21,11 +23,12 @@ type InputProps = TextInputProps & {
     width?: DimensionValue;
     height?: DimensionValue;
     secureTextEntry?: boolean;
+    style?: StyleProp<ViewStyle>;
     onIconPress?: () => void;
 }
 
 export const Input = forwardRef((Props: InputProps, ref: Ref<TextInput> | null) => {
-    const { value, title, secureTextEntry, onIconPress, padding, margin, fontSize, width, height, ...rest } = Props;
+    const { value, title, secureTextEntry, onIconPress, padding, margin, fontSize, width, height, style, ...rest } = Props;
     return (
         <Fragment>
             {title && <Text>{title}</Text>}
@@ -40,6 +43,8 @@ export const Input = forwardRef((Props: InputProps, ref: Ref<TextInput> | null) 
                         width: width ?? "100%",
                         height: height ?? "auto",
                     },
+                    style
+                    
                 ]}
                 {...rest}
                 secureTextEntry={secureTextEntry}>

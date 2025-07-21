@@ -10,22 +10,22 @@ import {
   TextStyle,
   DimensionValue,
   TouchableOpacityProps,
+  View
 } from 'react-native';
-import { IconProps } from '@expo/vector-icons/build/createIconSet';
 
-type IconComponent = React.ComponentType<React.ComponentProps<typeof AntDesign>>;
+type IconComponent = React.ComponentType<React.ComponentProps<any>>;
 type PositionType = 'absolute' | 'normal';
+type Border = 'Round' | 'Square' | 'Circle'
 
 type CustomButtonProps = TouchableOpacityProps & {
-  Icon?: IconComponent;
-  IconName?: string;
-  IconSize?: number;
+  Icon?: React.ReactNode;
   text?: string;
   width?: DimensionValue;
   height?: DimensionValue;
   color?: string;
   backcolor?: string;
   type?: PositionType;
+  border?: Border;
   top?: number;
   bottom?: number;
   left?: number;
@@ -36,14 +36,13 @@ type CustomButtonProps = TouchableOpacityProps & {
 
 const CustomButton: React.FC<CustomButtonProps> = ({
   Icon,
-  IconName,
-  IconSize = 20,
   text = '',
   width = 40,
   height = 40,
   color = '#000',
   backcolor = '#ccc',
   type = 'normal',
+  border = 'Square',
   top,
   bottom,
   left,
@@ -52,6 +51,20 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   onPress,
   ...rest
 }) => {
+
+
+  const getBorderRadius = () => {
+    switch (border) {
+      case 'Square':
+        return 0;
+      case 'Circle':
+        return 1000; // valor alto para simular um círculo
+      case 'Round':
+      default:
+        return 12; // ou o que for considerado "arredondado"
+    }
+  };
+
   const buttonStyle: StyleProp<ViewStyle> = [
     styles.button,
     {
@@ -59,6 +72,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       height,
       backgroundColor: backcolor,
       position: type === 'absolute' ? 'absolute' : 'relative',
+      borderRadius:
+        getBorderRadius(),
       top,
       bottom,
       left,
@@ -76,7 +91,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 
   return (
     <TouchableOpacity onPress={onPress} style={buttonStyle} {...rest}>
-      {Icon && IconName && <Icon name={IconName as any} size={IconSize} color={color} />}
+      {Icon && <View>{Icon}</View>}
       {text !== '' && <Text style={textStyle}>{text}</Text>}
     </TouchableOpacity>
   );

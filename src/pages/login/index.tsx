@@ -50,7 +50,7 @@ export default function Login({ navigation }: any) {
                         <Text style={{ color: colors.primary }}>Esqueceu sua senha?</Text></TouchableOpacity>
                 </SafeAreaView>
 
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('Main')}>
                     <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Entrar</Text>
                 </TouchableOpacity>
 
