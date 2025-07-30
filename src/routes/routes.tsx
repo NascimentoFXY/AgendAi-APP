@@ -12,6 +12,7 @@ import Initial from "../pages/initials/initial";
 import FinalScreen from "../pages/initials/finalScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainRoutes from "./homeRoutes";
+import TabRoutes from "./tabRoutes";
 
 export default function Routes() {
    const Stack = createNativeStackNavigator();
@@ -24,7 +25,7 @@ export default function Routes() {
                 <Stack.Screen name="Login" component={Login}/>
                 <Stack.Screen name="Cadastro" component={Cadastro}/>
                 <Stack.Screen name="Fscreen" component={FinalScreen}/>
-                <Stack.Screen name="Main" component={MainRoutes}/>
+                <Stack.Screen name="Main" component={TabRoutes}/>
             </Stack.Navigator>
         </View>
 

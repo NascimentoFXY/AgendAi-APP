@@ -19,7 +19,7 @@ import ServicesCards from '../../../components/homeScreenComponents/ServicesCarr
 
 
 const cardsWidth = 400;
-const cardsHeight = 260
+
 
 export default function Home() {
     return (
