@@ -8,7 +8,10 @@ import {
 import { Ionicons, Feather, Entypo, FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import FinalScreen from "../pages/initials/finalScreen";
+import Agenda from "../pages/main/agenda";
+import Chat from "../pages/main/Chat";
+import Explore from "../pages/main/Explore";
+import Perfil from "../pages/main/Perfil";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainRoutes from "./homeRoutes";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -25,14 +28,14 @@ export default function TabRoutes() {
                 }} />
 
 
-            <Tab.Screen name="Explore" component={FinalScreen}
+            <Tab.Screen name="Explore" component={Explore}
                 options={{
                     tabBarIcon: ({ color, size }) => <Entypo name="location-pin" size={size} color={color} />,
                     tabBarButton: (props: any) => <TouchableOpacity {...props} />
                 }} />
 
 
-            <Tab.Screen name="Agendas" component={FinalScreen}
+            <Tab.Screen name="Agendas" component={Agenda}
                 options={{
                     tabBarIcon: ({ color, size }) => <MaterialIcons name="schedule" size={size} color={color} />,
                     tabBarButton: (props: any) => <TouchableOpacity {...props} />
@@ -40,14 +43,14 @@ export default function TabRoutes() {
             />
 
 
-            <Tab.Screen name="Chat" component={FinalScreen}
+            <Tab.Screen name="Chat" component={Chat}
                 options={{
                     tabBarIcon: ({ color, size }) => <Entypo name="chat" size={size} color={color} />,
                     tabBarButton: (props: any) => <TouchableOpacity {...props} />
                 }} />
 
 
-            <Tab.Screen name="Perfil" component={FinalScreen}
+            <Tab.Screen name="Perfil" component={Perfil}
                 options={{
                     tabBarIcon: ({ color, size }) => <FontAwesome name="user" size={size} color={color} />,
                     tabBarButton: (props: any) => <TouchableOpacity {...props} />
@@ -58,8 +61,6 @@ export default function TabRoutes() {
 }
 
 export const styles = StyleSheet.create({
-    TabBar: {
-
-    }
+    TabBar: {}
 })
 

@@ -9,10 +9,10 @@ import {
     ScrollView
 } from 'react-native';
 
-export default function Chat(){
+export default function Agenda(){
     return(
         <View>
-            <Text>Chat</Text>
+            <Text>Agenda</Text>
         </View>
     )
 }

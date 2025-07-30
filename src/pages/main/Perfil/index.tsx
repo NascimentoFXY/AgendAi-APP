@@ -8,11 +8,11 @@ import {
     TouchableOpacity,
     ScrollView
 } from 'react-native';
-
+import perfilOptions from '../../../components/perfil/options';
 export default function Perfil(){
     return(
         <View>
-            <Text>Perfil</Text>
+        
         </View>
     )
 }
