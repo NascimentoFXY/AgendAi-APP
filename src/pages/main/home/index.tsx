@@ -80,15 +80,8 @@ export default function Home() {
                     <View />
 
                     <View
-                        style={{
-                            backgroundColor: "#242424ff",
-                            width: cardsWidth,
-                            height: cardsHeight,
-                            borderRadius: 30,
-                            padding: 12,
+                        style={styles.especialCards}>
 
-
-                        }}>
                         <View style={{ flex: 1 }}>
                             <Text style={{ backgroundColor: "#fff", width: 120, padding: 8, borderRadius: 20 }}>Tempo Limitado</Text>
                         </View>
@@ -108,6 +101,29 @@ export default function Home() {
                             />
                         </View>
                     </View>
+                    <View
+                        style={styles.especialCards}>
+
+                        <View style={{ flex: 1 }}>
+                            <Text style={{ backgroundColor: "#fff", width: 120, padding: 8, borderRadius: 20 }}>Tempo Limitado</Text>
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={{ fontWeight: 'bold', color: "#fff", fontSize: 24 }}>Salão do zé com desconto</Text>
+                            <Text style={{ color: "#fff" }}>De até</Text>
+                            <Text style={{ color: "#fff" }}>20%</Text>
+                        </View>
+                        <View style={{ flexDirection: "row", flex: 1, justifyContent: "space-between", paddingTop: 30, alignItems: "center" }}>
+                            <Text style={{ color: "#fff", fontSize: 12, paddingTop: 20, }}>Localizado em Faria lima, SP</Text>
+                            <CustomButton
+                                backcolor={colors.primary}
+                                border="Circle"
+                                text='IR'
+                                color='#fff'
+                                width={80}
+                            />
+                        </View>
+                    </View>
+                 
 
                     <View />
                 </Carroussel>
@@ -141,7 +157,7 @@ export default function Home() {
                     />
                     <ServicesCards
                         icon={
-                           <FontAwesome5 name="brush" size={40} color={"#3b000084"} />
+                            <FontAwesome5 name="brush" size={40} color={"#3b000084"} />
                         }
                         width={75}
                         textSize={10}
@@ -149,13 +165,31 @@ export default function Home() {
                     />
                     <ServicesCards
                         icon={
-                           <Ionicons name="people" size={40} color={"#3b000084"}/>
+                            <Ionicons name="people" size={40} color={"#3b000084"} />
                         }
                         width={75}
                         textSize={10}
                         text='Massagem'
                     />
                 </View>
+
+                {/* ============================================saloes=============================== */}
+                <View style={styles.contentHeader}>
+                    <Text style={styles.contentHeaderTitle}>Top salões</Text>
+                    <TouchableOpacity><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
+
+                </View>
+
+                <Carroussel
+                    cardsWidth={300}
+                    cardsGap={20}>
+
+                    <View
+                        style={styles.SaloesCards}>
+
+                       
+                    </View>
+                </Carroussel>
             </View>
         </SafeAreaView>
     );

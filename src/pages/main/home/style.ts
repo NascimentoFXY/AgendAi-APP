@@ -41,11 +41,25 @@ export const styles = StyleSheet.create({
         flex: 1,
         fontWeight: "bold"
     },
+    especialCards:{
+        backgroundColor: "#242424ff",
+        width: 400,
+        height: 260,
+        borderRadius: 30,
+        padding: 12,
+    },
     serviceCards: {
         flexDirection: "row",
         gap: 5,
         justifyContent: "space-between",
         paddingHorizontal: 20
+    },
+    SaloesCards:{
+        backgroundColor: "#a5a5a5",
+        width: 300,
+        height: 250,
+        borderRadius: 30,
+        padding: 12,
     },
     link: {
         color: colors.primary,
