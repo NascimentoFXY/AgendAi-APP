@@ -12,8 +12,6 @@ import {
   TouchableOpacityProps,
   View
 } from 'react-native';
-
-type IconComponent = React.ComponentType<React.ComponentProps<any>>;
 type PositionType = 'absolute' | 'normal';
 type Border = 'Round' | 'Square' | 'Circle'
 

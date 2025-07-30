@@ -30,7 +30,8 @@ export default function InitialPrimary({ navigation }: any) {
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         // função chamada quando o usuário arrasta o dedo na tela (scroll)
         const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-        // calcula em qual "página" o usuário está com base na posição horizontal
+        
+        // calcula em qual pagina o usuário está com base na posição horizontal
         setCurrentPage(pageIndex);
         console.log(pageIndex);
         // atualiza a página atual (usado para mostrar bolinhas e travar o botão "avançar")

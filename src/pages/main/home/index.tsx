@@ -25,9 +25,9 @@ export default function Home() {
     return (
         < SafeAreaView >
             {/* ===============HEADER=============== */}
-            <View style={{ padding: 30, backgroundColor: '#fff' }}>
+            <View style={styles.header}>
                 {/* Linha de cima: localização e sino */}
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <View style={styles.headerTop}>
 
                     <View>
 
@@ -42,12 +42,7 @@ export default function Home() {
 
                     <CustomButton
                         Icon={<Ionicons name="notifications" size={26} color="#6b6b6b" />}
-                        style={{
-                            backgroundColor: '#ffffffff',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-
-                        }} />
+                        style={styles.notificationButton} />
                 </View>
 
                 {/* Linha de baixo: campo de busca + botão */}
@@ -59,14 +54,7 @@ export default function Home() {
 
                     <CustomButton
                         Icon={<Feather name="sliders" size={18} color="#fff" />}
-                        style={{
-                            backgroundColor: '#d77a7a',
-                            marginLeft: 8,
-                            padding: 10,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-
-                        }}
+                        style={styles.filterButton}
                         border='Circle'
                     />
 
@@ -78,9 +66,9 @@ export default function Home() {
             <View>
 
                 {/* ==================ESPECIAL PRA VOCE======================================= */}
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 20 }}>
+                <View style={styles.contentHeader}>
 
-                    <Text style={{ fontSize: 20, fontWeight: "bold" }}>#EspecialParaVocê</Text>
+                    <Text style={styles.contentHeaderTitle}>#EspecialParaVocê</Text>
                     <TouchableOpacity><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
 
                 </View>
@@ -125,14 +113,14 @@ export default function Home() {
                 </Carroussel>
                 {/* =========================SERVIÇOS=================================== */}
 
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 20 }}>
+                <View style={styles.contentHeader}>
 
-                    <Text style={{ fontSize: 20, fontWeight: "bold" }}>Serviços</Text>
+                    <Text style={styles.contentHeaderTitle}>Serviços</Text>
                     <TouchableOpacity><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
 
                 </View>
 
-                <View style={{flexDirection: "row", gap: 5, justifyContent: "space-between", paddingHorizontal: 20}}>
+                <View style={styles.serviceCards}>
 
                     <ServicesCards
                         icon={
@@ -167,16 +155,7 @@ export default function Home() {
                         textSize={10}
                         text='Massagem'
                     />
-
-                   
-                    
-
                 </View>
-
-
-
-
-
             </View>
         </SafeAreaView>
     );
