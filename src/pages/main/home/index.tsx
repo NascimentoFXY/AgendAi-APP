@@ -47,7 +47,7 @@ export default function Home() {
 
                     {EspecialCardsData.map((key)=>(
 
-                        <View key={key}>{key.content}</View>
+                        <View key={key.id}>{key.content}</View>
                     ))}
                 </Carroussel>
                 {/* =========================SERVIÇOS=================================== */}
