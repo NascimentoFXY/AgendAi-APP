@@ -15,30 +15,55 @@ import Perfil from "../pages/main/Perfil";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainRoutes from "./homeRoutes";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import colors from "../configs/colors";
 
 
 const Tab = createBottomTabNavigator()
 export default function TabRoutes() {
+
+    const CustomTabBarButton = (props: any) => (
+        <TouchableOpacity
+            {...props}
+            style={[
+                styles.tabBarButton,
+                props.style,
+            ]}
+        />
+    );
+
     return (
-        <Tab.Navigator screenOptions={{ headerShown: false}}>
+        <Tab.Navigator screenOptions={{
+            headerShown: false,
+
+            tabBarStyle: {
+                height: 100,
+                justifyContent: "center",
+                alignItems: 'center',
+            },
+            tabBarItemStyle: {
+                paddingTop: 15
+            },
+            tabBarActiveTintColor: colors.primary,
+        }}>
+
             <Tab.Screen name="Home" component={MainRoutes}
                 options={{
                     tabBarIcon: ({ color, size }) => <Entypo name="home" size={size} color={color} />,
-                    tabBarButton: (props: any) => <TouchableOpacity {...props} />
+                    tabBarButton: (props: any) => <CustomTabBarButton {...props} />
                 }} />
 
 
             <Tab.Screen name="Explore" component={Explore}
                 options={{
                     tabBarIcon: ({ color, size }) => <Entypo name="location-pin" size={size} color={color} />,
-                    tabBarButton: (props: any) => <TouchableOpacity {...props} />
+                    tabBarButton: (props: any) => <CustomTabBarButton {...props} />
                 }} />
 
 
             <Tab.Screen name="Agendas" component={Agenda}
                 options={{
                     tabBarIcon: ({ color, size }) => <MaterialIcons name="schedule" size={size} color={color} />,
-                    tabBarButton: (props: any) => <TouchableOpacity {...props} />
+                    tabBarButton: (props: any) => <CustomTabBarButton {...props} />
                 }}
             />
 
@@ -46,14 +71,14 @@ export default function TabRoutes() {
             <Tab.Screen name="Chat" component={Chat}
                 options={{
                     tabBarIcon: ({ color, size }) => <Entypo name="chat" size={size} color={color} />,
-                    tabBarButton: (props: any) => <TouchableOpacity {...props} />
+                    tabBarButton: (props: any) => <CustomTabBarButton {...props} />
                 }} />
 
 
             <Tab.Screen name="Perfil" component={Perfil}
                 options={{
                     tabBarIcon: ({ color, size }) => <FontAwesome name="user" size={size} color={color} />,
-                    tabBarButton: (props: any) => <TouchableOpacity {...props} />
+                    tabBarButton: (props: any) => <CustomTabBarButton {...props} />
                 }} />
         </Tab.Navigator>
 
@@ -61,6 +86,7 @@ export default function TabRoutes() {
 }
 
 export const styles = StyleSheet.create({
-    TabBar: {}
+    tabBarButton: {
+    }
 })
 
