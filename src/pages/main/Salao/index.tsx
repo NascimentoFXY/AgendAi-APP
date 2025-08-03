@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -6,7 +6,9 @@ import {
     View,
     TextInput,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    NativeSyntheticEvent,
+    NativeScrollEvent
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { styles } from './style'
@@ -21,7 +23,7 @@ import SalaoServices from './salaoScreens';
 import SalaoEspecialistas from './Especialistas';
 
 
-
+const width = Dimensions.get("window").width;
 
 export default function SalaoScreen() {
     return (
@@ -99,7 +101,7 @@ export default function SalaoScreen() {
 
 
                     <ScrollView
-                    style={styles.salaoNavigationScroll}
+                        style={styles.salaoNavigationScroll}
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         overScrollMode='never'
@@ -130,12 +132,15 @@ export default function SalaoScreen() {
                     </ScrollView>
 
                 </View>
-                <ScrollView style={{width:"100%" }}
-                pagingEnabled
-                horizontal
+                <ScrollView style={{ width: "100%" }}
+      
+                    pagingEnabled
+                    horizontal
+             
+                    scrollEventThrottle={24}
                 >
                     <SalaoServices />
-                    <SalaoEspecialistas/>
+                    <SalaoEspecialistas />
                 </ScrollView>
             </View>
 

@@ -24,18 +24,18 @@ export default function SalaoServices() {
 
             {/* ServicosTitle */}
             <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 20, paddingVertical: 10, gap: 10 }}>
-                <Text style={{ fontSize: 18, fontWeight: "bold" }}>Serviços</Text><Text style={{ fontSize: 18, fontWeight: "bold", color: colors.primary, flex:1 }}>(18)</Text>
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>Serviços</Text><Text style={{ fontSize: 18, fontWeight: "bold", color: colors.primary, flex: 1 }}>(18)</Text>
             </View>
             {/* ServicosOptions */}
-            <View style={{justifyContent: "center", alignItems: "center", gap: 10}}>
+            <View style={{ justifyContent: "center", alignItems: "center", gap: 10 }}>
 
-                <ServiceItem/>
-                <ServiceItem/>
-                <ServiceItem/>
-                <ServiceItem/>
-                <ServiceItem/>
-                
-                </View>
+                <ServiceItem />
+                <ServiceItem />
+                <ServiceItem />
+                <ServiceItem />
+                <ServiceItem />
+
+            </View>
         </ScrollView>
 
     )

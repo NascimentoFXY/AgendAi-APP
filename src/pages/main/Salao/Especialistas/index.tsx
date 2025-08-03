@@ -30,7 +30,7 @@ export default function SalaoEspecialistas() {
 
 
 
-      
+
                 <ProfessionalCard cardWidth={calcCardsWidth} />
                 <ProfessionalCard cardWidth={calcCardsWidth} />
                 <ProfessionalCard cardWidth={calcCardsWidth} />

@@ -69,12 +69,7 @@ export default function InitialPrimary({ navigation }: any) {
                 scrollEventThrottle={24} // chama a função handleScroll sempre que rolar
             >
 
-                {pages.map((page, index) => (
-                    <View key={index} style={[styles.background, { width }]}>
-                        {page}
-                    </View>
-
-                ))}
+                
 
             </ScrollView>
 
