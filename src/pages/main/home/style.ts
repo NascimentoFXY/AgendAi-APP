@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         fontWeight: "bold"
     },
-    especialCards:{
+    especialCards: {
         backgroundColor: "#242424ff",
         width: 400,
         height: 260,
@@ -54,12 +54,23 @@ export const styles = StyleSheet.create({
         justifyContent: "space-between",
         paddingHorizontal: 20
     },
-    SaloesCards:{
+    SaloesCards: {
         backgroundColor: "#a5a5a5",
         width: 300,
-        height: 250,
+        height: 220,
         borderRadius: 30,
         padding: 12,
+    },
+    saloesRating: {
+        backgroundColor: "#fff", width: 100, height: 50, borderRadius: 100, justifyContent: "center", alignItems: "center", flexDirection: "row"
+    },
+    saloesHeart: {
+        backgroundColor: "#fff",
+        width: 50,
+        height: 50,
+        borderRadius: 100,
+        justifyContent: "center",
+        alignItems: "center",
     },
     link: {
         color: colors.primary,

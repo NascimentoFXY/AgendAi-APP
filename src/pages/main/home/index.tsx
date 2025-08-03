@@ -17,16 +17,16 @@ import Carroussel from '../../../components/homeScreenComponents/carroussel';
 import colors from '../../../configs/colors';
 import ServicesCards from '../../../components/homeScreenComponents/ServicesCarroussel';
 import MainHeader from '../../../components/homeScreenComponents/header';
-import { ServiceCardsData, EspecialCardsData } from './components';
+import { ServiceCardsData, EspecialCardsData, topSaloesCardsData } from './components';
 
 
 const cardsWidth = 400;
 
 
-export default function Home() {
+export default function Home({ navigation }: any) {
     return (
         <ScrollView>
-            <MainHeader/>
+            <MainHeader />
 
 
 
@@ -43,12 +43,24 @@ export default function Home() {
                 <Carroussel
                     cardsWidth={cardsWidth}
                     cardsGap={20}
-                    >
+                    style={{
+                        paddingLeft: 20,
 
-                    {EspecialCardsData.map((key)=>(
+                    }}
+                >
 
-                        <View key={key.id}>{key.content}</View>
+                    {EspecialCardsData.map((key) => (
+
+                        <View
+                            key={key.id}
+                            style={{
+                                paddingRight: EspecialCardsData[EspecialCardsData.length - 1].id === key.id ? 20 : 0
+                            }}
+                        >
+                            {key.content}
+                        </View>
                     ))}
+
                 </Carroussel>
                 {/* =========================SERVIÇOS=================================== */}
 
@@ -61,9 +73,9 @@ export default function Home() {
 
                 <View style={styles.serviceCards}>
 
-                   {ServiceCardsData.map((key)=>(
+                    {ServiceCardsData.map((key) => (
                         <View key={key.id}>{key.content}</View>
-                   ))}
+                    ))}
 
                 </View>
 
@@ -76,13 +88,16 @@ export default function Home() {
 
                 <Carroussel
                     cardsWidth={300}
-                    cardsGap={20}>
+                    cardsGap={20}
+                    style={{
+                        paddingLeft: 20
+                    }}>
 
-                    <View
-                        style={styles.SaloesCards}>
-
-
-                    </View>
+                    {topSaloesCardsData.map((key) => (
+                        <TouchableOpacity onPress={() => navigation.navigate("Salao")} key={key.id}>
+                            <View key={key.id}>{key.content}</View>
+                        </TouchableOpacity>
+                    ))}
                 </Carroussel>
             </View>
         </ScrollView>

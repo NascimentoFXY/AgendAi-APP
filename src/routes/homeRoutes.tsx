@@ -12,6 +12,7 @@ import Initial from "../pages/initials/initial";
 import FinalScreen from "../pages/initials/finalScreen";
 import Home from "../pages/main/home";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import SalaoScreen from "../pages/main/Salao";
 
 export default function MainRoutes({navigation}: any) {
    const Stack = createNativeStackNavigator();
@@ -20,6 +21,7 @@ export default function MainRoutes({navigation}: any) {
         <View style={{ flex: 1 }}>
             <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
                 <Stack.Screen name="Home" component={Home}/>
+                <Stack.Screen name="Salao" component={SalaoScreen}/>
             </Stack.Navigator>
         </View>
 

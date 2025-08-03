@@ -19,7 +19,9 @@ type ServicesProps = {
     color?: string,
     width?: number,
     height?: number,
-    textSize?: number
+    iconRadius?: number,
+    textSize?: number,
+    bold?: boolean,
 }
 
 
@@ -28,19 +30,21 @@ const ServicesCards: React.FC<ServicesProps> = ({
     text,
     color,
     width = 120,
-    height,
+    iconRadius = width,
+    height = 100,
     textSize = 16,
+    bold = true
 
 }) => {
     return (
         <>
-                <TouchableOpacity activeOpacity={0.6} style={{ width: width, borderRadius: 30, alignItems: "center"}}>
+                <TouchableOpacity activeOpacity={0.6} style={{ width: width, height: height, borderRadius: 30, alignItems: "center", overflow: "visible"}}>
 
-                    <View style={{ backgroundColor: "#deb49f", width: width, height: width, borderRadius: 1000, alignItems: "center", justifyContent: "center" }}>
+                    <View style={{ backgroundColor: "#deb49f", width: iconRadius, height: iconRadius, borderRadius: 1000, alignItems: "center", justifyContent: "center" }}>
                         {icon}
                     </View>
 
-                    <Text style={{ fontSize: textSize, fontWeight: "bold", textAlign: "center", color: color }}>
+                    <Text style={{ fontSize: textSize, fontWeight: bold? "bold": "normal", textAlign: "center", color: color, }}>
                         {text}
                     </Text>
 
