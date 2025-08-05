@@ -16,6 +16,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainRoutes from "./homeRoutes";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import colors from "../configs/colors";
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 
 const Tab = createBottomTabNavigator()
@@ -47,10 +48,20 @@ export default function TabRoutes() {
         }}>
 
             <Tab.Screen name="Home" component={MainRoutes}
-                options={{
+                options={({ route }) => ({
                     tabBarIcon: ({ color, size }) => <Entypo name="home" size={size} color={color} />,
-                    tabBarButton: (props: any) => <CustomTabBarButton {...props} />
-                }} />
+                    tabBarButton: (props: any) => <CustomTabBarButton {...props} />,
+                    tabBarStyle: ((route) => {
+                     
+                        const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
+                            if (routeName === 'Salao') {
+                                return { display: 'none' };
+                            }
+                        return; // Retorna o estilo padrão da tab bar
+                    })(route),
+
+                })
+                } />
 
 
             <Tab.Screen name="Explore" component={Explore}

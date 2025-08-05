@@ -78,7 +78,7 @@ export const styles = StyleSheet.create({
         gap: 30,
         overflow: "visible",
         paddingLeft: 20,
-        
+
 
 
 
@@ -105,5 +105,23 @@ export const styles = StyleSheet.create({
         bottom: 0,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
+    },
+
+    TabBarButton: {
+        backgroundColor: colors.primary,
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 210
+    },
+    Tab: {
+        position: "absolute",
+        width: "100%",
+        padding: 30,
+        backgroundColor: colors.background,
+        height: 120,
+        bottom: 0,
+        borderTopColor: "#a5a5a555",
+        borderTopWidth: 1
     }
 });
