@@ -8,7 +8,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import Cadastro from "../pages/cadastro";
 import Login from "../pages/login";
 import Loading from "../pages/loading";
-import Initial from "../pages/initials/initial";
+import InitialPrimary from "../pages/initials/initial";
 import FinalScreen from "../pages/initials/finalScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainRoutes from "./homeRoutes";
@@ -21,7 +21,7 @@ export default function Routes() {
         <View style={{ flex: 1 }}>
             <Stack.Navigator initialRouteName="Main" screenOptions={{headerShown: false}}>
                 <Stack.Screen name="Loading" component={Loading}/>
-                <Stack.Screen name="Initial" component={Initial}/>
+                <Stack.Screen name="Initial" component={InitialPrimary}/>
                 <Stack.Screen name="Login" component={Login}/>
                 <Stack.Screen name="Cadastro" component={Cadastro}/>
                 <Stack.Screen name="Fscreen" component={FinalScreen}/>

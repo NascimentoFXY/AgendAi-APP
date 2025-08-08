@@ -28,9 +28,6 @@ export default function SalaoEspecialistas() {
             {/* EspecialistasOptions */}
             <View style={{ justifyContent: "center", alignItems: "center", gap: 10, width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
 
-
-
-
                 <ProfessionalCard cardWidth={calcCardsWidth} />
                 <ProfessionalCard cardWidth={calcCardsWidth} />
                 <ProfessionalCard cardWidth={calcCardsWidth} />

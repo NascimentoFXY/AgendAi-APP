@@ -121,7 +121,6 @@ export default function Rating() {
             </ScrollView>
 
             <RatingComments
-                profile="https://placehold.co/50x50/E0777B/fff?text=QD"
                 name="Quandale Dingle"
                 followers="33 Seguidores"
                 rating="5.0"
@@ -129,7 +128,6 @@ export default function Rating() {
                 comment="Fui aí cortar meu cabelo, super recomendo o lugar. Me atenderam muito bem, apesar de eu ser careca."
             />
             <RatingComments
-                profile="https://placehold.co/50x50/E0777B/fff?text=AB"
                 name="Amanda B. Silva"
                 followers="15 Seguidores"
                 rating="5.0"
@@ -137,7 +135,6 @@ export default function Rating() {
                 comment="Excelente serviço! Adorei o corte e a cor do meu cabelo. O atendimento foi impecável."
             />
             <RatingComments
-                profile="https://placehold.co/50x50/E0777B/fff?text=JD"
                 name="João Dias"
                 followers="50 Seguidores"
                 rating="5.0"
@@ -145,7 +142,6 @@ export default function Rating() {
                 comment="Amei o corte!"
             />
             <RatingComments
-                profile="https://placehold.co/50x50/E0777B/fff?text=MS"
                 name="Maria Souza"
                 followers="78 Seguidores"
                 rating="4.5"
@@ -153,7 +149,6 @@ export default function Rating() {
                 comment="Muito bom o atendimento, mas o agendamento demorou um pouco."
             />
             <RatingComments
-                profile="https://placehold.co/50x50/E0777B/fff?text=RS"
                 name="Roberto Santos"
                 followers="23 Seguidores"
                 rating="5.0"
@@ -161,7 +156,6 @@ export default function Rating() {
                 comment="Melhor barbearia da região!"
             />
             <RatingComments
-                profile="https://placehold.co/50x50/E0777B/fff?text=AC"
                 name="Ana Clara"
                 followers="5 Seguidores"
                 rating="5.0"

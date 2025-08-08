@@ -60,17 +60,20 @@ export default function InitialPrimary({ navigation }: any) {
 
             <ScrollView style={{ width, height: "100%", backgroundColor: "#f7ff" }}
 
-                ref={scrollRef}                // conecta o ScrollView à variável scrollRef
-                horizontal                     // permite rolar na horizontal
+                ref={scrollRef}                
+                horizontal                    
                 pagingEnabled
-                scrollEnabled={false}
+                scrollEnabled={true}
                 onScroll={handleScroll}
-                showsHorizontalScrollIndicator={false} // esconde a barrinha de rolagem
-                scrollEventThrottle={24} // chama a função handleScroll sempre que rolar
+                showsHorizontalScrollIndicator={false}
+                scrollEventThrottle={24} 
             >
+                {pages.map((page, index) => (
+                    <View key={index} style={[styles.background, { width }]}>
+                        {page}
+                    </View>
 
-                
-
+                ))}
             </ScrollView>
 
 

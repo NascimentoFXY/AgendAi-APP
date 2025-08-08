@@ -11,7 +11,7 @@ import colors from "../../../configs/colors";
 import { Input } from "../../../components/input";
 
 
-export default function Initial1({ navigation }: any) {
+export default function Initial2({ navigation }: any) {
 
     return (
         <>

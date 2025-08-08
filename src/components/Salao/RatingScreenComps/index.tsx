@@ -8,12 +8,36 @@ import {
     TouchableOpacity,
     ScrollView,
     Image,
-    StyleSheet
+    StyleSheet,
+    
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
-
 // import colors from '../../../configs/colors';
-
+const getInitials = (fullName: string): string => {
+    // Se não houver nome, retorna uma string vazia para evitar erros
+    if (!fullName) {
+      return '';
+    }
+    
+    // Divide o nome completo em um array de palavras.
+    // Ex: "João da Silva" vira ["João", "da", "Silva"]
+    const names = fullName.split(' ');
+    
+    // Pega a primeira letra da primeira palavra
+    // Ex: "João" -> "J"
+    let initials = names[0][0] || '';
+    
+    // Se houver mais de uma palavra no nome (ex: nome e sobrenome)...
+    if (names.length > 1) {
+      // ...pega a primeira letra da última palavra (o sobrenome)
+      // Ex: "Silva" -> "S"
+      initials += names[names.length - 1][0] || '';
+    }
+    
+    // Converte as iniciais para maiúsculas e retorna
+    // Ex: "JS"
+    return initials.toUpperCase();
+  };
 const colorSet = {
     color: {
         primary: '#E0777B', // Placeholder for the pink color
@@ -25,13 +49,16 @@ const colorSet = {
 };
 
 const { width } = Dimensions.get("window")
-export const RatingComments = ({ profile, name, followers, rating, time, comment }: any) => {
+export const RatingComments = ({name, followers, rating, time, comment }: any) => {
+    const initials = getInitials(name);
+    console.log(`https://placehold.co/50x50/E0777B/fff?text=${initials}`)
+    
     // Componente para um único item de avaliação
     return (
         <View style={styles.reviewItem}>
             <View style={styles.reviewHeader}>
                 <Image
-                    source={{ uri: profile }}
+                    source={{ uri: `https://placehold.co/50x50/E0777B/fff?text=${initials}png`}}
                     style={styles.profileImage}
                 />
                 <View style={styles.reviewInfo}>
@@ -136,6 +163,7 @@ const styles = StyleSheet.create({
         height: 50,
         borderRadius: 25,
         marginRight: 15,
+        resizeMode: "stretch"
     },
     reviewInfo: {
         flex: 1,
