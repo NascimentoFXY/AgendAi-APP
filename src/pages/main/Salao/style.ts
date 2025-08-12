@@ -15,6 +15,7 @@ export const styles = StyleSheet.create({
         backgroundColor: colors.primary,
         zIndex: 1,
         marginBottom: -50,
+        justifyContent: "center"
     },
     modalContainer: {
 
@@ -107,6 +108,9 @@ export const styles = StyleSheet.create({
         bottom: 0,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
+    },
+    none:{
+        display: "none"
     },
 
     TabBarButton: {

@@ -28,7 +28,7 @@ const scrollProps = {
 const DayItems: any = [];
 for (let i = 0; i < 30; i++) {
     DayItems.push({
-        cardId: i + 1,
+        id: `DI-${i + 1}`,
         content:
             <View style={styles.cards}>
                 <Text style={styles.cardsText}>Dia</Text>
@@ -46,15 +46,15 @@ const parsedHour = (i: any) => {
 }
 for (let i = 6; i < 20; i++) {
     HourItems.push({
-        id: i + 1,
+        id: `HI-${i-5}`,
         content:
             <View style={styles.cards}>
                 <Text style={styles.cardsText}>Horário</Text>
                 <Text style={styles.cardsText}>{parsedHour(i)}:00</Text>
             </View>
     }
-
     )
+    console.log("ID: " + HourItems[HourItems.length - 1].id)
 }
 const especialistas: any = []
 for (let i = 6; i < 20; i++) {
@@ -94,13 +94,14 @@ export default function ScheduleModal() {
                 <View>
                     <Text style={styles.title}>Dia</Text>
 
-                    <ScrollView {...scrollProps}
+                    <ScrollView
+                        {...scrollProps}
                         style={{
                         }}
                         contentContainerStyle={{ gap: 10, paddingRight: 20, paddingLeft: 20 }}>
                         {/* conteudos */}
                         {DayItems.map((item: any) => (
-                            <View key={item.cardId}>
+                            <View key={item.id}>
                                 {item.content}
                             </View>
                         ))}
@@ -112,10 +113,8 @@ export default function ScheduleModal() {
                         {...scrollProps}
                         contentContainerStyle={{ gap: 10, paddingRight: 20, paddingLeft: 20 }}
                     >
-
-
                         {HourItems.map((item: any) => (
-                            <View key={item.cardId}>
+                            <View key={item.id}>
                                 {item.content}
                             </View>
                         ))}

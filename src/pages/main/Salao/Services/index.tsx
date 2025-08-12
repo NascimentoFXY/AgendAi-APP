@@ -27,7 +27,7 @@ export default function SalaoServices() {
                 <Text style={{ fontSize: 18, fontWeight: "bold" }}>Serviços</Text><Text style={{ fontSize: 18, fontWeight: "bold", color: colors.primary, flex: 1 }}>(18)</Text>
             </View>
             {/* ServicosOptions */}
-            <View style={{ justifyContent: "center", alignItems: "center", gap: 10 }}>
+            <View style={{ justifyContent: "center", alignItems: "center", gap: 10, paddingBottom: 10 }}>
 
                 <ServiceItem />
                 <ServiceItem />

@@ -19,11 +19,35 @@ import SalaoServices from '../../Services';
 import SalaoEspecialistas from '../../Especialistas';
 import Rating from '../../Avaliacoes';
 
+const { width } = Dimensions.get("window")
 
-export default function MainModal(){
-    return(
-<>
-<View style={styles.container}>
+export default function MainModal({ navigation }: any) {
+    const scrollRef = useRef<ScrollView>(null);
+    const [currentPage, setCurrentPage] = useState(0)
+
+    const pages = [<SalaoServices />, <SalaoEspecialistas />, <Rating />]
+
+    const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        // função chamada quando o usuário arrasta o dedo na tela (scroll)
+        const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width);
+
+        // calcula em qual pagina o usuário está com base na posição horizontal
+        setCurrentPage(pageIndex);
+        console.log(pageIndex);
+        // atualiza a página atual
+    };
+    const scrollToPage = (pageIndex: number) => {
+        // Verifica se o índice da página é válido e se a referência da rolagem existe
+        if (pageIndex >= 0 && pageIndex < pages.length && scrollRef.current) {
+            scrollRef.current.scrollTo({ x: width * pageIndex, animated: true });
+        } else {
+        
+            console.warn(`Página com índice ${pageIndex} não encontrada.`);
+        }
+    };
+    return (
+        <>
+            <View style={styles.container}>
 
                 <View style={styles.modalContainer}>
                     <View style={styles.SalaoInfoText}>
@@ -91,26 +115,38 @@ export default function MainModal(){
 
                     >
 
-                        <View style={styles.NavigationOptions}>
-                            <Text style={[styles.NavigationOptionsText, { color: colors.primary }]}>Serviços</Text>
-                            <View style={styles.underline} />
-                        </View>
-                        <View style={styles.NavigationOptions}>
-                            <Text style={styles.NavigationOptionsText}>Especialistas</Text>
+                        <TouchableOpacity
+                            style={styles.NavigationOptions}
+                            onPress={() => scrollToPage(0)}>
 
-                        </View>
-                        <View style={styles.NavigationOptions}>
+                            <Text style={[styles.NavigationOptionsText, currentPage === 0 ? { color: colors.primary } : styles.NavigationOptionsText]}>Serviços</Text>
+                            <View style={currentPage === 0 ? styles.underline : styles.none} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.NavigationOptions}
+                            onPress={() => scrollToPage(1)}>
+
+                            <Text style={[styles.NavigationOptionsText, currentPage === 1 ? { color: colors.primary } : styles.NavigationOptionsText]}>Especialistas</Text>
+                            <View style={currentPage === 1 ? styles.underline : styles.none} />
+                        </TouchableOpacity>
+
+
+                        <TouchableOpacity
+                            style={styles.NavigationOptions}
+                            onPress={() => scrollToPage(2)}>
+
+                            <Text style={[styles.NavigationOptionsText, currentPage === 2 ? { color: colors.primary } : styles.NavigationOptionsText]}>Avalições</Text>
+                            <View style={currentPage === 2 ? styles.underline : styles.none} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.NavigationOptions}>
+
                             <Text style={styles.NavigationOptionsText}>Galeria</Text>
+                            <View style={styles.none} />
+                        </TouchableOpacity>
 
-                        </View>
-                        <View style={styles.NavigationOptions}>
-                            <Text style={styles.NavigationOptionsText}>Avalições</Text>
-
-                        </View>
-                        <View style={styles.NavigationOptions}>
-                            <Text style={styles.NavigationOptionsText}>Avalições</Text>
-
-                        </View>
                     </ScrollView>
 
                 </View>
@@ -120,15 +156,16 @@ export default function MainModal(){
                     horizontal
                     overScrollMode='never'
                     scrollEventThrottle={24}
-
+                    ref={scrollRef}
+                    onScroll={handleScroll}
                 >
                     <SalaoServices />
                     <SalaoEspecialistas />
                     <Rating />
                 </ScrollView>
-                </View>
+            </View>
 
-</>
-        
+        </>
+
     )
 }

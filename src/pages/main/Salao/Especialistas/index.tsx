@@ -16,7 +16,9 @@ import ProfessionalCard from '../../../../components/Salao/EspecialistaScreen';
 
 
 const width = Dimensions.get("window").width;
-const calcCardsWidth = (width / 2) - 40; // Calcula a largura dos cards com base na largura da tela
+const calcCardsWidth = (width / 2) - 40;
+
+
 export default function SalaoEspecialistas() {
     return (
         <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -26,7 +28,15 @@ export default function SalaoEspecialistas() {
                 <Text style={{ fontSize: 18, fontWeight: "bold" }}>Especialistas</Text><Text style={{ fontSize: 18, fontWeight: "bold", color: colors.primary }}>(5)</Text>
             </View>
             {/* EspecialistasOptions */}
-            <View style={{ justifyContent: "center", alignItems: "center", gap: 10, width: "100%", flexDirection: "row", flexWrap: "wrap" }}>
+            <View style={{
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 10,
+                width: "100%",
+                flexDirection: "row",
+                flexWrap: "wrap",
+                paddingBottom: 10
+            }}>
 
                 <ProfessionalCard cardWidth={calcCardsWidth} />
                 <ProfessionalCard cardWidth={calcCardsWidth} />
