@@ -24,7 +24,9 @@ export const styles = StyleSheet.create({
         borderTopRightRadius: 20,
 
         borderBottomColor: "#3838386b",
-        borderBottomWidth: 2,
+        borderBottomWidth: 1,
+        borderBottomEndRadius: 20,
+        borderBottomStartRadius: 20,
         paddingBottom: 0,
         zIndex: 2,
 
@@ -123,5 +125,32 @@ export const styles = StyleSheet.create({
         bottom: 0,
         borderTopColor: "#a5a5a555",
         borderTopWidth: 1
+    },
+    //---------------------------------------- modal de agendamento
+    title: {
+        fontWeight: "bold",
+        fontSize: 18,
+        paddingLeft: 20,
+        marginTop: 20,
+        marginBottom: 10
+    },
+    subTitle: {
+        fontWeight: "bold",
+        marginVertical: 10,
+        color: colors.subTitle,
+        paddingLeft: 20,
+        fontSize: 16
+    },
+    cards: {
+        backgroundColor: colors.primary,
+        width: 100,
+        height: 70,
+        borderRadius: 10,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    cardsText:{
+        color: colors.textSecondary
+
     }
 });
