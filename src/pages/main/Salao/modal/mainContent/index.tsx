@@ -33,7 +33,6 @@ export default function MainModal({ navigation }: any) {
 
         // calcula em qual pagina o usuário está com base na posição horizontal
         setCurrentPage(pageIndex);
-        console.log(pageIndex);
         // atualiza a página atual
     };
     const scrollToPage = (pageIndex: number) => {
@@ -41,7 +40,7 @@ export default function MainModal({ navigation }: any) {
         if (pageIndex >= 0 && pageIndex < pages.length && scrollRef.current) {
             scrollRef.current.scrollTo({ x: width * pageIndex, animated: true });
         } else {
-        
+
             console.warn(`Página com índice ${pageIndex} não encontrada.`);
         }
     };

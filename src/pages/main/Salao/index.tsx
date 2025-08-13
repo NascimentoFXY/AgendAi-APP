@@ -20,7 +20,7 @@ import ScheduleModal from './modal/Agendamento';
 const width = Dimensions.get("window").width;
 
 export default function SalaoScreen({ navigation }: any) {
-    const [isScheduling, setScheduling] = useState(true);
+    const [isScheduling, setScheduling] = useState(false);
     return (
         <SafeAreaView style={styles.container}>
             {/* Imagem principal */}
@@ -33,7 +33,7 @@ export default function SalaoScreen({ navigation }: any) {
                     top={-15}
                     left={20}
                     style={{ zIndex: 3, backgroundColor: "#ffffff90", borderWidth: 1, borderColor: "#ffffff99" }}
-                    onPress={() => isScheduling ? setScheduling(false) : navigation.goBack()}
+                    onPress={() => isScheduling ? setScheduling(false) : (navigation.goBack(), setScheduling(false))}
                 />
 
             </View>
@@ -41,7 +41,7 @@ export default function SalaoScreen({ navigation }: any) {
 
             {
                 isScheduling ?
-                    <ScheduleModal key={1} /> : <MainModal key={2} />
+                    <ScheduleModal/> : <MainModal/>
             }
 
             <View style={styles.Tab}>

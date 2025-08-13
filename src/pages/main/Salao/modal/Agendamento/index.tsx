@@ -20,6 +20,7 @@ import SalaoServices from '../../Services';
 import SalaoEspecialistas from '../../Especialistas';
 import Rating from '../../Avaliacoes';
 import ProfessionalCard from '../../../../../components/Salao/EspecialistaScreen';
+
 const scrollProps = {
     showsHorizontalScrollIndicator: false,
     horizontal: true,
@@ -30,10 +31,10 @@ for (let i = 0; i < 30; i++) {
     DayItems.push({
         id: `DI-${i + 1}`,
         content:
-            <View style={styles.cards}>
+            <TouchableOpacity activeOpacity={0.8} style={styles.cards}>
                 <Text style={styles.cardsText}>Dia</Text>
                 <Text style={styles.cardsText}>{i + 1} de Jun</Text>
-            </View>
+            </TouchableOpacity>
     }
 
     )
@@ -46,15 +47,14 @@ const parsedHour = (i: any) => {
 }
 for (let i = 6; i < 20; i++) {
     HourItems.push({
-        id: `HI-${i-5}`,
+        id: `HI-${i - 5}`,
         content:
-            <View style={styles.cards}>
+            <TouchableOpacity activeOpacity={0.8} style={styles.cards}>
                 <Text style={styles.cardsText}>Horário</Text>
                 <Text style={styles.cardsText}>{parsedHour(i)}:00</Text>
-            </View>
+            </TouchableOpacity>
     }
     )
-    console.log("ID: " + HourItems[HourItems.length - 1].id)
 }
 const especialistas: any = []
 for (let i = 6; i < 20; i++) {
@@ -64,9 +64,9 @@ for (let i = 6; i < 20; i++) {
             <ProfessionalCard cardWidth={(Dimensions.get("window").width / 2) - 40} /> // Calcula a largura dos cards com base na largura da tela}/>
     })
 }
+
 export default function ScheduleModal() {
     return (
-
         <View style={styles.container}>
 
             <View style={styles.modalContainer}>
