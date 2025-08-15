@@ -37,14 +37,16 @@ export default function TabRoutes() {
             headerShown: false,
 
             tabBarStyle: {
-                height: 100,
+                height: 120,
                 justifyContent: "center",
                 alignItems: 'center',
+            
             },
             tabBarItemStyle: {
-                paddingTop: 15
+                paddingTop: 10,
             },
             tabBarActiveTintColor: colors.primary,
+            
         }}>
 
             <Tab.Screen name="Home" component={MainRoutes}
@@ -52,11 +54,13 @@ export default function TabRoutes() {
                     tabBarIcon: ({ color, size }) => <Entypo name="home" size={size} color={color} />,
                     tabBarButton: (props: any) => <CustomTabBarButton {...props} />,
                     tabBarStyle: ((route) => {
-                     
+
                         const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
-                            if (routeName === 'Salao' || routeName === 'ScheduleFinal') {
-                                return { display: 'none' };
-                            }
+                        if (routeName === 'Salao' ||
+                            routeName === 'ScheduleFinal' ||
+                            routeName === 'ScheduleConclusion') {
+                            return { display: 'none' };
+                        }
                         return;
                     })(route),
 

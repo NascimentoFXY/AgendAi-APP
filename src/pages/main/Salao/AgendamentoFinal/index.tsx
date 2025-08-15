@@ -74,7 +74,7 @@ export default function ScheduleFinal({ navigation }: any) {
 
             <View style={styles.Tab}>
                 <TouchableOpacity
-                    onPress={() => navigation.popToTop()}
+                    onPress={() => navigation.navigate('ScheduleConclusion')}
                     style={styles.TabBarButton}>
                     <Text style={{ color: "#fff" }}>Concluir</Text>
                 </TouchableOpacity>

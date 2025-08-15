@@ -5,12 +5,23 @@ export const styles = StyleSheet.create({
         alignItems: "center",
         flex: 1
     },
+    container2:{
+        alignItems: "center",
+        justifyContent: "center",
+        flex: 1
+    },
     TabBarButton: {
         backgroundColor: colors.primary,
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 210
+    },
+    TabBarButton2: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+
     },
     Tab: {
         position: "absolute",
@@ -21,6 +32,13 @@ export const styles = StyleSheet.create({
         bottom: 0,
         borderTopColor: "#a5a5a555",
         borderTopWidth: 1
+    },
+    Tab2: {
+        position: "absolute",
+        width: "100%",
+        padding: 30,
+        height: 150,
+        bottom: 0,
     },
     TopCurve: {
         position: "absolute",
@@ -63,5 +81,17 @@ export const styles = StyleSheet.create({
     labelContainer:{
         justifyContent: "space-between",
         flexDirection: "row"
+    },
+    title:{
+        fontSize: 26,
+        fontWeight: "bold"
+    },
+    conclusionIconContainer:{
+        width: 150,
+        height: 150,
+        backgroundColor: colors.primary,
+        borderRadius: 150,
+        justifyContent: "center",
+        alignItems: "center"
     }
 })
