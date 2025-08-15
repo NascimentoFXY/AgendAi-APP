@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -6,13 +6,27 @@ import {
     View,
     TextInput,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    NativeSyntheticEvent,
+    NativeScrollEvent
 } from 'react-native';
 import ScheduleHeader from './header';
-export default function Agenda(){
-    return(
-        <View style={{flex: 1}}>
-         <ScheduleHeader/>
+import { styles } from './style';
+import colors from '../../../configs/colors';
+
+
+
+
+export default function Agenda({navigation}: any) {
+    const scrollRef = useRef<ScrollView>(null);
+    return (
+        <View style={{ flex: 1 }}>
+            {/* ========HEADER=================== */}
+            <ScheduleHeader navigation={navigation} ref={scrollRef} />
+            {/* ================================== */}
+            <ScrollView horizontal>
+                {/* ==============================Conteudo======================================== */}
+            </ScrollView>
             <Text>Agenda</Text>
         </View>
     )
