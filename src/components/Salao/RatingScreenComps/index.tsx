@@ -51,7 +51,6 @@ const colorSet = {
 const { width } = Dimensions.get("window")
 export const RatingComments = ({name, followers, rating, time, comment }: any) => {
     const initials = getInitials(name);
-    console.log(`https://placehold.co/50x50/E0777B/fff?text=${initials}`)
     
     // Componente para um único item de avaliação
     return (
