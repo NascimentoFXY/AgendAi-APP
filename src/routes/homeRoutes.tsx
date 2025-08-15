@@ -13,7 +13,7 @@ import FinalScreen from "../pages/initials/finalScreen";
 import Home from "../pages/main/home";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SalaoScreen from "../pages/main/Salao";
-
+import ScheduleFinal from "../pages/main/Salao/AgendamentoFinal";
 export default function MainRoutes({navigation}: any) {
    const Stack = createNativeStackNavigator();
 
@@ -22,6 +22,7 @@ export default function MainRoutes({navigation}: any) {
             <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
                 <Stack.Screen name="Home" component={Home}/>
                 <Stack.Screen name="Salao" component={SalaoScreen}/>
+                <Stack.Screen name="ScheduleFinal" component={ScheduleFinal}/>
             </Stack.Navigator>
         </View>
 

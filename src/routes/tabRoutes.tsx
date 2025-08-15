@@ -54,10 +54,10 @@ export default function TabRoutes() {
                     tabBarStyle: ((route) => {
                      
                         const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
-                            if (routeName === 'Salao') {
+                            if (routeName === 'Salao' || routeName === 'ScheduleFinal') {
                                 return { display: 'none' };
                             }
-                        return; // Retorna o estilo padrão da tab bar
+                        return;
                     })(route),
 
                 })
