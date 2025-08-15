@@ -35,13 +35,39 @@ export default function ScheduleFinal({ navigation }: any) {
             {/*----------------------- MAIN--------------------- */}
             <View style={styles.contentContainer}>
                 <View style={styles.content}>
-                    <Text>Salão: La Mar</Text>
-                    <Text>Endereço: La Mar</Text>
-                    <Text>Endereço: La Mar</Text>
-                    <Text>Data de Reserva: La Mar</Text>
-                    <Text>Horario de Reserva: La Mar</Text>
-                    <Text>Especialista: La Mar</Text>
+                    <View style={styles.labelContainer}>
+                        <Text style={styles.label}>Salão: </Text>
+                        <Text style={styles.label2}>La Mar</Text>
+                    </View>
 
+                    <View style={styles.labelContainer}>
+                        <Text style={styles.label}>Endereço: </Text>
+                        <Text style={styles.label2}>Rua Euclides Zalgo, Endereço 0293</Text>
+                    </View>
+
+                    <View style={styles.labelContainer}>
+                        <Text style={styles.label}>Nome: </Text>
+                        <Text style={styles.label2}> Johan liebert</Text>
+                    </View>
+
+                    <View style={styles.labelContainer}>
+                        <Text style={styles.label}>Data de Reserva: </Text>
+                        <Text style={styles.label2}> La Mar</Text>
+                    </View>
+                    <View style={styles.labelContainer}>
+                        <Text style={styles.label}>Telefone: </Text>
+                        <Text style={styles.label2}> 55 11 22345-6789</Text>
+                    </View>
+
+                    <View style={styles.labelContainer}>
+                        <Text style={styles.label}>Horario de Reserva:</Text>
+                        <Text style={styles.label2}> 07:00 horas da Manhã</Text>
+                    </View>
+
+                    <View style={styles.labelContainer}>
+                        <Text style={styles.label}>Especialista: </Text>
+                        <Text style={styles.label2}> Cabeleireira - Lavínia </Text>
+                    </View>
                 </View>
 
             </View>

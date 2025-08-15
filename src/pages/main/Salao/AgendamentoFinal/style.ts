@@ -38,10 +38,30 @@ export const styles = StyleSheet.create({
         alignItems: "center"
     },
     content:{
-        width: "80%",
+   
         padding: 20,
         borderWidth: 0.9,
+        borderRadius: 20,
+        borderColor: "#0000000f",
         height: 500,
-        backgroundColor: colors.background
+        gap: 20,
+        backgroundColor: colors.background,
+        justifyContent: 'space-around',
+        boxShadow: "#0000",
+        elevation: 2,
+    },
+    label:{
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#a0a0a0"
+    },
+    label2:{
+        fontSize: 16,
+        fontWeight: "bold",
+        
+    },
+    labelContainer:{
+        justifyContent: "space-between",
+        flexDirection: "row"
     }
 })
