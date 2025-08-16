@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
         justifyContent: "space-between",
         padding: 20,
         flexDirection: "row",
-        alignItems: "center"
+        alignItems: "center",
 
     },
     NavigationScroll: {

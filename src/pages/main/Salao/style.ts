@@ -11,7 +11,6 @@ export const styles = StyleSheet.create({
     SalaoImagem: {
         width: "100%",
         height: 250,
-        borderRadius: 20,
         backgroundColor: colors.primary,
         zIndex: 1,
         marginBottom: -50,
@@ -72,20 +71,12 @@ export const styles = StyleSheet.create({
         flexDirection: "row",
         gap: 30,
         overflow: "visible",
-
-
-
     },
     salaoNavigationOptions: {
         flexDirection: "row",
         gap: 30,
         overflow: "visible",
         paddingLeft: 20,
-
-
-
-
-
     },
     NavigationOptions: {
         height: 50,

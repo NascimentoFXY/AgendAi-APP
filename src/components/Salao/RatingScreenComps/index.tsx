@@ -9,38 +9,37 @@ import {
     ScrollView,
     Image,
     StyleSheet,
-    
+
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
 // import colors from '../../../configs/colors';
 const getInitials = (fullName: string): string => {
     // Se não houver nome, retorna uma string vazia para evitar erros
     if (!fullName) {
-      return '';
+        return '';
     }
-    
-    // Divide o nome completo em um array de palavras.
-    // Ex: "João da Silva" vira ["João", "da", "Silva"]
+    //ex: Joao Silva -> "JS"
     const names = fullName.split(' ');
-    
+
     // Pega a primeira letra da primeira palavra
     // Ex: "João" -> "J"
     let initials = names[0][0] || '';
-    
+
     // Se houver mais de uma palavra no nome (ex: nome e sobrenome)...
     if (names.length > 1) {
-      // ...pega a primeira letra da última palavra (o sobrenome)
-      // Ex: "Silva" -> "S"
-      initials += names[names.length - 1][0] || '';
+        // ...pega a primeira letra da última palavra (o sobrenome)
+        // Ex: "Silva" -> "S"
+        initials += names[names.length - 1][0] || '';
     }
-    
+
     // Converte as iniciais para maiúsculas e retorna
     // Ex: "JS"
     return initials.toUpperCase();
-  };
-const colorSet = {
+};
+const colors = {
+    background: '#fff',
     color: {
-        primary: '#E0777B', // Placeholder for the pink color
+        primary: '#E0777B',
     },
     gray: '#ccc',
     lightGray: '#f0f0f0',
@@ -49,17 +48,22 @@ const colorSet = {
 };
 
 const { width } = Dimensions.get("window")
-export const RatingComments = ({name, followers, rating, time, comment }: any) => {
+export const RatingComments = ({ name, followers, rating, time, comment }: any) => {
     const initials = getInitials(name);
-    
+    const initialsSafe = initials && initials.trim() !== '' ? initials : 'U';
     // Componente para um único item de avaliação
     return (
         <View style={styles.reviewItem}>
             <View style={styles.reviewHeader}>
-                <Image
-                    source={{ uri: `https://placehold.co/50x50/E0777B/fff?text=${initials}png`}}
-                    style={styles.profileImage}
-                />
+                
+                {/* ImagePlaceholder */}
+                <View style={{
+                    width: 45, height: 45, marginRight: 10, marginVertical: 5, borderRadius: 25,
+                    backgroundColor: '#E0777B', justifyContent: 'center', alignItems: 'center'
+                }}>
+                    <Text style={{ color: '#fff', fontWeight: 'bold' }}>{initialsSafe}</Text>
+                </View>
+                
                 <View style={styles.reviewInfo}>
                     <Text style={{ fontWeight: 'bold', fontSize: 16, color: colors.text }}>{name}</Text>
                     <Text style={{ color: colors.darkGray }}>{followers}</Text>
@@ -81,16 +85,7 @@ export const RatingComments = ({name, followers, rating, time, comment }: any) =
         </View>
     );
 };
-const colors = {
-    background: '#fff',
-    color: {
-        primary: '#E0777B',
-    },
-    gray: '#ccc',
-    lightGray: '#f0f0f0',
-    darkGray: '#888',
-    text: '#333',
-};
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -162,7 +157,7 @@ const styles = StyleSheet.create({
         height: 50,
         borderRadius: 25,
         marginRight: 15,
-        resizeMode: "stretch"
+        resizeMode: "cover",
     },
     reviewInfo: {
         flex: 1,

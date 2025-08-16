@@ -132,8 +132,12 @@ export default function Agenda({ navigation }: any) {
     return (
         <View style={{ flex: 1 }}>
             {/* ========HEADER=================== */}
-            <ScheduleHeader navigation={navigation} currentPage={currentPage} scrollToPage={scrollToPage} />
+            <SafeAreaView style={{ zIndex: 2 }}>
+                <ScheduleHeader navigation={navigation} currentPage={currentPage} scrollToPage={scrollToPage} />
+            </SafeAreaView>
             {/* ================================== */}
+
+            
             <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} ref={scrollRef} onScroll={handleScroll} >
 
                 <ScrollView style={{ width: width }} >

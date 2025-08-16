@@ -24,9 +24,7 @@ export default function Cadastro({ navigation }: any) {
         <SafeAreaView style={styles.mainContainer}>
 
             <CustomButton
-                Icon={AntDesign}
-                IconName="arrowleft"
-                IconSize={30}
+                Icon={<AntDesign name="arrowleft" size={24} color={colors.lightGray} />}
                 onPress={() => navigation.goBack()}
                 style={styles.backButtonContainer}
 
@@ -67,8 +65,11 @@ export default function Cadastro({ navigation }: any) {
 
                     </View>
 
-                    <View style={{ flexDirection: "row", marginBottom: 40, alignItems: "center" }}><Checkbox /><Text>Concordo com os <Text style={styles.link}>Termos e condicões</Text></Text></View>
-                    <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('Main')}>
+                    <View style={styles.termsContainer}>
+                        <Checkbox />
+                        <Text>Concordo com os <Text style={styles.link}>Termos e condicões</Text></Text>
+                    </View>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Main')}>
                         <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Cadastrar</Text>
                     </TouchableOpacity>
                 </View>

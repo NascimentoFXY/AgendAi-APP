@@ -16,7 +16,7 @@ export default function Login({ navigation }: any) {
         <SafeAreaView style={styles.mainContainer}>
 
             <CustomButton
-                Icon={<AntDesign name="arrowleft" size={30}/>}
+                Icon={<AntDesign name="arrowleft" size={30} color={colors.lightGray}/>}
                 onPress={()=> navigation.goBack()}
                 style={styles.backButtonContainer}
 
@@ -30,7 +30,7 @@ export default function Login({ navigation }: any) {
 
                 </View>
 
-                <SafeAreaView style={{ width: "100%", flex: 1, marginBottom: 40 }}>
+                <View style={{ width: "100%", flex: 1, marginBottom: 40 }}>
 
                     <Input
                         title="Email"
@@ -46,14 +46,14 @@ export default function Login({ navigation }: any) {
                     >
 
                         <Text style={{ color: colors.primary }}>Esqueceu sua senha?</Text></TouchableOpacity>
-                </SafeAreaView>
+                </View>
 
                 <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('Main')}>
                     <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Entrar</Text>
                 </TouchableOpacity>
 
 
-                <SafeAreaView style={{ width: "100%", flex: 1, alignItems: "center", justifyContent: "center" }}>
+                <View style={{ width: "100%", flex: 1, alignItems: "center", justifyContent: "center" }}>
                     <Text>Ou entre com</Text>
                     <View style={styles.optionsContainer}>
                         <TouchableOpacity style={styles.options}>
@@ -70,7 +70,7 @@ export default function Login({ navigation }: any) {
                         </TouchableOpacity>
                     </View>
 
-                </SafeAreaView>
+                </View>
                 <View style={{ flexDirection: "row", flex: 1 }}>
                     <Text>Não tem uma conta? </Text>
                     <TouchableOpacity onPress={() => navigation.navigate("Cadastro")}>

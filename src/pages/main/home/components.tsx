@@ -75,8 +75,6 @@ export const ServiceCardsData = [
 
 
 ]
-
-
 export const EspecialCardsData = [
     {
         id: 1,

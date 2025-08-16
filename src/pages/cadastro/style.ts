@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
     contentContainer: {
 
         width: "100%",
-        
+
     },
     header: {
         marginTop: 50,
@@ -96,6 +96,11 @@ export const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         zIndex: 2,
+    },
+    termsContainer: {
+        flexDirection: "row",
+        marginBottom: 40,
+        alignItems: "center"
     }
 
 });

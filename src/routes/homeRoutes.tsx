@@ -19,14 +19,13 @@ export default function MainRoutes({navigation}: any) {
    const Stack = createNativeStackNavigator();
 
     return (
-        <View style={{ flex: 1 }}>
             <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
                 <Stack.Screen name="Home" component={Home}/>
                 <Stack.Screen name="Salao" component={SalaoScreen}/>
                 <Stack.Screen name="ScheduleFinal" component={ScheduleFinal}/>
                 <Stack.Screen name="ScheduleConclusion" component={ScheduleConclusion}/>
             </Stack.Navigator>
-        </View>
+
 
 
 

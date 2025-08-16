@@ -25,11 +25,8 @@ const cardsWidth = 400;
 
 export default function Home({ navigation }: any) {
     return (
-        <ScrollView>
+        <ScrollView contentContainerStyle={styles.container}>
             <MainHeader />
-
-
-
             <View>
 
                 {/* ==================ESPECIAL PRA VOCE======================================= */}
@@ -43,20 +40,14 @@ export default function Home({ navigation }: any) {
                 <Carroussel
                     cardsWidth={cardsWidth}
                     cardsGap={20}
-                    style={{
-                        paddingLeft: 20,
-
+                    contentContainerStyle={{
+                        paddingHorizontal: 20,
                     }}
                 >
 
                     {EspecialCardsData.map((key) => (
 
-                        <View
-                            key={key.id}
-                            style={{
-                                paddingRight: EspecialCardsData[EspecialCardsData.length - 1].id === key.id ? 20 : 0
-                            }}
-                        >
+                        <View key={key.id}>
                             {key.content}
                         </View>
                     ))}
@@ -89,8 +80,8 @@ export default function Home({ navigation }: any) {
                 <Carroussel
                     cardsWidth={300}
                     cardsGap={20}
-                    style={{
-                        paddingLeft: 20
+                    contentContainerStyle={{
+                        paddingHorizontal: 20
                     }}>
 
                     {topSaloesCardsData.map((key) => (

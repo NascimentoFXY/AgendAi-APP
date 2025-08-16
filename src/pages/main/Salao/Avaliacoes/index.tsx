@@ -13,7 +13,7 @@ import {
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
 
 import colors from '../../../../configs/colors';
-import {RatingComments} from '../../../../components/Salao/RatingScreenComps';
+import { RatingComments } from '../../../../components/Salao/RatingScreenComps';
 
 const colorSet = {
     color: {
@@ -36,11 +36,11 @@ export default function Rating() {
                     backgroundColor: colors.background
 
                 }]}>
-                    
+
             <View>
 
                 {/* Header Section */}
-                <SafeAreaView style={{ backgroundColor: colors.background }}>
+                <View style={{ backgroundColor: colors.background }}>
                     <View style={styles.header}>
                         <Text style={styles.title}>Avaliações</Text>
 
@@ -49,7 +49,7 @@ export default function Rating() {
                             <Text style={{ color: colorSet.color.primary, marginLeft: 5, fontSize: 16 }}>Avaliar</Text>
                         </TouchableOpacity>
                     </View>
-                </SafeAreaView>
+                </View>
 
                 {/* Search Section */}
                 <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
@@ -75,8 +75,10 @@ export default function Rating() {
 
             </View>
             {/* Filter Section */}
-            <ScrollView horizontal
-                style={{ flexDirection: 'row', paddingHorizontal: 20, marginBottom: 20, zIndex: 2,}}>
+            <ScrollView
+                horizontal
+                nestedScrollEnabled={true}
+                style={{ flexDirection: 'row', paddingLeft: 20, marginBottom: 20}}>
                 <TouchableOpacity style={{
                     flexDirection: 'row',
                     alignItems: 'center',

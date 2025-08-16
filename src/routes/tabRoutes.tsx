@@ -40,13 +40,13 @@ export default function TabRoutes() {
                 height: 120,
                 justifyContent: "center",
                 alignItems: 'center',
-            
+
             },
             tabBarItemStyle: {
                 paddingTop: 10,
             },
             tabBarActiveTintColor: colors.primary,
-            
+
         }}>
 
             <Tab.Screen name="Home" component={MainRoutes}
