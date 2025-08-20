@@ -15,6 +15,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SalaoScreen from "../pages/main/Salao";
 import ScheduleFinal from "../pages/main/Salao/AgendamentoFinal";
 import ScheduleConclusion from "../pages/main/Salao/AgendamentoFinal/agendamentoConcluido";
+import ScheduleCancelScreen from "../pages/main/agenda/cancelScreen";
 export default function MainRoutes({navigation}: any) {
    const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,7 @@ export default function MainRoutes({navigation}: any) {
                 <Stack.Screen name="Salao" component={SalaoScreen}/>
                 <Stack.Screen name="ScheduleFinal" component={ScheduleFinal}/>
                 <Stack.Screen name="ScheduleConclusion" component={ScheduleConclusion}/>
+                <Stack.Screen name="ScheduleCancelScreen" component={ScheduleCancelScreen}/>
             </Stack.Navigator>
 
 

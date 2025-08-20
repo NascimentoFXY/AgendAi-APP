@@ -33,7 +33,6 @@ export default function InitialPrimary({ navigation }: any) {
         
         // calcula em qual pagina o usuário está com base na posição horizontal
         setCurrentPage(pageIndex);
-        console.log(pageIndex);
         // atualiza a página atual (usado para mostrar bolinhas e travar o botão "avançar")
     };
     const scrollNextHandler = () => {

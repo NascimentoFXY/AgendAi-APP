@@ -35,60 +35,6 @@ const InitialMockData = [
         idServico: '#29820841',
         tipoAgendamento: 'proximo'
     },
-    {
-        data: '22 de Maio, 2025',
-        hora: '14:30',
-        lembreteAtivo: true,
-        titulo: 'Manicure e Pedicure',
-        endereco: 'Rua das Flores, 500',
-        idServico: '#29820842',
-        tipoAgendamento: 'proximo'
-    },
-    {
-        data: '25 de Maio, 2025',
-        hora: '09:00',
-        lembreteAtivo: false,
-        titulo: 'Massagem Relaxante',
-        endereco: 'Av. Central, 200',
-        idServico: '#29820843',
-        tipoAgendamento: 'proximo'
-    },
-    {
-        data: '28 de Maio, 2025',
-        hora: '11:15',
-        lembreteAtivo: true,
-        titulo: 'Tratamento Facial',
-        endereco: 'Rua do Sol, 750',
-        idServico: '#29820844',
-        tipoAgendamento: 'proximo'
-    },
-    {
-        data: '30 de Maio, 2025',
-        hora: '16:00',
-        lembreteAtivo: false,
-        titulo: 'Depilação a Laser',
-        endereco: 'Av. das Américas, 300',
-        idServico: '#29820845',
-        tipoAgendamento: 'proximo'
-    },
-    {
-        data: '02 de Junho, 2025',
-        hora: '13:30',
-        lembreteAtivo: true,
-        titulo: 'Design de Sobrancelhas',
-        endereco: 'Rua Verde, 1200',
-        idServico: '#29820846',
-        tipoAgendamento: 'proximo'
-    },
-    {
-        data: '05 de Junho, 2025',
-        hora: '15:45',
-        lembreteAtivo: false,
-        titulo: 'Cabeleireiro Completo',
-        endereco: 'Av. Azul, 450',
-        idServico: '#29820847',
-        tipoAgendamento: 'proximo'
-    },
 ];
 
 const { width } = Dimensions.get("window");
@@ -137,7 +83,7 @@ export default function Agenda({ navigation }: any) {
             </SafeAreaView>
             {/* ================================== */}
 
-            
+
             <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} ref={scrollRef} onScroll={handleScroll} >
 
                 <ScrollView style={{ width: width }} >
@@ -153,6 +99,9 @@ export default function Agenda({ navigation }: any) {
                             idServico={item.idServico}
                             tipoAgendamento={'proximo'}
                             onLembreteChange={(newValue) => handleSwitchChange(index, newValue)}
+                            onCancelar={() => 
+                                navigation.navigate("Home",{screen: "ScheduleCancelScreen"})
+                            }
                         />
                     ))}
                 </ScrollView>

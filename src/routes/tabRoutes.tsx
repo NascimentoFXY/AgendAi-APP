@@ -58,7 +58,8 @@ export default function TabRoutes() {
                         const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
                         if (routeName === 'Salao' ||
                             routeName === 'ScheduleFinal' ||
-                            routeName === 'ScheduleConclusion') {
+                            routeName === 'ScheduleConclusion'||
+                            routeName === 'ScheduleCancelScreen') {
                             return { display: 'none' };
                         }
                         return;
@@ -102,6 +103,7 @@ export default function TabRoutes() {
 
 export const styles = StyleSheet.create({
     tabBarButton: {
+        
     }
 })
 
