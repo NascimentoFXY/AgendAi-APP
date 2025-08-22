@@ -4,6 +4,7 @@ const colors = {
   background: "#f5f5f5",
   textSecondary: "#fff",
   white: "#fff",
+  title: "#545454",
   subTitle: "#a5a5a5",
   lightGray: "#a5a5a5",
   transparentLightGray: "#a5a5a5bb",

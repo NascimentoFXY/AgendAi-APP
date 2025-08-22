@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Input } from '../../../components/input'; // Você pode manter esse se já estiver estilizado
-import { styles } from '../../../pages/main/home/style';
+import { styles } from '../../../pages/main/Home/style';
 import CustomButton from '../../../components/customButton';
 import InputWithIcons from '../../../components/InputIcons';
 import Carroussel from '../../../components/homeScreenComponents/carroussel';
@@ -21,7 +21,7 @@ import ServicesCards from '../../../components/homeScreenComponents/ServicesCarr
 const cardsWidth = 400;
 
 
-export default function MainHeader() {
+export default function MainHeader({navigation}: any) {
     return (
         <>
             {/* ===============HEADER=============== */}
@@ -56,6 +56,7 @@ export default function MainHeader() {
                         Icon={<Feather name="sliders" size={18} color="#fff" />}
                         style={styles.filterButton}
                         border='Circle'
+                        onPress={()=> navigation.navigate("Filter")}
                     />
                 </View>
             </View>

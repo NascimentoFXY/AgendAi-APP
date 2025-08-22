@@ -8,7 +8,7 @@ import {
 import { Ionicons, Feather, Entypo, FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import Agenda from "../pages/main/agenda";
+import Agenda from "../pages/main/Agenda";
 import Chat from "../pages/main/Chat";
 import Explore from "../pages/main/Explore";
 import Perfil from "../pages/main/Perfil";
@@ -37,7 +37,6 @@ export default function TabRoutes() {
             headerShown: false,
 
             tabBarStyle: {
-                height: 120,
                 justifyContent: "center",
                 alignItems: 'center',
 
@@ -59,6 +58,7 @@ export default function TabRoutes() {
                         if (routeName === 'Salao' ||
                             routeName === 'ScheduleFinal' ||
                             routeName === 'ScheduleConclusion'||
+                            routeName === 'Filter'||
                             routeName === 'ScheduleCancelScreen') {
                             return { display: 'none' };
                         }

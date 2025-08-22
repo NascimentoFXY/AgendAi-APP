@@ -9,7 +9,7 @@ import {
     ScrollView
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
-import { styles } from './style';
+import { styles } from './style'
 import { Input } from '../../../components/input'; // Você pode manter esse se já estiver estilizado
 import CustomButton from '../../../components/customButton';
 import InputWithIcons from '../../../components/InputIcons';
@@ -26,7 +26,7 @@ const cardsWidth = 400;
 export default function Home({ navigation }: any) {
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <MainHeader />
+            <MainHeader navigation={navigation}/>
             <View>
 
                 {/* ==================ESPECIAL PRA VOCE======================================= */}
