@@ -85,15 +85,16 @@ export default function Filters({ navigation }: any) {
                 <FilterOptions optionTitle='Feminino' style={{ width: 120 }} />
             </View>
             {/* ========= */}
-
             <View>
                 <View>
                     <Text style={styles.label2}>SERVIÇOS</Text>
                 </View>
+                {/* ====essa scrollView========= */}
                 <ScrollView nestedScrollEnabled={true}
                     horizontal
+                    showsHorizontalScrollIndicator={false}
                     style={{ height: 60, width: width }}
-                    contentContainerStyle={{ paddingHorizontal: 20, flexDirection: 'row', width: "100%", gap: 20 }}>
+                    contentContainerStyle={{ paddingHorizontal: 20, flexDirection: 'row', gap: 20 }}>
                     <FilterOptions optionTitle='Cortes' optionColor='primary' style={{ width: 80 }} />
                     <FilterOptions optionTitle='Maquiagem' />
                     <FilterOptions optionTitle='Barbearia' />
