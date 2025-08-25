@@ -26,15 +26,47 @@ export const styles = StyleSheet.create({
         marginTop: -20,
         backgroundColor: colors.background,
     },
+    message1:{
+        borderWidth: 1,
+        padding:20,
+        borderRadius: 10,
+        alignSelf: "flex-start",
+        maxWidth: "70%",
+        marginVertical: 3,
+        marginLeft: 20,
+     
+
+    },
+    message2:{
+        borderWidth: 1,
+        padding:20,
+        borderRadius: 10,
+        alignSelf: "flex-end",
+        maxWidth: "70%",
+        marginRight: 20,
+        marginVertical: 3,
+        backgroundColor: colors.primary,
+        color: colors.white,
+
+    },
     title: {
-        flex: 1,
+        padding: 20,
         textAlign: "center",
-        fontWeight: "bold"
+        fontWeight: 800,
+        fontSize: 16,
     },
     label: {
         padding: 20,
         color: colors.lightGray,
         fontWeight: 500
+    },
+    userDataShow:{
+        flexDirection: "row",
+        padding: 20,
+        justifyContent: "space-between",
+        alignSelf: "flex-start",
+        width: "50%",
+        alignItems: "center"
     },
 
 });

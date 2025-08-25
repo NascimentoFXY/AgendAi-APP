@@ -14,6 +14,7 @@ import { styles } from './style';
 import CustomButton from '../../../../components/customButton';
 import colors from '../../../../configs/colors';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FlatList } from 'react-native-gesture-handler';
 
 const ChatHeaderData = ({ name, status }: any) => {
     return (
@@ -21,7 +22,7 @@ const ChatHeaderData = ({ name, status }: any) => {
             {/* IMAGEM */}
             <View style={{ width: 60, height: 60, backgroundColor: colors.white, borderRadius: 50 }} />
             {/* DATA CONTAINER */}
-            <View style={{gap: 10, padding: 5}}>
+            <View style={{ gap: 10, padding: 5 }}>
                 {/* NOME */}
                 <Text style={{ fontWeight: 'bold', fontSize: 16, color: colors.white }}>
                     {name}
@@ -33,6 +34,27 @@ const ChatHeaderData = ({ name, status }: any) => {
             </View>
         </View>
     )
+}
+interface message {
+    id: number,
+    message: string,
+    sender: string,
+    time: string,
+    isSender: boolean,
+
+}
+const messages: message[] = [
+    { id: 1, message: "Oi!", sender: "Cleiton", time: "13:01", isSender: false },
+    { id: 2, message: "Olá!", sender: "user2", time: "13:01", isSender: true },
+    { id: 3, message: "Como ficou o corte?", sender: "Cleiton", time: "13:02", isSender: false },
+    { id: 4, message: "Gostou?", sender: "Cleiton", time: "13:02", isSender: false },
+    { id: 5, message: "Ficou muito massa!", sender: "user2", time: "13:03", isSender: true },
+    { id: 6, message: "Boa!", sender: "Cleiton", time: "13:03", isSender: false },
+]
+const isLastFromUser = (messages: message[], index: number) => {
+    const current = messages[index]
+    const next = messages[index + 1]
+    return !next || next.sender !== current.sender
 }
 
 export default function ChatScreen({ navigation }: any) {
@@ -74,11 +96,35 @@ export default function ChatScreen({ navigation }: any) {
                 />
             </View>
             <View style={styles.messagesContainer}>
-                    <Text> aaaaaaaaaaaaaaaaa</Text>
-                    <Text> aaaaaaaaaaaaaaaaa</Text>
-                    <Text> aaaaaaaaaaaaaaaaa</Text>
-                    <Text> aaaaaaaaaaaaaaaaa</Text>
-            
+                <Text style={styles.title}>HOJE</Text>
+
+
+                <ScrollView>
+                    {messages.map((item, message) => (
+
+                        <View>
+                            <Text key={item.id} style={[item.isSender ? styles.message2 : styles.message1]}>{item.message}</Text>
+                            {
+                                isLastFromUser(messages, message) && (
+                                    <View style={styles.userDataShow}>
+                                        {/* Imagem */}
+                                        <View style={item.isSender ?
+                                            { display: "none" } :
+                                            { backgroundColor: colors.primary, width: 50, height: 50, borderRadius: 100 }} />
+                                        {/* Nome e horário */}
+                                        <Text>{item.isSender ? null : item.sender}</Text>
+                                        <Text>{item.isSender ? null : item.time}</Text>
+                                    </View>
+                                )
+                            }
+
+
+                        </View>
+                    ))}
+                </ScrollView>
+
+
+
             </View>
         </SafeAreaView>
     );

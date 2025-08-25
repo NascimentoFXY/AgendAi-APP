@@ -15,7 +15,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SalaoScreen from "../pages/main/Salao";
 import ScheduleFinal from "../pages/main/Salao/AgendamentoFinal";
 import ScheduleConclusion from "../pages/main/Salao/AgendamentoFinal/agendamentoConcluido";
-import ScheduleCancelScreen from "../pages/main/Agenda/cancelScreen";
+import ScheduleCancelScreen from "../pages/main/agenda/cancelScreen";
 import Filters from "../pages/main/Filter";
 import ChatScreen from "../pages/main/Chat/ChatScreen";
 export default function MainRoutes({navigation}: any) {
