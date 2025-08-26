@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useContext } from 'react';
+import { ChatContext } from '../../../../context/chatContext';
 import {
     Dimensions,
     SafeAreaView,
@@ -15,6 +16,7 @@ import CustomButton from '../../../../components/customButton';
 import colors from '../../../../configs/colors';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { FlatList } from 'react-native-gesture-handler';
+import TabBarButton from '../../../../components/TabBar';
 
 const ChatHeaderData = ({ name, status }: any) => {
     return (
@@ -43,21 +45,35 @@ interface message {
     isSender: boolean,
 
 }
-const messages: message[] = [
-    { id: 1, message: "Oi!", sender: "Cleiton", time: "13:01", isSender: false },
-    { id: 2, message: "Olá!", sender: "user2", time: "13:01", isSender: true },
-    { id: 3, message: "Como ficou o corte?", sender: "Cleiton", time: "13:02", isSender: false },
-    { id: 4, message: "Gostou?", sender: "Cleiton", time: "13:02", isSender: false },
-    { id: 5, message: "Ficou muito massa!", sender: "user2", time: "13:03", isSender: true },
-    { id: 6, message: "Boa!", sender: "Cleiton", time: "13:03", isSender: false },
-]
 const isLastFromUser = (messages: message[], index: number) => {
     const current = messages[index]
     const next = messages[index + 1]
+    //retorna true quando:
+    //  quando nao tiver próximo, ou seja, for o último da lista
+    //  ou quando o próximo for de outro usuário
     return !next || next.sender !== current.sender
 }
 
 export default function ChatScreen({ navigation }: any) {
+
+    const chatContext = useContext(ChatContext);
+
+    if (!chatContext) {
+        throw new Error("ChatContext not provided. Make sure to wrap your component with a ChatProvider.");
+    }
+
+    const { messages, addMessage } = chatContext;
+    const [textInputValue, setTextInputValue] = useState("")
+
+    const submitMessage = () => {
+        //chama a função addMessage do contexto
+        
+        textInputValue ? addMessage(textInputValue) : null;
+        setTextInputValue("");
+    };
+
+
+
     return (
         <SafeAreaView style={styles.container}>
             {/* ================================================HEADER================================================ */}
@@ -99,21 +115,19 @@ export default function ChatScreen({ navigation }: any) {
                 <Text style={styles.title}>HOJE</Text>
 
 
-                <ScrollView>
+                <ScrollView contentContainerStyle={{ paddingBottom: 120 }} >
                     {messages.map((item, message) => (
 
-                        <View>
-                            <Text key={item.id} style={[item.isSender ? styles.message2 : styles.message1]}>{item.message}</Text>
+                        <View key={item.id}>
+                            <Text style={[item.isSender ? styles.message2 : styles.message1]}>{item.message}</Text>
                             {
                                 isLastFromUser(messages, message) && (
-                                    <View style={styles.userDataShow}>
+                                    <View key={message} style={[!item.isSender ? styles.userDataShow : styles.none]}>
                                         {/* Imagem */}
-                                        <View style={item.isSender ?
-                                            { display: "none" } :
-                                            { backgroundColor: colors.primary, width: 50, height: 50, borderRadius: 100 }} />
+                                        <View style={{ backgroundColor: colors.primary, width: 30, height: 30, borderRadius: 100, }} />
                                         {/* Nome e horário */}
-                                        <Text>{item.isSender ? null : item.sender}</Text>
-                                        <Text>{item.isSender ? null : item.time}</Text>
+                                        <Text style={{ flex: 1, paddingLeft: 20, }}>{item.sender}</Text>
+                                        <Text style={{ color: colors.lightGray }}>{item.time}</Text>
                                     </View>
                                 )
                             }
@@ -123,8 +137,13 @@ export default function ChatScreen({ navigation }: any) {
                     ))}
                 </ScrollView>
 
-
-
+                <TabBarButton
+                    title='Enviar Mensagem'
+                    type='input1'
+                    textInputValue={textInputValue}
+                    onChangeText={(text) => setTextInputValue(text)}
+                    onPress={() => submitMessage()}
+                />
             </View>
         </SafeAreaView>
     );

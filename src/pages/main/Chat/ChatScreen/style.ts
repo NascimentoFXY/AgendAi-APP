@@ -38,7 +38,6 @@ export const styles = StyleSheet.create({
 
     },
     message2:{
-        borderWidth: 1,
         padding:20,
         borderRadius: 10,
         alignSelf: "flex-end",
@@ -62,11 +61,16 @@ export const styles = StyleSheet.create({
     },
     userDataShow:{
         flexDirection: "row",
-        padding: 20,
+        padding: 5,
+        marginBottom: 20,
         justifyContent: "space-between",
         alignSelf: "flex-start",
-        width: "50%",
-        alignItems: "center"
+        width: "70%",
+        alignItems: "center",
+        marginLeft: 20,
     },
+    none:{
+        display: "none"
+    }
 
 });

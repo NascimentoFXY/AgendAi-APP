@@ -4,12 +4,17 @@ import Login from './src/pages/login';
 import Cadastro from './src/pages/cadastro';
 import { NavigationContainer } from '@react-navigation/native';
 import Routes from './src/routes/routes';
+import AuthProvider from './src/context/auth';
+
 export default function App() {
   return (
-      <NavigationContainer>
+    <NavigationContainer>
+      <AuthProvider>
         <Routes />
-      </NavigationContainer>
+      </AuthProvider>
+    </NavigationContainer>
   );
+
 }
 
 const styles = StyleSheet.create({

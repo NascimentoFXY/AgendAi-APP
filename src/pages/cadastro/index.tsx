@@ -1,4 +1,5 @@
-import React from "react";
+import React,  { useContext, useState } from "react";
+import { AuthContext } from "../../context/auth";
 import {
     SafeAreaView,
     ScrollView,
@@ -13,13 +14,16 @@ import { styles } from "./style";
 import colors from "../../configs/colors";
 
 
-import { useState } from "react";
-import { Ionicons } from '@expo/vector-icons'; // Ícone do check
+import { Ionicons, AntDesign } from '@expo/vector-icons'; // Ícone do check
 import Checkbox from "../../components/checkbox/checkbox";
 import { Input } from "../../components/input";
 import CustomButton from "../../components/customButton";
-import AntDesign from '@expo/vector-icons/AntDesign';
+
 export default function Cadastro({ navigation }: any) {
+    const { register } = useContext(AuthContext)!;
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     return (
         <SafeAreaView style={styles.mainContainer}>
 
@@ -47,19 +51,24 @@ export default function Cadastro({ navigation }: any) {
                         <Input
                             title="Nome Completo"
                             placeholder="Digite seu nome completo"
+                            onTextChange={setName}
 
                         />
                         <Input
                             title="Email"
                             placeholder="Digite seu Email"
+                            onTextChange={setEmail}
                         />
                         <Input
                             title="Senha"
                             placeholder="Digite sua senha"
+                            secureTextEntry={false}
+                            onTextChange={setPassword}
                         />
                         <Input
                             title="Confirme sua senha"
                             placeholder="Confirme sua senha"
+                            
                         />
 
 
@@ -69,7 +78,8 @@ export default function Cadastro({ navigation }: any) {
                         <Checkbox />
                         <Text>Concordo com os <Text style={styles.link}>Termos e condicões</Text></Text>
                     </View>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Main')}>
+
+                    <TouchableOpacity style={styles.button} onPress={() => (navigation.navigate('Main'), register(name, email, password))}>
                         <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Cadastrar</Text>
                     </TouchableOpacity>
                 </View>

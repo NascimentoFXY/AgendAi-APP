@@ -18,19 +18,23 @@ import ScheduleConclusion from "../pages/main/Salao/AgendamentoFinal/agendamento
 import ScheduleCancelScreen from "../pages/main/agenda/cancelScreen";
 import Filters from "../pages/main/Filter";
 import ChatScreen from "../pages/main/Chat/ChatScreen";
-export default function MainRoutes({navigation}: any) {
-   const Stack = createNativeStackNavigator();
+import ChatProvider from "../context/chatContext";
+export default function MainRoutes({ navigation }: any) {
+    const Stack = createNativeStackNavigator();
 
     return (
-            <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
-                <Stack.Screen name="Home" component={Home}/>
-                <Stack.Screen name="Filter" component={Filters}/>
-                <Stack.Screen name="Salao" component={SalaoScreen}/>
-                <Stack.Screen name="ChatScreen" component={ChatScreen}/>
-                <Stack.Screen name="ScheduleFinal" component={ScheduleFinal}/>
-                <Stack.Screen name="ScheduleConclusion" component={ScheduleConclusion}/>
-                <Stack.Screen name="ScheduleCancelScreen" component={ScheduleCancelScreen}/>
+        <ChatProvider>
+            <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Filter" component={Filters} />
+                <Stack.Screen name="Salao" component={SalaoScreen} />
+
+                <Stack.Screen name="ChatScreen" component={ChatScreen} />
+                <Stack.Screen name="ScheduleFinal" component={ScheduleFinal} />
+                <Stack.Screen name="ScheduleConclusion" component={ScheduleConclusion} />
+                <Stack.Screen name="ScheduleCancelScreen" component={ScheduleCancelScreen} />
             </Stack.Navigator>
+        </ChatProvider>
 
 
 

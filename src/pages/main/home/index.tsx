@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import { AuthContext } from '../../../context/auth';
 import {
     Dimensions,
     SafeAreaView,
@@ -24,9 +25,18 @@ const cardsWidth = 400;
 
 
 export default function Home({ navigation }: any) {
+    const { user } = useContext(AuthContext)!;
+
+        if (!user) {
+        // Exiba um carregamento ou redirecione para a tela de login
+        return <Text>Carregando...</Text>; 
+    }
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <MainHeader navigation={navigation}/>
+            <Text>{user?.name}</Text>
+            <Text>{user?.email}</Text>
+            <Text>{user?.password}</Text>
             <View>
 
                 {/* ==================ESPECIAL PRA VOCE======================================= */}

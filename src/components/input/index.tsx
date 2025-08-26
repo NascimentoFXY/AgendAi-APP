@@ -25,10 +25,11 @@ type InputProps = TextInputProps & {
     secureTextEntry?: boolean;
     style?: StyleProp<ViewStyle>;
     onIconPress?: () => void;
+    onTextChange?: (text: string) => void;
 }
 
 export const Input = forwardRef((Props: InputProps, ref: Ref<TextInput> | null) => {
-    const { value, title, secureTextEntry, onIconPress, padding, margin, fontSize, width, height, style, ...rest } = Props;
+    const { value, title, secureTextEntry, onIconPress, padding, margin, fontSize, width, height, style, onTextChange, ...rest } = Props;
     return (
         <Fragment>
             {title && <Text>{title}</Text>}
@@ -47,7 +48,9 @@ export const Input = forwardRef((Props: InputProps, ref: Ref<TextInput> | null) 
                     
                 ]}
                 {...rest}
-                secureTextEntry={secureTextEntry}>
+                secureTextEntry={secureTextEntry}
+                onChangeText={onTextChange}
+                >
             </TextInput >
 
         </Fragment >

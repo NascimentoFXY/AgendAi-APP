@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useContext} from 'react';
+import { AuthContext } from '../../context/auth';
 import {
     SafeAreaView,
     Text,
@@ -12,6 +13,12 @@ import { Input } from "../../components/input";
 import CustomButton from "../../components/customButton";
 import AntDesign from '@expo/vector-icons/AntDesign';
 export default function Login({ navigation }: any) {
+
+    const { signIn, signOut } = useContext(AuthContext)!;
+
+    const [email, setEmail] = React.useState('');
+    const [password, setPassword] = React.useState('');
+
     return (
         <SafeAreaView style={styles.mainContainer}>
 
@@ -35,20 +42,22 @@ export default function Login({ navigation }: any) {
                     <Input
                         title="Email"
                         placeholder="Digite seu Email"
+                        onTextChange={setEmail}
                     />
                     <Input
                         title="Senha"
                         placeholder="Digite sua senha"
-                        secureTextEntry={true}
+                        secureTextEntry={false}
+                        onTextChange={setPassword}
                     />
                     <TouchableOpacity
                         style={{ flexDirection: "row-reverse" }}
-                    >
-
+                        onPress={() => (alert("Função de recuperação de senha ainda não implementada. Deslogando..."), signOut())}
+                        >
                         <Text style={{ color: colors.primary }}>Esqueceu sua senha?</Text></TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('Main')}>
+                <TouchableOpacity style={styles.button} onPress={()=> signIn(email, password)}>
                     <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Entrar</Text>
                 </TouchableOpacity>
 

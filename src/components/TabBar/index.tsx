@@ -1,20 +1,63 @@
 // TabBarButton.tsx
 import React from "react";
-import { View, TouchableOpacity, Text, StyleSheet, GestureResponderEvent } from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet, GestureResponderEvent, TextInput } from "react-native";
 import colors from "../../configs/colors"; // ajuste o caminho conforme seu projeto
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Input } from "../input";
+
 
 type TabBarButtonProps = {
     title: string;
+    type?: "button" | "input1";
+    textInputValue?: string;
+    onChangeText?: (text: string) => void;
     onPress?: (event: GestureResponderEvent) => void;
+
 };
 
-export default function TabBarButton({ title, onPress }: TabBarButtonProps) {
+export default function TabBarButton({ title, onPress, onChangeText,type = "button", textInputValue, }: TabBarButtonProps) {
+
+
     return (
-        <View style={styles.Tab}>
-            <TouchableOpacity onPress={onPress} style={styles.TabBarButton}>
-                <Text style={{ color: "#fff" }}>{title}</Text>
-            </TouchableOpacity>
+        <View>
+
+            {/* Button */}
+            {type === "button" && (
+                <View style={styles.Tab}>
+                    <TouchableOpacity onPress={onPress} style={styles.TabBarButton}>
+                        <Text style={{ color: "#fff" }}>{title}</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+
+            {/* Input */}
+            {type === "input1" && (
+                <View style={styles.Tab}>
+                    <View style={styles.inputContainer}>
+                        <TouchableOpacity style={[styles.icons, {backgroundColor: colors.white, borderWidth: 1, borderColor: colors.transparentLightGray}]}>
+                            <MaterialCommunityIcons name="plus" size={24} color={colors.secondary} />
+                        </TouchableOpacity>
+
+
+                        {/* esse aqui */}
+                        <TextInput placeholder="Digite sua mensagem"  value={textInputValue} onChangeText={onChangeText} style={styles.input} />
+
+
+
+
+                        <TouchableOpacity style={styles.icons} onPress={onPress}>
+                            <MaterialCommunityIcons name="send" size={24} color={colors.white} />
+                        </TouchableOpacity>
+
+                    </View>
+
+                </View>
+            )}
         </View>
+
+
+
+
     );
 }
 
@@ -25,6 +68,27 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 210,
+    },
+    input: {
+        flex: 1,
+        height: 50,
+        padding: 10,
+    },
+    inputContainer: {
+        borderWidth: 1,
+        borderColor: colors.lightGray,
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        flexDirection: "row",
+        alignItems: "center",
+        padding: 8,
+        justifyContent: "space-around",
+
+    },
+    icons:{
+        backgroundColor: colors.primary,
+        padding: 10,
+        borderRadius: 10,
     },
     Tab: {
         position: "absolute",
