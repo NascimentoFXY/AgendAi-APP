@@ -1,5 +1,8 @@
 import React, { useRef, useState, useContext } from 'react';
+import { AuthContext } from '../../../../context/auth';
 import { ChatContext } from '../../../../context/chatContext';
+
+
 import {
     Dimensions,
     SafeAreaView,
@@ -53,10 +56,16 @@ const isLastFromUser = (messages: message[], index: number) => {
     //  ou quando o próximo for de outro usuário
     return !next || next.sender !== current.sender
 }
+const isSameTime= (message: message[], index: number)=>{
+    const currentMessage = message[index];
+    const nextMessage = message[index + 1];
+    if(!nextMessage) return true;
+    return nextMessage.time !== currentMessage.time;
+}
 
 export default function ChatScreen({ navigation }: any) {
-
     const chatContext = useContext(ChatContext);
+    const {user} = useContext(AuthContext)!;
 
     if (!chatContext) {
         throw new Error("ChatContext not provided. Make sure to wrap your component with a ChatProvider.");
@@ -119,15 +128,20 @@ export default function ChatScreen({ navigation }: any) {
                     {messages.map((item, message) => (
 
                         <View key={item.id}>
-                            <Text style={[item.isSender ? styles.message2 : styles.message1]}>{item.message}</Text>
+                            <Text style={[item.sender === user?.name ? styles.message2 : styles.message1]}>{item.message}</Text>
+                            {
+                               isSameTime(messages, message ) &&  (
+                                    <Text style={{ color: colors.lightGray, alignSelf: item.isSender ? "flex-end" : "flex-start", paddingHorizontal: 10 }}>{item.time}</Text>
+                                )
+                            }
+                            {/* horario */}
                             {
                                 isLastFromUser(messages, message) && (
-                                    <View key={message} style={[!item.isSender ? styles.userDataShow : styles.none]}>
+                                    <View key={message} style={[styles.userDataShow]}>
                                         {/* Imagem */}
                                         <View style={{ backgroundColor: colors.primary, width: 30, height: 30, borderRadius: 100, }} />
-                                        {/* Nome e horário */}
+                                        {/* Nome */}
                                         <Text style={{ flex: 1, paddingLeft: 20, }}>{item.sender}</Text>
-                                        <Text style={{ color: colors.lightGray }}>{item.time}</Text>
                                     </View>
                                 )
                             }

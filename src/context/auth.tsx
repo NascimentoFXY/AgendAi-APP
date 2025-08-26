@@ -20,7 +20,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const navigation = useNavigation();
 
     // Estado para a lista de todos os usuários cadastrados
-    const [registeredUsers, setRegisteredUsers] = useState<user[]>([]);
+    const [registeredUsers, setRegisteredUsers] = useState<user[]>([{name: "Admin", email: "Admin@gmail.com", password: ""},{name: "Admin2", email: "Admin2@gmail.com", password: ""}]);
 
     // Estado para o usuário logado atualmente
     const [loggedInUser, setLoggedInUser] = useState<user | null>(null);
