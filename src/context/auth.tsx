@@ -5,6 +5,7 @@ interface user {
     name: string,
     email: string,
     password: string,
+
 }
 
 interface AuthContextType {
@@ -27,14 +28,11 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     const signIn = (email: string, password: string) => {
         // Pesquisa o usuário na lista completa de usuários cadastrados
-        console.log("Tentativa de login com:", { email, password });
+   
         const foundUser = registeredUsers.find(u => u.email === email && u.password === password);
-        console.log("Pesquisando na lista de usuários:", registeredUsers);
-        console.log("Usuário encontrado:", foundUser);
         if (foundUser) {
             // Define o usuário logado
             setLoggedInUser(foundUser);
-            alert("Login realizado com sucesso!");
             navigation.navigate('Main' as never);
 
         } else {
@@ -45,6 +43,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const signOut = () => {
         // Limpa o estado do usuário logado
         setLoggedInUser(null);
+        navigation.navigate('Login')
     };
 
     const register = (name: string, email: string, password: string) => {

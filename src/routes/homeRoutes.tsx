@@ -19,6 +19,7 @@ import ScheduleCancelScreen from "../pages/main/agenda/cancelScreen";
 import Filters from "../pages/main/Filter";
 import ChatScreen from "../pages/main/Chat/ChatScreen";
 import ChatProvider from "../context/chatContext";
+import UserSettings from "../pages/main/settings";
 export default function MainRoutes({ navigation }: any) {
     const Stack = createNativeStackNavigator();
 
@@ -28,7 +29,7 @@ export default function MainRoutes({ navigation }: any) {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Filter" component={Filters} />
             <Stack.Screen name="Salao" component={SalaoScreen} />
-
+            <Stack.Screen name="Settings" component={UserSettings} />
             <Stack.Screen name="ChatScreen" component={ChatScreen} />
             <Stack.Screen name="ScheduleFinal" component={ScheduleFinal} />
             <Stack.Screen name="ScheduleConclusion" component={ScheduleConclusion} />
