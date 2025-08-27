@@ -23,7 +23,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const [registeredUsers, setRegisteredUsers] = useState<user[]>([{name: "Admin", email: "Admin@gmail.com", password: ""},{name: "Admin2", email: "Admin2@gmail.com", password: ""}]);
 
     // Estado para o usuário logado atualmente
-    const [loggedInUser, setLoggedInUser] = useState<user | null>(null);
+    const [loggedInUser, setLoggedInUser] = useState<user | null>({name: "Admin", email: "Admin@gmail.com", password: ""});
 
     const signIn = (email: string, password: string) => {
         // Pesquisa o usuário na lista completa de usuários cadastrados
