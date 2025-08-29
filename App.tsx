@@ -1,7 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import Login from './src/pages/login';
-import Cadastro from './src/pages/cadastro';
 import { NavigationContainer } from '@react-navigation/native';
 import Routes from './src/routes/routes';
 import AuthProvider from './src/context/auth';
@@ -16,7 +14,7 @@ import { getAnalytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyDz02HFYTNFWquEMeHiniW086WgTPDqwKU",
   authDomain: "agendai-11849.firebaseapp.com",
   projectId: "agendai-11849",
@@ -34,7 +32,6 @@ export default function App() {
     <NavigationContainer>
       <AuthProvider>
         <ChatProvider>
-
           <Routes />
         </ChatProvider>
       </AuthProvider>
