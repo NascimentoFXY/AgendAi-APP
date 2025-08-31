@@ -60,8 +60,7 @@ export default function Login({ navigation }: any) {
                 <TouchableOpacity style={styles.button} onPress={()=> signIn(email, password)}>
                     <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Entrar</Text>
                 </TouchableOpacity>
-
-
+                
                 <View style={{ width: "100%", flex: 1, alignItems: "center", justifyContent: "center" }}>
                     <Text>Ou entre com</Text>
                     <View style={styles.optionsContainer}>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, createContext } from "react";
-import { useNavigation } from '@react-navigation/native';
 
-interface user {
+interface User {
     name: string,
     email: string,
     password: string,
@@ -9,23 +8,23 @@ interface user {
 }
 
 interface AuthContextType {
-    user: user | null;
+    user: User | null;
     signIn: (email: string, password: string) => void;
     signOut: () => void;
     register: (name: string, email: string, password: string) => void;
+    isAuthenticated?: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-    const navigation = useNavigation();
+
 
     // Estado para a lista de todos os usuários cadastrados
-    const [registeredUsers, setRegisteredUsers] = useState<user[]>([{name: "Admin", email: "Admin@gmail.com", password: ""},{name: "Admin2", email: "Admin2@gmail.com", password: ""}]);
+    const [registeredUsers, setRegisteredUsers] = useState<User[]>([]);
 
     // Estado para o usuário logado atualmente
-    const [loggedInUser, setLoggedInUser] = useState<user | null>({name: "Admin", email: "Admin@gmail.com", password: ""});
-
+    const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
     const signIn = (email: string, password: string) => {
         // Pesquisa o usuário na lista completa de usuários cadastrados
    
@@ -33,7 +32,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         if (foundUser) {
             // Define o usuário logado
             setLoggedInUser(foundUser);
-            navigation.navigate('Main' as never);
+            
 
         } else {
             alert("Usuário ou senha incorretos");
@@ -43,7 +42,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const signOut = () => {
         // Limpa o estado do usuário logado
         setLoggedInUser(null);
-        navigation.navigate('Login')
     };
 
     const register = (name: string, email: string, password: string) => {
@@ -64,13 +62,14 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     useEffect(() => {
         console.log("Usuário logado:", loggedInUser);
     }, [loggedInUser]);
-
+    
     return (
         <AuthContext.Provider value={{
             user: loggedInUser,
             signIn,
             signOut,
-            register
+            register,
+            isAuthenticated: !!loggedInUser
         }}>
             {children}
         </AuthContext.Provider>
