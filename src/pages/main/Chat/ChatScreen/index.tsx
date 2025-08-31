@@ -18,7 +18,6 @@ import { styles } from './style';
 import CustomButton from '../../../../components/customButton';
 import colors from '../../../../configs/colors';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
-import { FlatList } from 'react-native-gesture-handler';
 import TabBarButton from '../../../../components/TabBar';
 
 const ChatHeaderData = ({ name, status }: any) => {
@@ -41,11 +40,11 @@ const ChatHeaderData = ({ name, status }: any) => {
     )
 }
 interface message {
-    id: number,
     message: string,
     sender: string,
+    senderID: string,
     time: string,
-    isSender: boolean,
+
 
 }
 const isLastFromUser = (messages: message[], index: number) => {
@@ -56,30 +55,38 @@ const isLastFromUser = (messages: message[], index: number) => {
     //  ou quando o próximo for de outro usuário
     return !next || next.sender !== current.sender
 }
-const isSameTime= (message: message[], index: number)=>{
+const isSameTime = (message: message[], index: number) => {
     const currentMessage = message[index];
     const nextMessage = message[index + 1];
-    if(!nextMessage) return true;
+    if (!nextMessage) return true;
     return nextMessage.time !== currentMessage.time;
 }
 
 export default function ChatScreen({ navigation }: any) {
     const chatContext = useContext(ChatContext);
-    const {user} = useContext(AuthContext)!;
+    const { user,  } = useContext(AuthContext)!;
 
     if (!chatContext) {
         throw new Error("ChatContext not provided. Make sure to wrap your component with a ChatProvider.");
     }
 
-    const { messages, addMessage } = chatContext;
+    const { messages, addMessage, exitChat, chat } = chatContext;
     const [textInputValue, setTextInputValue] = useState("")
+    const [chatId, setChatId] = useState(chat?.id!); // você precisa passar ou definir o chat atual
+    
 
+    
     const submitMessage = () => {
         //chama a função addMessage do contexto
+        console.log(chat?.id!)
         
-        textInputValue ? addMessage(textInputValue) : null;
-        setTextInputValue("");
+        if (!textInputValue) return;
+
+        addMessage(textInputValue, chatId)
+            .then(() => setTextInputValue("")) // limpa input após enviar
+            .catch(err => console.error("Erro ao enviar mensagem:", err));
     };
+
 
 
 
@@ -121,17 +128,17 @@ export default function ChatScreen({ navigation }: any) {
                 />
             </View>
             <View style={styles.messagesContainer}>
+
                 <Text style={styles.title}>HOJE</Text>
 
-
                 <ScrollView contentContainerStyle={{ paddingBottom: 120 }} >
-                    {messages.map((item, message) => (
 
-                        <View key={item.id}>
+                    {messages.map((item, message) => (
+                        <View key={item.message}>
                             <Text style={[item.sender === user?.name ? styles.message2 : styles.message1]}>{item.message}</Text>
                             {
-                               isSameTime(messages, message ) &&  (
-                                    <Text style={{ color: colors.lightGray, alignSelf: item.isSender ? "flex-end" : "flex-start", paddingHorizontal: 10 }}>{item.time}</Text>
+                                isSameTime(messages, message) && (
+                                    <Text style={{ color: colors.lightGray, alignSelf: item.sender = user?.name ? "flex-end" : "flex-start", paddingHorizontal: 10 }}>{item.time}</Text>
                                 )
                             }
                             {/* horario */}
