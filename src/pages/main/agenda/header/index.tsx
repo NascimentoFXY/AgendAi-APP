@@ -48,7 +48,10 @@ export default function ScheduleHeader({ navigation, currentPage, scrollToPage }
             </SafeAreaView>
             <View>
                 <View
-                    style={styles.NavigationOptions}>
+                    style={styles.NavigationOptions}
+
+
+                >
 
                     <TouchableOpacity
                         style={styles.headerNavigationOptions}
