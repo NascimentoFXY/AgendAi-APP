@@ -64,7 +64,7 @@ const isSameTime = (message: message[], index: number) => {
 
 export default function ChatScreen({ navigation }: any) {
     const chatContext = useContext(ChatContext);
-    const { user,  } = useContext(AuthContext)!;
+    const { user, } = useContext(AuthContext)!;
 
     if (!chatContext) {
         throw new Error("ChatContext not provided. Make sure to wrap your component with a ChatProvider.");
@@ -72,17 +72,16 @@ export default function ChatScreen({ navigation }: any) {
 
     const { messages, addMessage, exitChat, chat } = chatContext;
     const [textInputValue, setTextInputValue] = useState("")
-    const [chatId, setChatId] = useState(chat?.id!); // você precisa passar ou definir o chat atual
-    
 
-    
-    const submitMessage = () => {
-        //chama a função addMessage do contexto
+
+
+    const submitMessage = async () => {
+        const [chatId, setChatId] = await useState(chat?.id); // você precisa passar ou definir o chat atual
         console.log(chat?.id!)
-        
+
         if (!textInputValue) return;
 
-        addMessage(textInputValue, chatId)
+        addMessage(textInputValue, chatId!)
             .then(() => setTextInputValue("")) // limpa input após enviar
             .catch(err => console.error("Erro ao enviar mensagem:", err));
     };

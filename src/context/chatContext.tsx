@@ -23,9 +23,8 @@ interface ChatContextType {
     messages: message[];
     addMessage: (message: string, chatID: string) => Promise<void>;
     useChat: (ChatID: any) => void,
-    exitChat: ()=> void,
+    exitChat: () => void,
     createChat: () => void;
-    fetchChats: () => Promise<void>;
     chatList: any[] | null;
 }
 
@@ -58,16 +57,24 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
         }
     }
 
-    const fetchChats = async () => {
 
+    useEffect(() => {
         const q = query(collection(db, "chats"), orderBy("createdAt", "desc"));
-        const querySnapshot = await getDocs(q);
-        const chats = querySnapshot.docs
-            .map(doc => ({ id: doc.id, ...doc.data() } as Chat))
-            .filter(chat => chat.public === true || chat.hostId === user?.id);
-        console.log("Chats fetched: ", chats);
-        setChatList(chats);
-    }
+        const unsubscribe = onSnapshot(q, (querySnapshot)=>{
+            const fetchedChats: any = [];
+            querySnapshot.forEach((doc)=>{
+                fetchedChats.push({
+                    id: doc.id, ...doc.data()
+                })
+            })
+            setChatList(fetchedChats)
+            console.log("Chats carregados: ", fetchedChats)
+        })
+        return ()=> unsubscribe()
+
+
+    }, [])
+
 
     const useChat = async (chatID: any) => {
         try {
@@ -90,13 +97,13 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
             return
         }
     }
-    const exitChat = ()=>{
-       setLocalChatID(null); 
+    const exitChat = () => {
+        setLocalChatID(null);
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         console.log(localChatID)
-    },[setLocalChatID])
+    }, [setLocalChatID])
 
 
     const addMessage = async (message: any, chatID: string) => {
@@ -135,7 +142,7 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
             messages,
             addMessage,
             createChat,
-            fetchChats,
+          
             useChat,
             exitChat,
             chatList

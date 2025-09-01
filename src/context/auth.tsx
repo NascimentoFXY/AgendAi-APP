@@ -23,7 +23,9 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-
+    const authListener =()=>{
+        
+    }
 
     const signIn = async (email: string, password: string) => {
 
@@ -46,7 +48,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const register = async (name: string, email: string, password: string) => {
 
         try {
-
             const cred = await createUserWithEmailAndPassword(auth, email, password);
 
             const db = getFirestore();
@@ -76,9 +77,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             alert("Verifique suas credenciais.");
         }
     };
-
-
-
     const signOut = () => {
         auth.signOut().then(() => {
             setUser(null);
