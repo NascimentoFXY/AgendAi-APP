@@ -1,12 +1,13 @@
 import React, { useState, createContext, use, useEffect } from "react";
 import { AuthContext } from "./auth";
 import { db } from "../services/firebase";
-import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc } from "@firebase/firestore";
+import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc, deleteDoc, serverTimestamp, Timestamp } from "@firebase/firestore";
 interface message {
+    id?: string,
     message: string,
     sender: string,
     senderID: string,
-    time: string,
+    time: any,
 
 }
 interface Chat {
@@ -19,12 +20,13 @@ interface Chat {
 
 
 interface ChatContextType {
-    chat: Chat | null;
+    chatID: string,
     messages: message[];
     addMessage: (message: string, chatID: string) => Promise<void>;
     useChat: (ChatID: any) => void,
     exitChat: () => void,
     createChat: () => void;
+    deleteAllChats: () => void;
     chatList: any[] | null;
 }
 
@@ -36,12 +38,13 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
     const [messages, setMessages] = useState<message[]>([]);
 
     const [chatList, setChatList] = useState<Chat[] | null>([]);
-    const [localChatID, setLocalChatID] = useState<Chat | null>(null)
+    const [localChatID, setLocalChatID] = useState<any | null>(null)
 
+    
     const createChat = async () => {
         try {
             const chatRef = doc(collection(db, "chats"));
-            await setDoc(chatRef, {
+            const docRef = await setDoc((chatRef), {
                 id: chatRef.id,
                 hostName: user?.name,
                 hostId: user?.id,
@@ -56,21 +59,27 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
             alert("Erro ao criar chat. Tente novamente.");
         }
     }
+    const deleteAllChats = async () => {
+        const docRef = await getDocs(collection(db, "chats"))
+        docRef.forEach(Items => {
+            deleteDoc(doc(db, "chats", Items.id))
+        });
 
-
+    }
+    // ============carregar chats
     useEffect(() => {
         const q = query(collection(db, "chats"), orderBy("createdAt", "desc"));
-        const unsubscribe = onSnapshot(q, (querySnapshot)=>{
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const fetchedChats: any = [];
-            querySnapshot.forEach((doc)=>{
+            querySnapshot.forEach((doc) => {
                 fetchedChats.push({
                     id: doc.id, ...doc.data()
                 })
             })
             setChatList(fetchedChats)
-            console.log("Chats carregados: ", fetchedChats)
+            console.log("Chats carregados: ", fetchedChats.map((doc: Chat) => (doc.id)))
         })
-        return ()=> unsubscribe()
+        return () => unsubscribe()
 
 
     }, [])
@@ -83,7 +92,7 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
 
             if (chatSnap.exists()) {
                 const chat = { id: chatSnap.id, ...chatSnap.data() };
-                console.log("Chat encontrado:", chat);
+                console.log("Chat encontrado:", chat.id);
 
                 setLocalChatID(chatID);
                 return chat;
@@ -101,10 +110,6 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
         setLocalChatID(null);
     }
 
-    useEffect(() => {
-        console.log(localChatID)
-    }, [setLocalChatID])
-
 
     const addMessage = async (message: any, chatID: string) => {
         if (!user) return
@@ -112,10 +117,11 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
         const messagesRef = collection(db, "chats", chatID, "messages");
 
         const newMessage: message = {
+
             message: message,
             sender: user?.name as string,
             senderID: user?.id as string,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            time: serverTimestamp(),
         };
 
         await addDoc(messagesRef, newMessage);
@@ -124,25 +130,28 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
 
     }
 
-    const subscribeMessages = (chatId: string, callback: (msgs: any[]) => void) => {
-        const messagesRef = collection(db, "chats", chatId, "messages");
-        const q = query(messagesRef, orderBy("createdAt", "asc"));
-
+    useEffect(() => {
+        if (!localChatID) return;
+        const q = query(collection(db, "chats", localChatID, "messages"), orderBy("time", "asc"))
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const msgs = querySnapshot.docs.map(doc => ({ id: doc.id, ...(doc.data() as any) }));
-            callback(msgs); // chama a função passando as mensagens
-        });
+            const msgs = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+                time: doc.data().time?.toDate ? doc.data().time.toDate() : new Date(),
+            }))
+            setMessages(msgs as any)
+        })
 
-        return unsubscribe;
-    };
+        return () => unsubscribe()
+    }, [localChatID])
 
     return (
         <ChatContext.Provider value={{
-            chat: localChatID,
-            messages,
+            chatID: localChatID,
+            messages: messages,
             addMessage,
             createChat,
-          
+            deleteAllChats,
             useChat,
             exitChat,
             chatList

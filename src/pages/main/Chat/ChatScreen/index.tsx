@@ -1,4 +1,4 @@
-import React, { useRef, useState, useContext } from 'react';
+import React, { useRef, useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../../../context/auth';
 import { ChatContext } from '../../../../context/chatContext';
 
@@ -19,6 +19,7 @@ import CustomButton from '../../../../components/customButton';
 import colors from '../../../../configs/colors';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import TabBarButton from '../../../../components/TabBar';
+import { Timestamp } from '@firebase/firestore';
 
 const ChatHeaderData = ({ name, status }: any) => {
     return (
@@ -43,9 +44,7 @@ interface message {
     message: string,
     sender: string,
     senderID: string,
-    time: string,
-
-
+    time: any,
 }
 const isLastFromUser = (messages: message[], index: number) => {
     const current = messages[index]
@@ -55,6 +54,8 @@ const isLastFromUser = (messages: message[], index: number) => {
     //  ou quando o próximo for de outro usuário
     return !next || next.sender !== current.sender
 }
+
+
 const isSameTime = (message: message[], index: number) => {
     const currentMessage = message[index];
     const nextMessage = message[index + 1];
@@ -69,25 +70,31 @@ export default function ChatScreen({ navigation }: any) {
     if (!chatContext) {
         throw new Error("ChatContext not provided. Make sure to wrap your component with a ChatProvider.");
     }
-
-    const { messages, addMessage, exitChat, chat } = chatContext;
+    const { messages, addMessage, exitChat, chatID } = chatContext;
     const [textInputValue, setTextInputValue] = useState("")
 
 
+    const processedMessages = messages.map((msg, i) => ({
+        ...msg,
+        isLastFromUser: !messages[i + 1] || messages[i + 1].senderID !== msg.senderID,
+
+    }));
 
     const submitMessage = async () => {
-        const [chatId, setChatId] = await useState(chat?.id); // você precisa passar ou definir o chat atual
-        console.log(chat?.id!)
-
+        console.log(chatID)
         if (!textInputValue) return;
 
-        addMessage(textInputValue, chatId!)
+        addMessage(textInputValue, chatID)
             .then(() => setTextInputValue("")) // limpa input após enviar
             .catch(err => console.error("Erro ao enviar mensagem:", err));
     };
 
 
+    const scrollViewRef = useRef<ScrollView>(null);
 
+    useEffect(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, [messages]);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -105,7 +112,7 @@ export default function ChatScreen({ navigation }: any) {
                 />
                 {/* TITULO PRINCIPAL
                     Imagem, nome e status
-                */}
+                    */}
                 <ChatHeaderData name={"Cleiton"} status={"online"} />
                 {/* BOTAO 2 */}
                 <CustomButton
@@ -130,20 +137,31 @@ export default function ChatScreen({ navigation }: any) {
 
                 <Text style={styles.title}>HOJE</Text>
 
-                <ScrollView contentContainerStyle={{ paddingBottom: 120 }} >
+                <ScrollView contentContainerStyle={{ paddingBottom: 120 }} ref={scrollViewRef} >
 
-                    {messages.map((item, message) => (
-                        <View key={item.message}>
+                    {processedMessages.map((item, index) => (
+                        <View key={item.id}>
                             <Text style={[item.sender === user?.name ? styles.message2 : styles.message1]}>{item.message}</Text>
-                            {
-                                isSameTime(messages, message) && (
-                                    <Text style={{ color: colors.lightGray, alignSelf: item.sender = user?.name ? "flex-end" : "flex-start", paddingHorizontal: 10 }}>{item.time}</Text>
-                                )
-                            }
+
+                           <Text style={{ color: colors.lightGray, alignSelf: item.senderID == user?.id ? "flex-end" : "flex-start", paddingHorizontal: 10 }}>
+                                horario
+                            </Text>
+
                             {/* horario */}
                             {
-                                isLastFromUser(messages, message) && (
-                                    <View key={message} style={[styles.userDataShow]}>
+                                item.isLastFromUser && (
+
+                                    <View key={item.id} style={{
+                                        flexDirection: "row",
+                                        padding: 5,
+                                        marginBottom: 20,
+                                        justifyContent: "space-between",
+                                        width: "30%",
+                                        alignSelf: item.senderID === user?.id ? "flex-end" : "flex-start",
+                                        alignItems: "center",
+                                        backgroundColor: item.senderID === user?.id ? colors.lightGray : colors.primary
+
+                                    }}>
                                         {/* Imagem */}
                                         <View style={{ backgroundColor: colors.primary, width: 30, height: 30, borderRadius: 100, }} />
                                         {/* Nome */}

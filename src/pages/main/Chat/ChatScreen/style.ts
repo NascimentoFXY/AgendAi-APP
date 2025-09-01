@@ -60,14 +60,7 @@ export const styles = StyleSheet.create({
         fontWeight: 500
     },
     userDataShow:{
-        flexDirection: "row",
-        padding: 5,
-        marginBottom: 20,
-        justifyContent: "space-between",
-        alignSelf: "flex-start",
-        width: "70%",
-        alignItems: "center",
-        marginLeft: 20,
+        
     },
     none:{
         display: "none"

@@ -48,9 +48,9 @@ const ChatComp = ({ chatName, time, lastMessage, chatID }: any,) => {
         </TouchableOpacity>
     )
 }
-export default function Chat({ navigation }: any) {
-    const { createChat, chatList } = useContext(ChatContext)!;
-
+export default function Chat() {
+    const { createChat, deleteAllChats, chatList } = useContext(ChatContext)!;
+    const navigation = useNavigation();
 
 
     return (
@@ -97,7 +97,17 @@ export default function Chat({ navigation }: any) {
                 style={{ zIndex: 3, backgroundColor: colors.primary, borderWidth: 1, borderColor: "#c5c5c5", bottom: 20, right: 20 }}
                 onPress={createChat}
                 />
-            
+            {/* botao de excluir todos os chats */}
+
+                <CustomButton
+                Icon={<Ionicons name="trash" size={24} color={"#fff"} />}
+                border='Circle' 
+                type='absolute'
+                width={80}
+                height={80}
+                style={{ zIndex: 3, backgroundColor: colors.primary, borderWidth: 1, borderColor: "#c5c5c5", bottom: 120, right: 20 }}
+                onPress={deleteAllChats}
+                />
         </View>
     )
 }
