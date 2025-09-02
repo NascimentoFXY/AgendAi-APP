@@ -1,7 +1,13 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    updateProfile,
+    signOut as firebaseSignOut
+} from "firebase/auth";
 import React, { useState, useEffect, createContext, use } from "react";
 import { auth } from "../services/firebase";
-import { getFirestore, setDoc, doc } from "firebase/firestore";
+import { getFirestore, setDoc, doc, } from "firebase/firestore";
 
 interface User {
     id: string
@@ -11,7 +17,7 @@ interface User {
 
 interface AuthContextType {
     user: User | null;
-    signIn: (email: string, password: string) => void;
+    signIn: (email: string, password: string) => Promise<void>;
     signOut: () => void;
     register: (name: string, email: string, password: string) => void;
     isAuthenticated?: boolean;
@@ -24,16 +30,31 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+            if (firebaseUser) {
+                setUser({
+                    id: firebaseUser.uid,
+                    name: firebaseUser.displayName || "",
+                    email: firebaseUser.email || "",
+                });
+                console.log(firebaseUser.displayName)
+            } else {
+                setUser(null);
+                console.log(firebaseUser)
+            }
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+
+
     const signIn = async (email: string, password: string) => {
 
         try {
-
             const cred = await signInWithEmailAndPassword(auth, email, password)
-            setUser({
-                id: cred.user.uid,
-                name: cred.user.displayName!,
-                email: cred.user.email!,
-            })
         } catch (error) {
             console.error("Erro ao fazer login:", error);
             alert("Falha ao fazer login. Verifique suas credenciais.");
@@ -74,10 +95,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             alert("Verifique suas credenciais.");
         }
     };
-    const signOut = () => {
-        auth.signOut().then(() => {
-            setUser(null);
-        })
+    const signOut = async () => {
+        await firebaseSignOut(auth);
+        setUser(null);
+
     };
 
     return (

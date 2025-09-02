@@ -36,7 +36,6 @@ export default function Home({ navigation }: any) {
             <MainHeader navigation={navigation}/>
             <Text>{user?.name}</Text>
             <Text>{user?.email}</Text>
-            <Text>{user?.password}</Text>
             <View>
 
                 {/* ==================ESPECIAL PRA VOCE======================================= */}
