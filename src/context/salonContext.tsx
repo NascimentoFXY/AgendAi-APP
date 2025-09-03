@@ -14,7 +14,11 @@ interface Salon {
     owner: User,
     name: string,
     opHour: any,
-    rating: Ratings
+    rating: Ratings,
+    specialists: Specialists[],
+    services: Services[],
+
+    
 }
 interface Ratings{
     sender: User,
@@ -22,6 +26,14 @@ interface Ratings{
     schedule: any,
     comment: string,
 
+}
+interface Specialists{
+    name: string,
+    rating: any
+}
+interface Services{
+    id: string,
+    type: string
 }
 interface SalonContextType {
     salon: Salon,
