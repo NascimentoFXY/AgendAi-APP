@@ -20,7 +20,7 @@ interface Chat {
 
 
 interface ChatContextType {
-    chatID: string,
+    chat: Chat,
     messages: message[];
     addMessage: (message: string, chatID: string) => Promise<void>;
     useChat: (ChatID: any) => void,
@@ -38,7 +38,7 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
     const [messages, setMessages] = useState<message[]>([]);
 
     const [chatList, setChatList] = useState<Chat[] | null>([]);
-    const [localChatID, setLocalChatID] = useState<any | null>(null)
+    const [chat, setChat] = useState<Chat | null>(null)
 
     
     const createChat = async () => {
@@ -66,8 +66,10 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
         });
 
     }
-    // ============carregar chats
+    // ============carregar chats=================================//
     useEffect(() => {
+        if(!user) return;
+
         const q = query(collection(db, "chats"), orderBy("createdAt", "desc"));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const fetchedChats: any = [];
@@ -82,9 +84,9 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
         return () => unsubscribe()
 
 
-    }, [])
+    }, [user])
 
-
+//------------ao apertar no chat--------------------//
     const useChat = async (chatID: any) => {
         try {
             const chatRef = doc(db, "chats", chatID);
@@ -93,8 +95,8 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
             if (chatSnap.exists()) {
                 const chat = { id: chatSnap.id, ...chatSnap.data() };
                 console.log("Chat encontrado:", chat.id);
-
-                setLocalChatID(chatID);
+                setChat(chat as Chat)
+                console.log("chat clicado: ", chat)
                 return chat;
             } else {
                 console.log("Chat não encontrado");
@@ -107,10 +109,10 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
         }
     }
     const exitChat = () => {
-        setLocalChatID(null);
+        setChat(null);
     }
 
-
+//----------------------adicionar mensagem---------------------//
     const addMessage = async (message: any, chatID: string) => {
         if (!user) return
 
@@ -129,10 +131,10 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
         // setMessages(prevMessages => [...prevMessages, newMessage]);
 
     }
-
+//-----------------------------checar mensagens em tempo real---------------------//
     useEffect(() => {
-        if (!localChatID) return;
-        const q = query(collection(db, "chats", localChatID, "messages"), orderBy("time", "asc"))
+        if (!chat?.id) return;
+        const q = query(collection(db, "chats", chat.id, "messages"), orderBy("time", "asc"))
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const msgs = querySnapshot.docs.map((doc) => ({
                 id: doc.id,
@@ -143,11 +145,11 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
         })
 
         return () => unsubscribe()
-    }, [localChatID])
-
+    }, [chat?.id])
+//----------------------------------------------------------------------------------//
     return (
         <ChatContext.Provider value={{
-            chatID: localChatID,
+            chat: chat!,
             messages: messages,
             addMessage,
             createChat,

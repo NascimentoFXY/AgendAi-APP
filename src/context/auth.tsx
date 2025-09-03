@@ -55,6 +55,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
         try {
             const cred = await signInWithEmailAndPassword(auth, email, password)
+            alert("Bem vindo, " + cred.user.displayName + "!");
         } catch (error) {
             console.error("Erro ao fazer login:", error);
             alert("Falha ao fazer login. Verifique suas credenciais.");
@@ -88,7 +89,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
 
             console.log("Usuário registrado:", cred.user.email, cred.user.displayName);
-            alert("Usuário registrado com sucesso!");
+            alert("Bem vindo, " + user?.name + "!");
         }
         catch (error) {
             console.error("Erro ao registrar usuário:", error);

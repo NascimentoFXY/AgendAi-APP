@@ -17,6 +17,7 @@ import { styles } from './style';
 import colors from '../../../configs/colors';
 import TabBarButton from '../../../components/TabBar';
 import { useNavigation } from "@react-navigation/native";
+
 import { ChatContext } from '../../../context/chatContext';
 const ChatComp = ({ chatName, time, lastMessage, chatID }: any,) => {
 
@@ -26,6 +27,11 @@ const ChatComp = ({ chatName, time, lastMessage, chatID }: any,) => {
     const hour = time || "Horário";
 
     const {useChat, exitChat} = useContext(ChatContext)!
+
+    
+
+
+
     return (
         <TouchableOpacity
             onPress={() => (navigation.navigate("Home", {screen: "ChatScreen"}), useChat(chatID))}

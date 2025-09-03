@@ -1,4 +1,5 @@
-import React, { useRef, useState, useContext, useEffect } from 'react';
+import React, { useRef, useState, useContext, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { AuthContext } from '../../../../context/auth';
 import { ChatContext } from '../../../../context/chatContext';
 
@@ -20,27 +21,12 @@ import colors from '../../../../configs/colors';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import TabBarButton from '../../../../components/TabBar';
 import { Timestamp } from '@firebase/firestore';
+import ChatHeader from './components';
 
-const ChatHeaderData = ({ name, status }: any) => {
-    return (
-        <View style={{ flex: 1, flexDirection: "row" }}>
-            {/* IMAGEM */}
-            <View style={{ width: 60, height: 60, backgroundColor: colors.white, borderRadius: 50 }} />
-            {/* DATA CONTAINER */}
-            <View style={{ gap: 10, padding: 5 }}>
-                {/* NOME */}
-                <Text style={{ fontWeight: 'bold', fontSize: 16, color: colors.white }}>
-                    {name}
-                </Text>
-                {/* STATUS */}
-                <Text style={{ fontSize: 14, color: "#ffffffbb", fontWeight: "bold" }}>
-                    {status}
-                </Text>
-            </View>
-        </View>
-    )
-}
+
+
 interface message {
+    id?: string
     message: string,
     sender: string,
     senderID: string,
@@ -70,7 +56,7 @@ export default function ChatScreen({ navigation }: any) {
     if (!chatContext) {
         throw new Error("ChatContext not provided. Make sure to wrap your component with a ChatProvider.");
     }
-    const { messages, addMessage, exitChat, chatID } = chatContext;
+    const { messages, addMessage, exitChat, chat } = chatContext;
     const [textInputValue, setTextInputValue] = useState("")
 
 
@@ -81,10 +67,10 @@ export default function ChatScreen({ navigation }: any) {
     }));
 
     const submitMessage = async () => {
-        console.log(chatID)
+        console.log(chat?.id)
         if (!textInputValue) return;
 
-        addMessage(textInputValue, chatID)
+        addMessage(textInputValue, chat?.id)
             .then(() => setTextInputValue("")) // limpa input após enviar
             .catch(err => console.error("Erro ao enviar mensagem:", err));
     };
@@ -99,40 +85,8 @@ export default function ChatScreen({ navigation }: any) {
     return (
         <SafeAreaView style={styles.container}>
             {/* ================================================HEADER================================================ */}
-            <View style={styles.chatHeader}>
-                {/* BOTAO 1 */}
-                <CustomButton
-                    Icon={<Ionicons name="arrow-back" size={24} color={"#fff"} />}
-                    border='Circle'
-
-                    width={50}
-                    height={50}
-                    style={{ zIndex: 3, backgroundColor: colors.primary, borderWidth: 1, borderColor: "#c5c5c5" }}
-                    onPress={() => navigation.goBack()}
-                />
-                {/* TITULO PRINCIPAL
-                    Imagem, nome e status
-                    */}
-                <ChatHeaderData name={"Cleiton"} status={"online"} />
-                {/* BOTAO 2 */}
-                <CustomButton
-                    Icon={<Ionicons name="call" size={24} color={colors.lightGray} />}
-                    border='Circle'
-
-                    width={50}
-                    height={50}
-                    style={{ zIndex: 3, backgroundColor: colors.background, borderWidth: 1, borderColor: "#c5c5c5" }}
-                />
-                {/* BOTAO 3 */}
-                <CustomButton
-                    Icon={<Entypo name="dots-three-vertical" size={24} color={colors.lightGray} />}
-                    border='Circle'
-
-                    width={50}
-                    height={50}
-                    style={{ zIndex: 3, backgroundColor: colors.background, borderWidth: 1, borderColor: "#c5c5c5" }}
-                />
-            </View>
+            <ChatHeader/>
+            {/* ====================================================================================================== */}
             <View style={styles.messagesContainer}>
 
                 <Text style={styles.title}>HOJE</Text>
@@ -143,7 +97,7 @@ export default function ChatScreen({ navigation }: any) {
                         <View key={item.id}>
                             <Text style={[item.sender === user?.name ? styles.message2 : styles.message1]}>{item.message}</Text>
 
-                           <Text style={{ color: colors.lightGray, alignSelf: item.senderID == user?.id ? "flex-end" : "flex-start", paddingHorizontal: 10 }}>
+                            <Text style={{ color: colors.lightGray, alignSelf: item.senderID == user?.id ? "flex-end" : "flex-start", paddingHorizontal: 10 }}>
                                 horario
                             </Text>
 
