@@ -2,65 +2,93 @@ import React, { useState, createContext, use, useEffect, useContext } from "reac
 import { AuthContext } from "./auth";
 import { db } from "../services/firebase";
 import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc, deleteDoc, serverTimestamp, Timestamp } from "@firebase/firestore";
+import { User } from "@firebase/auth";
 
 interface Salon {
-    id: string,
+    id?: string
     CNPJ: string,
     owner: string,
     name: string,
-    opHour: any,
-    rating: Ratings,
-    specialists: Specialists[],
-    services: Services[],
+    opHour?: any,
+    rating?: Ratings,
+    specialists?: Specialists[],
+    services?: Services,
 
-    
+
 }
-interface Ratings{
+interface Ratings {
     sender: string,
     ratingPoint: number,
-    schedule: any,
     comment: string,
-    
+
 }
-interface Specialists{
+interface Specialists {
+    id: string,
     name: string,
     rating: any
 }
-interface Services{
+interface Services {
     id: string,
     type: string
 }
 interface SalonContextType {
     salon: Salon | null,
-    createSalon: (name: string, CNPJ: string) => void
+    salonList: Salon[] | null,
+    createSalon: (data: Salon) => void,
+    loading: boolean,
 }
 
 export const SalonContext = createContext<SalonContextType | null>(null);
 
 export default function SalonProvider({ children }: { children: React.ReactNode }) {
-    
+
     const authData = useContext(AuthContext)!
-    const [salon, setSalon] = useState<Salon| null>(null)
-    
-    const createSalon = async ({name, CNPJ}: any)=>{
-        const salonRef = doc(collection(db, "salon"))
-        try{
-            await setDoc(salonRef, {
-                id: salonRef.id,
-                name: name,
-                owner: authData.user?.id,
-                CNPJ: CNPJ,
+    const [salon, setSalon] = useState<Salon | null>(null)
+    const [salonList, setSalonList] = useState<Salon[]| null>([])
+    const [loading, setLoading] = useState(true)
+
+    const createSalon = async (data: Salon) => {
+        try {
+            const salonRef = doc(collection(db, "salon"))
+            console.log("tentando criar salão com: \n ", data.name)
+            const sla = await setDoc((salonRef), {id: salonRef.id, ...data}).then(()=>{
+                alert("Salão criado!")
             })
-            
-        }catch(err){
+            const serviceRef = doc(collection(db, "salon", salonRef.id, "services"))
+            await setDoc((serviceRef), {id: serviceRef.id, ...data.services})
+            console.log(data)
+        } catch (err) {
             console.log(err)
         }
     }
+    // atualizar em tempo real
+    useEffect(()=>{
+        const q = query(collection(db, "salon"))
+        const unsubscribe = onSnapshot(q, (snapshot)=>{
+            const salonListA: any = []
+            snapshot.forEach((doc)=>[
+                salonListA.push({
+                    id: doc.id,
+                    ...doc.data()
+                })
+            ])
+            setSalonList(prev => [prev, salonListA])
+            console.log("lista de saloes",salonList, "\n")
+            
+        })
+        setLoading(false)
+        return () => unsubscribe()
+                    
+    },[])
+
+    
     return (
         <SalonContext.Provider value={{
             salon: salon!,
             createSalon,
-
+            salonList,
+            loading,
+       
         }}>
             {children}
         </SalonContext.Provider>

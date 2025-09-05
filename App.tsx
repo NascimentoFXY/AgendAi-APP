@@ -9,6 +9,7 @@ import ChatProvider from './src/context/chatContext';
 import { useContext } from 'react';
 import MainRoutes from './src/routes/homeRoutes';
 import TabRoutes from './src/routes/tabRoutes';
+import SalonProvider from './src/context/salonContext';
 
 
 
@@ -16,10 +17,10 @@ import TabRoutes from './src/routes/tabRoutes';
 export function PrivateRoute() {
   const { isAuthenticated, loading } = useContext(AuthContext)!;
 
-  if(loading){
-    return(
+  if (loading) {
+    return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large"/>
+        <ActivityIndicator size="large" />
       </View>
     )
   }
@@ -36,7 +37,9 @@ export default function App() {
     <NavigationContainer>
       <AuthProvider>
         <ChatProvider>
-          <PrivateRoute />
+          <SalonProvider>
+            <PrivateRoute />
+          </SalonProvider>
         </ChatProvider>
       </AuthProvider>
     </NavigationContainer>
