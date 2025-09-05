@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import { AuthContext } from '../../../context/auth';
 import {
     Dimensions,
@@ -27,15 +27,23 @@ const cardsWidth = 400;
 export default function Home({ navigation }: any) {
     const { user } = useContext(AuthContext)!;
 
-        if (!user) {
+    if (!user) {
         // Exiba um carregamento ou redirecione para a tela de login
-        return <Text>Carregando...</Text>; 
+        return <Text>Carregando...</Text>;
     }
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <MainHeader navigation={navigation}/>
-            <Text>{user?.name}</Text>
-            <Text>{user?.email}</Text>
+            <MainHeader navigation={navigation} />
+            <Text style={{
+                fontWeight: 800, textAlign: "center",
+                fontSize: 30,
+                padding: 20,
+                borderBottomWidth: 1,
+                borderBottomLeftRadius: 50,
+                borderBottomRightRadius: 50,
+                borderBottomColor: colors.transparentLightGray
+            }}>OLÁ {user.name ? user.name.toUpperCase() : ""}!</Text>
+
             <View>
 
                 {/* ==================ESPECIAL PRA VOCE======================================= */}

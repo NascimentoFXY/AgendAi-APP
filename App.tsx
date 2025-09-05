@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import Login from './src/pages/login';
 import Cadastro from './src/pages/cadastro';
 import { NavigationContainer } from '@react-navigation/native';
@@ -14,7 +14,15 @@ import TabRoutes from './src/routes/tabRoutes';
 
 
 export function PrivateRoute() {
-  const { isAuthenticated } = useContext(AuthContext)!;
+  const { isAuthenticated, loading } = useContext(AuthContext)!;
+
+  if(loading){
+    return(
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large"/>
+      </View>
+    )
+  }
   return (
     <>
       {isAuthenticated ?

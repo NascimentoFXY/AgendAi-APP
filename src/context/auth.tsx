@@ -8,6 +8,7 @@ import {
 import React, { useState, useEffect, createContext, use } from "react";
 import { auth } from "../services/firebase";
 import { getFirestore, setDoc, doc, } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface User {
     id: string
@@ -21,6 +22,7 @@ interface AuthContextType {
     signOut: () => void;
     register: (name: string, email: string, password: string) => void;
     isAuthenticated?: boolean;
+    loading: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -30,50 +32,77 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
+    //----------------------------verifica se ja tem um usuario no asyncStorage
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        const loadUser = async () => {
+            try {
+                const response = await AsyncStorage.getItem('@agendaiApp:user');
+                if (response) {
+                    const parsedResponse = JSON.parse(response);
+                    setUser({
+                        id: parsedResponse.uid,
+                        email: parsedResponse.email,
+                        name: parsedResponse.displayName,
+                    })
+                } else {
+                    console.log("nao encontrado no AS");
+                }
+            }
+            catch (err) {
+                console.log(err)
+            }
+        }
+        loadUser();
+    }, [])
+
+    // -----------------Verifica se o usuario esta logado------------------------//
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
+                const userToken = await firebaseUser.getIdToken()
+                const userData = {
+                    id: firebaseUser.uid,
+                    name: firebaseUser.displayName,
+                    email: firebaseUser.email,
+                    userToken,
+                }
                 setUser({
                     id: firebaseUser.uid,
                     name: firebaseUser.displayName || "",
                     email: firebaseUser.email || "",
                 });
-                console.log(firebaseUser.displayName)
+                try {
+                    await AsyncStorage.setItem('@agendaiApp:user', JSON.stringify(userData));
+                } catch (err) {
+                    console.log("Erro ao salvar no AsyncStorage:", err);
+                }
             } else {
+                await AsyncStorage.removeItem('@agendaiApp:user');
                 setUser(null);
-                console.log(firebaseUser)
             }
             setLoading(false);
         });
-
         return () => unsubscribe();
-    }, []);
-
-
-
+    }, [])
+//---------------------login-----------------------------------//
     const signIn = async (email: string, password: string) => {
 
         try {
             const cred = await signInWithEmailAndPassword(auth, email, password)
             alert("Bem vindo, " + cred.user.displayName + "!");
+
         } catch (error) {
             console.error("Erro ao fazer login:", error);
             alert("Falha ao fazer login. Verifique suas credenciais.");
         }
-
-
     }
-
+//--------------------------------cadastro-------------------------//
     const register = async (name: string, email: string, password: string) => {
 
         try {
             const cred = await createUserWithEmailAndPassword(auth, email, password);
-
             const db = getFirestore();
-            console.log("usuario cadastrado: ", cred.user.uid)
-
             await updateProfile(cred.user, { displayName: name })
-
             await setDoc(doc(db, "users", cred.user.uid), {
                 createdAt: new Date(),
                 email: email,
@@ -86,9 +115,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                 name: cred.user.displayName || name,
                 email: cred.user.email || email,
             })
-
-
-            console.log("Usuário registrado:", cred.user.email, cred.user.displayName);
             alert("Bem vindo, " + user?.name + "!");
         }
         catch (error) {
@@ -96,19 +122,20 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             alert("Verifique suas credenciais.");
         }
     };
+    //--------------------------logout------------------------//
     const signOut = async () => {
         await firebaseSignOut(auth);
         setUser(null);
-
     };
-
+    //---------------------------------------------------------//
     return (
         <AuthContext.Provider value={{
             user: user,
             signIn,
             signOut,
             register,
-            isAuthenticated: !!user
+            isAuthenticated: !!user,
+            loading: loading,
         }}>
             {children}
         </AuthContext.Provider>
