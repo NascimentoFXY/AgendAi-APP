@@ -115,7 +115,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                 name: cred.user.displayName || name,
                 email: cred.user.email || email,
             })
-            alert("Bem vindo, " + user?.name + "!");
+            alert("Bem vindo, " + user?.name.split(" ")[0] + "!");
         }
         catch (error) {
             console.error("Erro ao registrar usuário:", error);
