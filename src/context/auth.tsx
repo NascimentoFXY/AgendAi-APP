@@ -14,6 +14,7 @@ interface User {
     id: string
     name: string,
     email: string,
+    isProfessional?: boolean
 }
 
 interface AuthContextType {
@@ -108,7 +109,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                 email: email,
                 name: cred.user.displayName,
                 id: cred.user.uid,
-                senha: password
             });
             setUser({
                 id: cred.user.uid,

@@ -19,6 +19,7 @@ import colors from '../../../configs/colors';
 import ServicesCards from '../../../components/homeScreenComponents/ServicesCarroussel';
 import MainHeader from '../../../components/homeScreenComponents/header';
 import { ServiceCardsData, EspecialCardsData, topSaloesCardsData } from './components';
+import { SalonContext } from '../../../context/salonContext';
 
 
 const cardsWidth = 400;
@@ -26,7 +27,7 @@ const cardsWidth = 400;
 
 export default function Home({ navigation }: any) {
     const { user } = useContext(AuthContext)!;
-
+    const {createSalon} = useContext(SalonContext)!
     if (!user) {
         // Exiba um carregamento ou redirecione para a tela de login
         return <Text>Carregando...</Text>;
@@ -100,13 +101,21 @@ export default function Home({ navigation }: any) {
                     contentContainerStyle={{
                         paddingHorizontal: 20
                     }}>
-
                     {topSaloesCardsData.map((key) => (
                         <TouchableOpacity onPress={() => navigation.navigate("Salao")} key={key.id}>
                             <View key={key.id}>{key.content}</View>
                         </TouchableOpacity>
                     ))}
                 </Carroussel>
+                <CustomButton
+                Icon={<Ionicons name="add" size={24} color={"#fff"} />}
+                border='Circle' 
+                type='absolute'
+                width={80}
+                height={80}
+                style={{ zIndex: 3, backgroundColor: colors.primary, borderWidth: 1, borderColor: "#c5c5c5", bottom: 200, right: 20 }}
+                onPress={()=>createSalon("salaoTeste", "1234567NPJ")}
+                />
             </View>
         </ScrollView>
     );
