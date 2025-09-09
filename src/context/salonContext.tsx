@@ -11,6 +11,7 @@ interface Salon {
     name: string,
     opHour?: any,
     rating?: Ratings,
+    addres?: string,
     specialists?: Specialists[],
     services?: Services,
     createdAt?: any,
@@ -35,6 +36,7 @@ interface SalonContextType {
     salon: Salon | null,
     salonList: Salon[] | null,
     createSalon: (data: Salon) => void,
+    useSalon: (salonID: string) => void,
     loading: boolean,
 }
 
@@ -46,11 +48,12 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     const [salon, setSalon] = useState<Salon | null>(null)
     const [loading, setLoading] = useState(false)
     const [salonList, setSalonList] = useState<Salon[]>([])
+    const [serviceList, setServiceList] = useState<Services[]>([])
     console.log("lista de saloes", salonList, "\n")
 
+    // ----------------------CRIAR SALAO---------------------------------//
     const createSalon = async (data: Salon) => {
         try {
-
             const salonRef = doc(collection(db, "salon"))
             console.log("tentando criar salão com: \n ", data.name)
 
@@ -73,27 +76,79 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             console.log(err)
         }
     }
-    // atualizar em tempo real
-    // useEffect(() => {
-    //     const q = query(collection(db, "salon"))
-    //     const unsubscribe = onSnapshot(q, (snapshot) => {
-    //         const list = snapshot.docs.map((doc) => ({
-    //             id: doc.id,
-    //             ...doc.data()
-    //         } as Salon))
 
-    //         setSalonList(list)
-    //         setLoading(false)
-    //     })
-    //     return () => unsubscribe()
-    // }, [])
+    //-------------------------------usarSalao----------------------------------//
 
+    const useSalon = async (salonId: string)=>{
+        try{
+            const salonSnap = await getDoc(doc(db, "salon", salonId))
+            if(salonSnap.exists()){
+                const salon = {id: salonSnap.id, ...salonSnap.data()} as Salon
+                setSalon(salon)
 
+                console.log("salao encontrado: ", salon.id)
+                return salon;
+            }
+            else{
+                alert("nao foi possivel encontrar o chat")
+                return null
+            }
+        }
+        catch(err){
+            console.log(err)
+        }
 
+    }
+    //---------------------------------atualizar Serviços---------------------------//
+
+    const updateServices = async ()=>{
+        try{
+            const serviceRef = query(collection(db, "salon", salon?.id!, "services"))
+            const serviceSnap = await getDocs(serviceRef)
+            if(serviceSnap){
+                const list = []
+                serviceSnap.docs.map((item)=>({
+                  
+                    
+                    
+                }))
+            
+            }
+
+        }catch(err){
+            console.log(err)
+        }
+       
+    }
+    // -----------------------atualizar em tempo real----------------------------------//
+    useEffect(() => {
+        const q = query(collection(db, "salon"))
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const list = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data()
+            } as Salon))
+
+            setSalonList(list)
+            setLoading(false)
+        })
+        return () => unsubscribe()
+    }, [])
+
+    //-----------------------------apagar todos saloes---------------//
+
+    const deleteAllSalon = async () => {
+        const salonRef = await getDocs(collection(db, "salon"))
+        salonRef.forEach(item => {
+            deleteDoc(doc(db, "salon", item.id))
+        })
+    }
+    // deleteAllSalon()
     return !loading && (
         <SalonContext.Provider value={{
-            salon: salon!,
+            salon: salon,
             createSalon,
+            useSalon,
             salonList,
             loading,
 

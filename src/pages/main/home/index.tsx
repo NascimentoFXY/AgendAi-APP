@@ -46,13 +46,13 @@ export default function Home({ navigation }: any) {
         // Exiba um carregamento ou redirecione para a tela de login
         return <ActivityIndicator />;
     }
-    const { salon, createSalon, salonList, loading } = salonData
+    const { salon, createSalon, salonList, loading, useSalon } = salonData
 
     const name: string = "nome salao"
     const CNPJ: string = "cnpj salao"
 
     const createSalonWithData = () => {
-        const newSalon: Salon  = {
+        const newSalon: Salon = {
             CNPJ: CNPJ,
             name: name,
             opHour: "06:00-19:00",
@@ -63,29 +63,29 @@ export default function Home({ navigation }: any) {
         }
         createSalon(newSalon)
     }
-    
 
-    const TopSaloesCardsData = ({ rating, name, owner }: any) => {
+
+    const TopSaloesCardsData = ({ rating, name, owner, salonId }: any) => {
         return (
+            <TouchableOpacity onPress={() => (navigation.navigate("Salao"), useSalon(salonId))} >
+                <View
+                    style={styles.SaloesCards}>
 
-            <View
-                style={styles.SaloesCards}>
-                <Text>{rating}</Text>
-                <View style={{ flex: 3, flexDirection: "row-reverse" }}>
-                    <View style={styles.saloesHeart}>
-                        <FontAwesome5 name='heart' size={30} />
+                    <View style={{ flex: 3, flexDirection: "row-reverse" }}>
+                        <View style={styles.saloesHeart}>
+                            <FontAwesome5 name='heart' size={30} />
+                        </View>
                     </View>
-                </View>
-                <View style={{ flex: 1, flexDirection: "row-reverse" }}>
-                    <View style={styles.saloesRating}>
-                        <MaterialIcons name='star' size={30} />
-                        <Text>5.0</Text>
+                    <View style={{ flex: 1, flexDirection: "row-reverse" }}>
+                        <View style={styles.saloesRating}>
+                            <MaterialIcons name='star' size={30} />
+                            <Text>{rating}</Text>
+                        </View>
                     </View>
+
+
                 </View>
-
-
-            </View>
-
+            </TouchableOpacity>
         )
     }
 
@@ -161,11 +161,7 @@ export default function Home({ navigation }: any) {
                         paddingHorizontal: 20
                     }}>
                     {salonList?.map((key) => (
-                        <TouchableOpacity onPress={() => navigation.navigate("Salao")} key={key.id}>
-
-                            <TopSaloesCardsData name={"aaa"} owner={"bbbbbb"} rating={"5.0"} />
-
-                        </TouchableOpacity>
+                        <TopSaloesCardsData name={"aaa"} owner={"bbbbbb"} rating={"5.0"} salonId={key.id} />
                     ))}
                 </Carroussel>
                 <CustomButton

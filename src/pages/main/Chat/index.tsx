@@ -28,10 +28,6 @@ const ChatComp = ({ chatName, time, lastMessage, chatID }: any,) => {
 
     const {useChat, exitChat} = useContext(ChatContext)!
 
-    
-
-
-
     return (
         <TouchableOpacity
             onPress={() => (navigation.navigate("Home", {screen: "ChatScreen"}), useChat(chatID))}
