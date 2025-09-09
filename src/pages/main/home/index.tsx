@@ -19,48 +19,51 @@ import Carroussel from '../../../components/homeScreenComponents/carroussel';
 import colors from '../../../configs/colors';
 import ServicesCards from '../../../components/homeScreenComponents/ServicesCarroussel';
 import MainHeader from '../../../components/homeScreenComponents/header';
-import { ServiceCardsData, EspecialCardsData, topSaloesCardsData } from './components';
+import { ServiceCardsData, EspecialCardsData } from './components';
 import { SalonContext } from '../../../context/salonContext';
 
 
 const cardsWidth = 400;
 interface Services {
     type: string,
+    id?: string
 
 }
 interface Salon {
 
     CNPJ: string,
     name: string,
+    owner: string,
     opHour?: any,
     services?: Services,
 }
 
 export default function Home({ navigation }: any) {
+    console.log("renderizou")
     const { user } = useContext(AuthContext)!;
     const salonData = useContext(SalonContext)
     if (!user || !salonData) {
         // Exiba um carregamento ou redirecione para a tela de login
         return <ActivityIndicator />;
     }
-    const { salon, createSalon, salonList,loading } = salonData
+    const { salon, createSalon, salonList, loading } = salonData
 
     const name: string = "nome salao"
     const CNPJ: string = "cnpj salao"
-    const [data, setData] = useState<Salon>()
 
     const createSalonWithData = () => {
-        setData({
+        const newSalon: Salon  = {
             CNPJ: CNPJ,
             name: name,
             opHour: "06:00-19:00",
+            owner: user?.id,
             services: {
                 type: "corte de cabelo",
             },
-
-        })
-        createSalon(data as any)
+        }
+        createSalon(newSalon)
     }
+    
 
     const TopSaloesCardsData = ({ rating, name, owner }: any) => {
         return (

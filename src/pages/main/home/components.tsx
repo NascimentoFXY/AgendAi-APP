@@ -182,96 +182,96 @@ export const EspecialCardsData = [
     },
 
 ]
-export const topSaloesCardsData = [
+// export const topSaloesCardsData = [
 
-    {
+//     {
 
-        id: 1,
-        content:
-
-
-            <View
-                style={styles.SaloesCards}>
-                <View style={{ flex: 3, flexDirection: "row-reverse" }}>
-                    <View style={styles.saloesHeart}>
-                        <FontAwesome5 name='heart' size={30} />
-                    </View>
-                </View>
-                <View style={{ flex: 1, flexDirection: "row-reverse" }}>
-                    <View style={styles.saloesRating}>
-                        <MaterialIcons name='star' size={30} />
-                        <Text>5.0</Text>
-                    </View>
-                </View>
+//         id: 1,
+//         content:
 
 
-            </View>
-    },
-    {
-
-        id: 2,
-        content:
-            <View
-                style={styles.SaloesCards}>
-                <View style={{ flex: 3, flexDirection: "row-reverse" }}>
-                    <View style={styles.saloesHeart}>
-                        <FontAwesome5 name='heart' size={30} />
-                    </View>
-                </View>
-                <View style={{ flex: 1, flexDirection: "row-reverse" }}>
-                    <View style={styles.saloesRating}>
-                        <MaterialIcons name='star' size={30} />
-                        <Text>5.0</Text>
-                    </View>
-                </View>
+//             <View
+//                 style={styles.SaloesCards}>
+//                 <View style={{ flex: 3, flexDirection: "row-reverse" }}>
+//                     <View style={styles.saloesHeart}>
+//                         <FontAwesome5 name='heart' size={30} />
+//                     </View>
+//                 </View>
+//                 <View style={{ flex: 1, flexDirection: "row-reverse" }}>
+//                     <View style={styles.saloesRating}>
+//                         <MaterialIcons name='star' size={30} />
+//                         <Text>5.0</Text>
+//                     </View>
+//                 </View>
 
 
-            </View>
+//             </View>
+//     },
+//     {
 
-    },
-    {
-
-        id: 3,
-        content:
-            <View
-                style={styles.SaloesCards}>
-                <View style={{ flex: 3, flexDirection: "row-reverse" }}>
-                    <View style={styles.saloesHeart}>
-                        <FontAwesome5 name='heart' size={30} />
-                    </View>
-                </View>
-                <View style={{ flex: 1, flexDirection: "row-reverse" }}>
-                    <View style={styles.saloesRating}>
-                        <MaterialIcons name='star' size={30} />
-                        <Text>5.0</Text>
-                    </View>
-                </View>
-
-
-            </View>
-
-    },
-    {
-
-        id: 4,
-        content:
-            <View
-                style={styles.SaloesCards}>
-                <View style={{ flex: 3, flexDirection: "row-reverse" }}>
-                    <View style={styles.saloesHeart}>
-                        <FontAwesome5 name='heart' size={30} />
-                    </View>
-                </View>
-                <View style={{ flex: 1, flexDirection: "row-reverse" }}>
-                    <View style={styles.saloesRating}>
-                        <MaterialIcons name='star' size={30} />
-                        <Text>5.0</Text>
-                    </View>
-                </View>
+//         id: 2,
+//         content:
+//             <View
+//                 style={styles.SaloesCards}>
+//                 <View style={{ flex: 3, flexDirection: "row-reverse" }}>
+//                     <View style={styles.saloesHeart}>
+//                         <FontAwesome5 name='heart' size={30} />
+//                     </View>
+//                 </View>
+//                 <View style={{ flex: 1, flexDirection: "row-reverse" }}>
+//                     <View style={styles.saloesRating}>
+//                         <MaterialIcons name='star' size={30} />
+//                         <Text>5.0</Text>
+//                     </View>
+//                 </View>
 
 
-            </View>
+//             </View>
 
-    }
+//     },
+//     {
 
-]
+//         id: 3,
+//         content:
+//             <View
+//                 style={styles.SaloesCards}>
+//                 <View style={{ flex: 3, flexDirection: "row-reverse" }}>
+//                     <View style={styles.saloesHeart}>
+//                         <FontAwesome5 name='heart' size={30} />
+//                     </View>
+//                 </View>
+//                 <View style={{ flex: 1, flexDirection: "row-reverse" }}>
+//                     <View style={styles.saloesRating}>
+//                         <MaterialIcons name='star' size={30} />
+//                         <Text>5.0</Text>
+//                     </View>
+//                 </View>
+
+
+//             </View>
+
+//     },
+//     {
+
+//         id: 4,
+//         content:
+//             <View
+//                 style={styles.SaloesCards}>
+//                 <View style={{ flex: 3, flexDirection: "row-reverse" }}>
+//                     <View style={styles.saloesHeart}>
+//                         <FontAwesome5 name='heart' size={30} />
+//                     </View>
+//                 </View>
+//                 <View style={{ flex: 1, flexDirection: "row-reverse" }}>
+//                     <View style={styles.saloesRating}>
+//                         <MaterialIcons name='star' size={30} />
+//                         <Text>5.0</Text>
+//                     </View>
+//                 </View>
+
+
+//             </View>
+
+//     }
+
+// ]
