@@ -9,7 +9,8 @@ import {
     TouchableOpacity,
     ScrollView,
     NativeSyntheticEvent,
-    NativeScrollEvent
+    NativeScrollEvent,
+    ActivityIndicator
 } from 'react-native';
 import { SalonContext } from '../../../../../context/salonContext';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -25,7 +26,7 @@ const { width } = Dimensions.get("window")
 export default function MainModal({ navigation }: any) {
     const scrollRef = useRef<ScrollView>(null);
     const [currentPage, setCurrentPage] = useState(0)
-    const {salon} = useContext(SalonContext)!
+    const {salon, loading} = useContext(SalonContext)!
     const pages = [<SalaoServices />, <SalaoEspecialistas />, <Rating />]
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -45,8 +46,15 @@ export default function MainModal({ navigation }: any) {
             console.warn(`Página com índice ${pageIndex} não encontrada.`);
         }
     };
+    if (loading) {
+        return (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <ActivityIndicator size="large" />
+          </View>
+        )
+      }
     return (
-        <>
+        
             <View style={styles.container}>
 
                 <View style={styles.modalContainer}>
@@ -165,7 +173,7 @@ export default function MainModal({ navigation }: any) {
                 </ScrollView>
             </View>
 
-        </>
+    
 
     )
 }

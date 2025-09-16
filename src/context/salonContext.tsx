@@ -30,7 +30,7 @@ interface Specialists {
 }
 interface Services {
     id?: string,
-    type: string
+    type: any
 }
 interface SalonContextType {
     salon: Salon | null,
@@ -43,20 +43,20 @@ interface SalonContextType {
 export const SalonContext = createContext<SalonContextType | null>(null);
 
 export default function SalonProvider({ children }: { children: React.ReactNode }) {
-
+    
     const authData = useContext(AuthContext)!
     const [salon, setSalon] = useState<Salon | null>(null)
     const [loading, setLoading] = useState(false)
     const [salonList, setSalonList] = useState<Salon[]>([])
     const [serviceList, setServiceList] = useState<Services[]>([])
     // console.log("lista de saloes", salonList, "\n")
-
+    
     // ----------------------CRIAR SALAO---------------------------------//
     const createSalon = async (data: Salon) => {
         try {
             const salonRef = doc(collection(db, "salon"))
-            console.log("tentando criar salão com: \n ", data.name)
-
+            console.log("tentando criar salão com: \n ", data.name, data.CNPJ)
+            
             await setDoc((salonRef), {
                 id: salonRef.id,
                 CNPJ: data.CNPJ,
@@ -65,32 +65,39 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                 opHour: data.opHour,
                 createdAt: new Date(),
             })
-            const serviceRef = doc(collection(db, "salon", salonRef.id, "services"))
-            await setDoc((serviceRef), {
-                id: serviceRef.id,
-                type: data.services?.type
-            })
+            
             console.log(data)
-
+            
         } catch (err) {
             console.log(err)
         }
     }
-
+    
+    //---------------------------------atualizar Serviços---------------------------//
+    async function addServicesToSalon(data: any){
+        const serviceRef = doc(collection(db, "salon", salon?.id!, "services"))
+        await setDoc((serviceRef), {
+            id: serviceRef.id,
+            type: data.services?.type
+        })
+    }
     //-------------------------------usarSalao----------------------------------//
-
     const useSalon = async (salonId: string)=>{
+        setLoading(true)
         try{
             const salonSnap = await getDoc(doc(db, "salon", salonId))
             if(salonSnap.exists()){
                 const salon = {id: salonSnap.id, ...salonSnap.data()} as Salon
                 setSalon(salon)
-
+                setLoading(false)
+        
+                
                 console.log("salao encontrado: ", salon.id)
                 return salon;
             }
             else{
                 alert("nao foi possivel encontrar o chat")
+                setLoading(false)
                 return null
             }
         }
@@ -98,25 +105,6 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             console.log(err)
         }
 
-    }
-    //---------------------------------atualizar Serviços---------------------------//
-
-    const updateServices = async ()=>{
-        try{
-            const serviceRef = query(collection(db, "salon", salon?.id!, "services"))
-            const serviceSnap = await getDocs(serviceRef)
-            if(serviceSnap){
-                const list = []
-                serviceSnap.docs.map((item)=>({
-                  
-                }))
-            
-            }
-
-        }catch(err){
-            console.log(err)
-        }
-       
     }
     // -----------------------atualizar em tempo real----------------------------------//
     useEffect(() => {
@@ -142,7 +130,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         })
     }
     // deleteAllSalon()
-    return !loading && (
+    return (
         <SalonContext.Provider value={{
             salon: salon,
             createSalon,

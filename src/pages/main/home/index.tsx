@@ -25,7 +25,7 @@ import { SalonContext } from '../../../context/salonContext';
 
 const cardsWidth = 400;
 interface Services {
-    type: string,
+    type: any,
     id?: string
 
 }
@@ -48,8 +48,8 @@ export default function Home({ navigation }: any) {
     }
     const { salon, createSalon, salonList, loading, useSalon } = salonData
 
-    const name: string = "nome salao"
-    const CNPJ: string = "cnpj salao"
+    const name: string = "La Mar"
+    const CNPJ: string = "123.456.67"
 
     const createSalonWithData = () => {
         const newSalon: Salon = {
@@ -65,7 +65,7 @@ export default function Home({ navigation }: any) {
     }
 
 
-    const TopSaloesCardsData = ({ rating, name, owner, salonId }: any) => {
+    const TopSaloesCardsData = ({ rating, name, salonId }: any) => {
         return (
             <TouchableOpacity onPress={() => (navigation.navigate("Salao"), useSalon(salonId))} >
                 <View
@@ -137,13 +137,13 @@ export default function Home({ navigation }: any) {
 
                 </View>
 
-                {!loading && <View style={styles.serviceCards}>
+                <View style={styles.serviceCards}>
 
                     {ServiceCardsData.map((key) => (
                         <View key={key.id}>{key.content}</View>
                     ))}
 
-                </View>}
+                </View>
 
                 {/* ============================================saloes=============================== */}
 
