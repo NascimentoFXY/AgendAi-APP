@@ -49,7 +49,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     const [loading, setLoading] = useState(false)
     const [salonList, setSalonList] = useState<Salon[]>([])
     const [serviceList, setServiceList] = useState<Services[]>([])
-    console.log("lista de saloes", salonList, "\n")
+    // console.log("lista de saloes", salonList, "\n")
 
     // ----------------------CRIAR SALAO---------------------------------//
     const createSalon = async (data: Salon) => {
@@ -109,8 +109,6 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                 const list = []
                 serviceSnap.docs.map((item)=>({
                   
-                    
-                    
                 }))
             
             }
