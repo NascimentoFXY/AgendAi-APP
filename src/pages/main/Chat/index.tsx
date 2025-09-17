@@ -26,14 +26,14 @@ const ChatComp = ({ chatName, time, lastMessage, chatID }: any,) => {
     const message = chatID || "Lorem ipsum dolor, sit amet consectetur...";
     const hour = time || "Horário";
 
-    const {useChat, exitChat} = useContext(ChatContext)!
+    const { useChat, exitChat } = useContext(ChatContext)!
 
     return (
         <TouchableOpacity
-            onPress={() => (navigation.navigate("Home", {screen: "ChatScreen"}), useChat(chatID))}
+            onPress={() => (navigation.navigate("Home", { screen: "ChatScreen" }), useChat(chatID))}
             activeOpacity={0.8}>
             <View style={styles.chatContainer}>
-                
+
                 <View style={styles.chatImage} >
                     <View style={styles.chatPersonStatus} />
                 </View>
@@ -57,6 +57,7 @@ export default function Chat() {
 
     return (
         <View style={styles.container}>
+            {/*----- header---- */}
             <View style={styles.header}>
 
                 <CustomButton
@@ -79,37 +80,37 @@ export default function Chat() {
                     style={{ zIndex: 3, backgroundColor: colors.background, borderWidth: 1, borderColor: "#c5c5c5" }}
                 />
             </View>
-
+            {/* --------- */}
             <ScrollView
                 contentContainerStyle={{ gap: 20 }}>
 
                 {chatList && chatList.map(chat => (
-                    <ChatComp key={chat.id} chatName={chat.hostName} lastMessage={""} chatID={chat.id}/>
+                    <ChatComp key={chat.id} chatName={chat.hostName} lastMessage={""} chatID={chat.id} />
                 ))}
-               
+
             </ScrollView>
 
 
             <CustomButton
                 Icon={<Ionicons name="chatbubble-ellipses" size={24} color={"#fff"} />}
-                border='Circle' 
+                border='Circle'
                 type='absolute'
                 width={80}
                 height={80}
                 style={{ zIndex: 3, backgroundColor: colors.primary, borderWidth: 1, borderColor: "#c5c5c5", bottom: 20, right: 20 }}
                 onPress={createChat}
-                />
+            />
             {/* botao de excluir todos os chats */}
 
-                <CustomButton
+            <CustomButton
                 Icon={<Ionicons name="trash" size={24} color={"#fff"} />}
-                border='Circle' 
+                border='Circle'
                 type='absolute'
                 width={80}
                 height={80}
                 style={{ zIndex: 3, backgroundColor: colors.primary, borderWidth: 1, borderColor: "#c5c5c5", bottom: 120, right: 20 }}
                 onPress={deleteAllChats}
-                />
+            />
         </View>
     )
 }

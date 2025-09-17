@@ -21,7 +21,7 @@ import SalaoEspecialistas from '../../Especialistas';
 import Rating from '../../Avaliacoes';
 
 const { width } = Dimensions.get("window")
-
+//tela principal ao apertar em um salão
 export default function MainModal({ navigation }: any) {
     const scrollRef = useRef<ScrollView>(null);
     const [currentPage, setCurrentPage] = useState(0)
@@ -46,7 +46,7 @@ export default function MainModal({ navigation }: any) {
         }
     };
     return (
-        <>
+        
             <View style={styles.container}>
 
                 <View style={styles.modalContainer}>
@@ -165,7 +165,7 @@ export default function MainModal({ navigation }: any) {
                 </ScrollView>
             </View>
 
-        </>
+    
 
     )
 }

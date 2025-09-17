@@ -55,4 +55,4 @@ const ServicesCards: React.FC<ServicesProps> = ({
 
 }
 
-export default ServicesCards
+export default ServicesCards // uso de componentização para melhorar a manutenção do código

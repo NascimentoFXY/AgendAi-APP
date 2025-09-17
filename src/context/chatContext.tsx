@@ -69,7 +69,6 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
     // ============carregar chats=================================//
     useEffect(() => {
         if(!user) return;
-
         const q = query(collection(db, "chats"), orderBy("createdAt", "desc"));
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const fetchedChats: any = [];
@@ -162,3 +161,4 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
         </ChatContext.Provider>
     )
 }
+ 

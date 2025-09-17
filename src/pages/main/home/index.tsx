@@ -39,7 +39,7 @@ interface Salon {
 }
 
 export default function Home({ navigation }: any) {
-    console.log("renderizou")
+    console.log("renderizou") // teste de performance
     const { user } = useContext(AuthContext)!;
     const salonData = useContext(SalonContext)
     if (!user || !salonData) {
@@ -50,7 +50,8 @@ export default function Home({ navigation }: any) {
 
     const name: string = "nome salao"
     const CNPJ: string = "cnpj salao"
-
+    // testando a criação de salão com firebase
+    // os dados estão sendo inseridos diretamente, mas futuramente terá um formulário.
     const createSalonWithData = () => {
         const newSalon: Salon = {
             CNPJ: CNPJ,

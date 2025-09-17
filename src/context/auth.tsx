@@ -34,6 +34,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const [loading, setLoading] = useState(true);
 
     //----------------------------verifica se ja tem um usuario no asyncStorage
+
+    //persistência
     useEffect(() => {
         const loadUser = async () => {
             try {
@@ -89,7 +91,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const signIn = async (email: string, password: string) => {
 
         try {
-            const cred = await signInWithEmailAndPassword(auth, email, password)
+            const cred = await signInWithEmailAndPassword(auth, email, password) // conexão com firebase
             alert("Bem vindo, " + cred.user.displayName + "!");
 
         } catch (error) {
