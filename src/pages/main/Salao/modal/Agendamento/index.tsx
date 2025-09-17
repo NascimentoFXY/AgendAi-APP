@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -20,6 +20,7 @@ import SalaoServices from '../../Services';
 import SalaoEspecialistas from '../../Especialistas';
 import Rating from '../../Avaliacoes';
 import ProfessionalCard from '../../../../../components/Salao/EspecialistaScreen';
+import { SalonContext } from '../../../../../context/salonContext';
 
 const scrollProps = {
     showsHorizontalScrollIndicator: false,
@@ -66,24 +67,27 @@ for (let i = 6; i < 20; i++) {
 }
 
 export default function ScheduleModal() {
+
+    const {salon, loading} = useContext(SalonContext)!
+
     return (
         <View style={styles.container}>
 
             <View style={styles.modalContainer}>
                 <View style={styles.SalaoInfoText}>
                     <Text style={styles.SalaoNome}>
-                        La Mar
+                        {salon?.name}
                     </Text>
                     <Text style={styles.SalaoSubTitle}>Cortes de Cabelo, Maquiagem, Massagem</Text>
                 </View>
                 <View style={styles.SalaoLocContainer}>
                     <View style={styles.SalaoLocText}>
                         <MaterialIcons name='location-on' size={20} color={colors.primary} />
-                        <Text> Rua Euclides Zalgo, Endereço 0293</Text>
+                        <Text> {salon?.addres}</Text>
                     </View>
                     <View style={styles.SalaoLocText}>
                         <FontAwesome5 name='clock' size={20} color={colors.primary} />
-                        <Text>30 min  3.8km*Sab Dom | 06 da manhã - 11 da tarde</Text>
+                        <Text>30 min  3.8km*Sab Dom | Opera entre {salon?.opHour}</Text>
                     </View>
                 </View>
 

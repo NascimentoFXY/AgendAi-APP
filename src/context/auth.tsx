@@ -60,6 +60,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     // -----------------Verifica se o usuario esta logado------------------------//
     useEffect(() => {
+        setLoading(true)
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
                 const userToken = await firebaseUser.getIdToken()
@@ -83,17 +84,20 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                 await AsyncStorage.removeItem('@agendaiApp:user');
                 setUser(null);
             }
-            setLoading(false);
         });
+        setLoading(false)
         return () => unsubscribe();
     }, [])
+
+    //verifica se tem usuario
+
 //---------------------login-----------------------------------//
     const signIn = async (email: string, password: string) => {
-
+        setLoading(true)
         try {
-            const cred = await signInWithEmailAndPassword(auth, email, password) // conexão com firebase
+            const cred = await signInWithEmailAndPassword(auth, email, password)
+            setLoading(false)
             alert("Bem vindo, " + cred.user.displayName + "!");
-
         } catch (error) {
             console.error("Erro ao fazer login:", error);
             alert("Falha ao fazer login. Verifique suas credenciais.");
@@ -101,7 +105,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }
 //--------------------------------cadastro-------------------------//
     const register = async (name: string, email: string, password: string) => {
-
+        setLoading(true)
         try {
             const cred = await createUserWithEmailAndPassword(auth, email, password);
             const db = getFirestore();
@@ -117,7 +121,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                 name: cred.user.displayName || name,
                 email: cred.user.email || email,
             })
-            alert("Bem vindo, " + user?.name.split(" ")[0] + "!");
+            alert("Bem vindo, " + cred.user.displayName?.split(" ")[0] + "!");
+            setLoading(false)
         }
         catch (error) {
             console.error("Erro ao registrar usuário:", error);

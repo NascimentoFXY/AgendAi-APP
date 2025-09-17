@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -12,11 +12,16 @@ import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, Materi
 import { styles } from '../style'
 import colors from '../../../../configs/colors';
 import ServiceItem from '../../../../components/Salao/ServicesScreenOptions';
+import CustomButton from '../../../../components/customButton';
+import { SalonContext } from '../../../../context/salonContext';
+import { AuthContext } from '../../../../context/auth';
 
 
 
 
 export default function SalaoServices() {
+    const {salon, loading} = useContext(SalonContext)!
+    const {user} = useContext(AuthContext)!
     return (
 
         <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -27,14 +32,21 @@ export default function SalaoServices() {
                 <Text style={{ fontSize: 18, fontWeight: "bold" }}>Serviços</Text><Text style={{ fontSize: 18, fontWeight: "bold", color: colors.primary, flex: 1 }}>(18)</Text>
             </View>
             {/* ServicosOptions */}
+
+         
+              <CustomButton
+                      Icon={<Ionicons name="add" size={24} color={"#fff"} />}
+                      border='Circle'
+                      type='absolute'
+                      width={80}
+                      height={80}
+                      style={{ zIndex: 3, backgroundColor: colors.primary, borderWidth: 1, borderColor: "#c5c5c5", bottom: 0, right: 20 }}
+                  
+                  />
+          
             <View style={{ justifyContent: "center", alignItems: "center", gap: 10, paddingBottom: 10 }}>
 
                 <ServiceItem />
-                <ServiceItem />
-                <ServiceItem />
-                <ServiceItem />
-                <ServiceItem />
-
             </View>
         </ScrollView>
 
