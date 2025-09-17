@@ -4,8 +4,7 @@ Gabriely Santos Lopes
 Guilherme Gomes Portugal
 Higor Souza Morato
 
---------------DESCRIÇÃO---------------------------------
-
+-----------------------------------------------------
 O AgendAí é um aplicativo inovador para gerenciamento e agendamento de serviços estéticos, conectando de forma prática clientes e profissionais.
 
 Com ele, o usuário pode agendar desde um simples corte de cabelo até uma sessão de massagem, escolhendo entre diversos estabelecimentos próximos. O processo é simples: basta selecionar o tipo de serviço desejado, o dia, o horário disponível e até mesmo o profissional preferido.
