@@ -13,7 +13,7 @@ import {
 import { styles } from '../style';
 import CustomButton from '../../../../../components/customButton';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
-import colors from '../../../../../configs/colors';
+import colors from '../../../../../configs/theme';
 import { ChatContext } from '../../../../../context/chatContext';
 import { useNavigation } from '@react-navigation/native'
 const ChatHeaderData = ({ name, status }: any) => {

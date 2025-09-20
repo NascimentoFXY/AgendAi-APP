@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import ScheduleHeader from './header';
 import { styles } from './style';
-import colors from '../../../configs/colors';
+import colors from '../../../configs/theme';
 import AgendamentoCard from '../../../components/Salao/AgendamentoCards';
 
 

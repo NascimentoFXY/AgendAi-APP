@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Switch } from 'react-native';
-import colors from '../../../configs/colors';
+import colors from '../../../configs/theme';
 // src/components/AgendamentoCard/types.ts
 interface AgendamentoCardProps {
   data?: string;

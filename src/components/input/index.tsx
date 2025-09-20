@@ -11,7 +11,7 @@ import {
     ViewStyle
 } from "react-native";
 import { styles } from "./style";
-import colors from "../../configs/colors";
+import colors from "../../configs/theme";
 import { useState } from "react";
 
 type InputProps = TextInputProps & {

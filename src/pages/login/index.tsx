@@ -8,7 +8,7 @@ import {
     View
 } from "react-native";
 import { styles } from "./style";
-import colors from "../../configs/colors";
+import colors from "../../configs/theme";
 import { Input } from "../../components/input";
 import CustomButton from "../../components/customButton";
 import AntDesign from '@expo/vector-icons/AntDesign';

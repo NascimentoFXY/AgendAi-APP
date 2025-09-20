@@ -7,7 +7,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import Cadastro from "../pages/cadastro";
 import Login from "../pages/login";
-import Loading from "../pages/loading";
+import Loading from "../pages/splash";
 import InitialPrimary from "../pages/initials/initial";
 import FinalScreen from "../pages/initials/finalScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";

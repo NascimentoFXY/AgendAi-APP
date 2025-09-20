@@ -14,7 +14,7 @@ import {
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { styles } from '../style';
 import CustomButton from '../../../../components/customButton';
-import colors from '../../../../configs/colors';
+import colors from '../../../../configs/theme';
 
 interface ScheduleHeaderProps {
     navigation: any;

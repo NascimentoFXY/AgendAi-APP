@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
 import { styles } from '../style'
-import colors from '../../../../configs/colors';
+import colors from '../../../../configs/theme';
 import ServiceItem from '../../../../components/Salao/ServicesScreenOptions';
 import ProfessionalCard from '../../../../components/Salao/EspecialistaScreen';
 

@@ -10,8 +10,28 @@ import { useContext } from 'react';
 import MainRoutes from './src/routes/homeRoutes';
 import TabRoutes from './src/routes/tabRoutes';
 import SalonProvider from './src/context/salonContext';
+import * as Font from "expo-font"
+import { useEffect, useState } from 'react';
+import MainScreen from './src/components/MainScreenLogo';
+
+const getFonts = () => Font.loadAsync({
+  'poppins-regular': require("./assets/fonts/poppins/Poppins-Regular.ttf"),
+  'poppins-bold': require("./assets/fonts/poppins/Poppins-Bold.ttf"),
+  'poppins-medium': require("./assets/fonts/poppins/Poppins-Medium.ttf"),
+  'poppins-light': require("./assets/fonts/poppins/Poppins-Light.ttf"),
+  'poppins-semibold': require("./assets/fonts/poppins/Poppins-SemiBold.ttf"),
+  'poppins-italic': require("./assets/fonts/poppins/Poppins-Italic.ttf"),
+  'poppins-extrabold': require("./assets/fonts/poppins/Poppins-ExtraBold.ttf"),
+  'poppins-thin': require("./assets/fonts/poppins/Poppins-Thin.ttf"),
+  'poppins-extralight': require("./assets/fonts/poppins/Poppins-ExtraLight.ttf"),
+  'poppins-black': require("./assets/fonts/poppins/Poppins-Black.ttf"),
+  'abrilFatface-regular': require("./assets/fonts/AbrilFatface/AbrilFatface-Regular.ttf")
+});
 
 
+ 
+
+ 
 
 
 export function PrivateRoute() {
@@ -33,6 +53,19 @@ export function PrivateRoute() {
 
 }
 export default function App() {
+   const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    getFonts().then(() => setFontsLoaded(true));
+  }, []);
+
+  if (!fontsLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <MainScreen/>
+      </View>
+    );
+  }
   return (
     <NavigationContainer>
       <AuthProvider>

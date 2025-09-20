@@ -1,7 +1,7 @@
 // TabBarButton.tsx
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet, GestureResponderEvent, TextInput } from "react-native";
-import colors from "../../configs/colors"; // ajuste o caminho conforme seu projeto
+import colors from "../../configs/theme"; // ajuste o caminho conforme seu projeto
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Input } from "../input";
 

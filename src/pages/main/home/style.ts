@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import colors from "../../../configs/colors";
+import colors, { font } from "../../../configs/theme";
 
 export const styles = StyleSheet.create({
 
@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
     contentHeaderTitle: {
         fontSize: 20,
         flex: 1,
-        fontWeight: "bold"
+        fontFamily: font.abrilFatface
     },
     especialCards: {
         backgroundColor: "#242424ff",

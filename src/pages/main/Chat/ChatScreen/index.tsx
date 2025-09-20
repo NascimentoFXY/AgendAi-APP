@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import { styles } from './style';
 import CustomButton from '../../../../components/customButton';
-import colors from '../../../../configs/colors';
+import colors from '../../../../configs/theme';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import TabBarButton from '../../../../components/TabBar';
 import { Timestamp } from '@firebase/firestore';

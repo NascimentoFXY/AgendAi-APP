@@ -14,7 +14,7 @@ import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from 
 import { Input } from '../../../components/input'; // Você pode manter esse se já estiver estilizado
 import CustomButton from '../../../components/customButton';
 import { styles } from './style';
-import colors from '../../../configs/colors';
+import colors from '../../../configs/theme';
 import TabBarButton from '../../../components/TabBar';
 import { useNavigation } from "@react-navigation/native";
 

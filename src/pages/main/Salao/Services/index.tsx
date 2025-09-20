@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
 import { styles } from '../style'
-import colors from '../../../../configs/colors';
+import colors from '../../../../configs/theme';
 import ServiceItem from '../../../../components/Salao/ServicesScreenOptions';
 import CustomButton from '../../../../components/customButton';
 import { SalonContext } from '../../../../context/salonContext';
@@ -46,6 +46,16 @@ export default function SalaoServices() {
           
             <View style={{ justifyContent: "center", alignItems: "center", gap: 10, paddingBottom: 10 }}>
 
+                <ServiceItem />
+                <ServiceItem />
+                <ServiceItem />
+                <ServiceItem />
+                <ServiceItem />
+                <ServiceItem />
+                <ServiceItem />
+                <ServiceItem />
+                <ServiceItem />
+                <ServiceItem />
                 <ServiceItem />
             </View>
         </ScrollView>

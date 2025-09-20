@@ -15,7 +15,7 @@ import {
 import { SalonContext } from '../../../../../context/salonContext';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { styles } from '../../style';
-import colors from '../../../../../configs/colors'
+import colors from '../../../../../configs/theme'
 import ServicesCards from '../../../../../components/homeScreenComponents/ServicesCarroussel';
 import SalaoServices from '../../Services';
 import SalaoEspecialistas from '../../Especialistas';

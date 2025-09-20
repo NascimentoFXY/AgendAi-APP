@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { styles } from "./style";
 
-import colors from "../../configs/colors";
+import colors from "../../configs/theme";
 
 
 import { Ionicons, AntDesign } from '@expo/vector-icons'; // Ícone do check

@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
 
-import colors from '../../../../configs/colors';
+import colors from '../../../../configs/theme';
 import { RatingComments } from '../../../../components/Salao/RatingScreenComps';
 
 const colorSet = {

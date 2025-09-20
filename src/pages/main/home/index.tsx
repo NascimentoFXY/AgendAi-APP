@@ -16,7 +16,7 @@ import { Input } from '../../../components/input'; // Você pode manter esse se 
 import CustomButton from '../../../components/customButton';
 import InputWithIcons from '../../../components/InputIcons';
 import Carroussel from '../../../components/homeScreenComponents/carroussel';
-import colors from '../../../configs/colors';
+import colors from '../../../configs/theme';
 import ServicesCards from '../../../components/homeScreenComponents/ServicesCarroussel';
 import MainHeader from '../../../components/homeScreenComponents/header';
 import { ServiceCardsData, EspecialCardsData } from './components';
@@ -101,7 +101,7 @@ export default function Home({ navigation }: any) {
                 borderBottomLeftRadius: 50,
                 borderBottomRightRadius: 50,
                 borderBottomColor: colors.transparentLightGray
-            }}>OLÁ {user.name ? user.name.toUpperCase() : ""}!</Text>
+            }}>OLÁ, {user.name ? user.name.toUpperCase() : ""}!</Text>
 
             <View>
 
@@ -146,8 +146,8 @@ export default function Home({ navigation }: any) {
 
                 </View>
 
-                {/* ============================================saloes=============================== */}
 
+                {/* ============================================saloes=============================== */}
 
                 <View style={styles.contentHeader}>
                     <Text style={styles.contentHeaderTitle}>Top salões</Text>
@@ -162,7 +162,7 @@ export default function Home({ navigation }: any) {
                         paddingHorizontal: 20
                     }}>
                     {salonList?.map((key) => (
-                        <TopSaloesCardsData name={"aaa"} owner={"bbbbbb"} rating={"5.0"} salonId={key.id} />
+                        <TopSaloesCardsData key={key.id} name={"aaa"} owner={"bbbbbb"} rating={"5.0"} salonId={key.id} />
                     ))}
                 </Carroussel>
                 <CustomButton

@@ -14,7 +14,7 @@ import { Input } from '../../../components/input'; // Você pode manter esse se 
 import CustomButton from '../../../components/customButton';
 import InputWithIcons from '../../../components/InputIcons';
 import Carroussel from '../../../components/homeScreenComponents/carroussel';
-import colors from '../../../configs/colors';
+import colors from '../../../configs/theme';
 import ServicesCards from '../../../components/homeScreenComponents/ServicesCarroussel';
 import MainHeader from '../../../components/homeScreenComponents/header';
 import { useNavigation } from '@react-navigation/native';

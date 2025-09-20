@@ -9,7 +9,7 @@ import {
     TouchableOpacityProps, // Para herdar todas as props de TouchableOpacity
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'; // Certifique-se de ter o @expo/vector-icons instalado
-import colors from '../../../configs/colors';
+import colors from '../../../configs/theme';
 
 // 1. Definição das Props
 interface ProfessionalCardProps extends TouchableOpacityProps { // Estende para aceitar props de TouchableOpacity como onPress

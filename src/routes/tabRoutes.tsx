@@ -15,7 +15,7 @@ import Perfil from "../pages/main/Perfil";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainRoutes from "./homeRoutes";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import colors from "../configs/colors";
+import colors from "../configs/theme";
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 

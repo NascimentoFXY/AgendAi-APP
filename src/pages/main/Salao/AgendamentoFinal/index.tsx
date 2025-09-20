@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { styles } from './style';
-import colors from '../../../../configs/colors';
+import colors from '../../../../configs/theme';
 import CustomButton from '../../../../components/customButton';
 
 export default function ScheduleFinal({ navigation }: any) {

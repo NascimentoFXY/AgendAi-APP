@@ -8,7 +8,7 @@ import {
   StyleSheet
 } from "react-native";
 import { styles } from "../style";
-import colors from "../../../configs/colors";
+import colors from "../../../configs/theme";
 import { Input } from "../../../components/input";
 import MainScreen from "../../../components/MainScreenLogo";
 

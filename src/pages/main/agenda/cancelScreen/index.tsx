@@ -14,7 +14,7 @@ import { styles } from './style';
 import CustomButton from '../../../../components/customButton';
 import Checkbox from '../../../../components/checkbox/checkbox';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import colors from '../../../../configs/colors';
+import colors from '../../../../configs/theme';
 export default function ScheduleCancelScreen({ navigation }: any) {
     return (
         <SafeAreaView style={styles.container}>

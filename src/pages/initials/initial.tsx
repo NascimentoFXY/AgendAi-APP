@@ -12,7 +12,7 @@ import {
     NativeSyntheticEvent
 } from "react-native";
 import { styles } from "./style";
-import colors from "../../configs/colors";
+import colors from "../../configs/theme";
 import Initial1 from "./initial1";
 import Initial2 from "./initial2";
 import Initial3 from "./initial3";

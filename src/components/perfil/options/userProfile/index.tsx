@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, TextStyle, View, ViewStyle, Text, TouchableOpacity } from 'react-native';
-import colors from '../../../../configs/colors';
+import colors from '../../../../configs/theme';
 
 interface UserOptionsProps {
     image?: string,

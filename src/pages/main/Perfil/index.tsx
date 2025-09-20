@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import perfilOptions from '../../../components/perfil/options';
 import UserOptions from '../../../components/perfil/options/userProfile';
-import colors from '../../../configs/colors';
+import colors from '../../../configs/theme';
 import { styles } from './style';
 import CustomButton from '../../../components/customButton';
 export default function Perfil({navigation}: any) {

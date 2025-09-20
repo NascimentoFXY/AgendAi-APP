@@ -19,7 +19,7 @@ interface ServiceItemProps {
 const ServiceItem: React.FC<ServiceItemProps> = ({
     text = 'Cortes de Cabelo', // Valor padrão para o texto
     amount = 30,       // Valor padrão para a quantidade
-    iconName = 'arrowright',   // Valor padrão para o ícone
+    iconName = 'arrow-right',   // Valor padrão para o ícone
     onPress,
     style,
     textStyle,
