@@ -17,12 +17,10 @@ export const styles = StyleSheet.create({
         justifyContent: "center"
     },
     modalContainer: {
-
         backgroundColor: colors.background,
         paddingVertical: 20,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-
         borderBottomColor: "#3838386b",
         borderBottomWidth: 1,
         borderBottomEndRadius: 20,

@@ -18,6 +18,7 @@ interface Salon {
     services?: Services,
     description?: string,
     createdAt?: any,
+    image?: any
 
 }
 interface Ratings {
@@ -45,6 +46,7 @@ interface Info {
     bairro?: string;
     cidade?: string;
     horario?: string;
+    image?: any
 }
 interface SalonContextType {
     salon: Salon | null,
@@ -68,7 +70,6 @@ type RootStackParamList = {
 
 export default function SalonProvider({ children }: { children: React.ReactNode }) {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-
     const { user } = useContext(AuthContext)!
     const authData = useContext(AuthContext)!
     const [salon, setSalon] = useState<Salon | null>(null)
@@ -83,7 +84,8 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         rua: "",
         bairro: "",
         cidade: "",
-        horario: ""
+        horario: "",
+        image: "",
     })
     // console.log("lista de saloes", salonList, "\n")
 
@@ -120,6 +122,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                     opHour: info?.horario,
                     addres: `${info.rua}, ${info.bairro}, ${info.cidade}`,
                     description: info.especialidades,
+                    image: info.image,
                     createdAt: new Date(),
                 })
                 useSalon(salonRef.id)

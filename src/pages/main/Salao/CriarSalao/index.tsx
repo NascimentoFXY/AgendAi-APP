@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import {
     View,
     Text,
@@ -18,36 +18,86 @@ import TabBarButton from '../../../../components/TabBar';
 import { SalonContext } from '../../../../context/salonContext';
 import { Image } from 'react-native';
 import { useState } from 'react';
-function NoPhoto() {
-    return (
+import * as ImagePicker from 'expo-image-picker';
 
-        <View style={{ alignItems: "center", marginHorizontal: "auto" }}>
-            <Icon.MaterialIcons name="add-a-photo" size={60} color="#ffffff90" />
-            <Text style={{ textAlign: "center", color: "#ffffff90", fontFamily: font.poppins.bold }}>{`Adicione uma foto de \n destaque para seu salão`}</Text>
-        </View>
-
-    )
-}
 
 export default function CreateSalon({ navigation }: any) {
-const [image, setImage] = useState<string | null>(null);
-    const { createSalon } = useContext(SalonContext)!
+    const [image, setImage] = useState<string | null>(null);
+    const { createSalon, setData } = useContext(SalonContext)!
+
+
+    useEffect(()=>{
+        setData({
+            image: image
+        })
+        console.log(image)
+    },[image])
+
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [16, 9],
+            quality: 1,
+        });
+
+        console.log(result);
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+        }
+    };
+
+    function Photo() {
+        return (
+
+            <TouchableOpacity
+                style={{ flex: 1, alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}
+                onPress={pickImage}
+                activeOpacity={0.8}
+            >
+                {image ? (
+                    <>
+                        <Image
+                            source={{ uri: image }}
+                            style={{ width: "100%", height: "100%", resizeMode: "cover", borderRadius: 10, position: "absolute" }}
+                        />
+                        <View style={{ alignItems: "center", justifyContent: "center", zIndex: 2 }}>
+                            <Icon.MaterialIcons name="add-a-photo" size={60} color="#ffffff90" />
+                            <Text style={{ textAlign: "center", color: "#ffffff90", fontFamily: font.poppins.bold }}>
+                                {`Adicione uma foto de \n destaque para seu salão`}
+                            </Text>
+                        </View>
+                    </>
+                ) : (
+                    <View style={{ alignItems: "center", justifyContent: "center" }}>
+                        <Icon.MaterialIcons name="add-a-photo" size={60} color="#ffffff90" />
+                        <Text style={{ textAlign: "center", color: "#ffffff90", fontFamily: font.poppins.bold }}>
+                            {`Adicione uma foto de \n destaque para seu salão`}
+                        </Text>
+                    </View>
+                )}
+            </TouchableOpacity>
+
+        )
+    }
     return (
         <SafeAreaView style={styles.container}>
 
             <View style={styles.foto}>
+
                 <CustomButton
                     Icon={<Icon.Ionicons name="arrow-back" size={24} color="white" />}
                     border='Circle'
-
                     width={50}
                     height={50}
-                    style={{ zIndex: 3, backgroundColor: "#ffffff90", borderWidth: 1, borderColor: "#ffffff99", }}
+                    style={{ zIndex: 3, backgroundColor: "#ffffff90", borderWidth: 1, borderColor: "#ffffff99", position: "absolute", left: 20 }}
                     onPress={() => navigation.goBack()}
                 />
                 {/* foto do salao */}
-                <NoPhoto />
-                <View style={{ width: 50 }} />
+                <Photo />
+
             </View>
 
             <ScrollView contentContainerStyle={{ paddingBottom: 150 }} style={styles.modal} showsVerticalScrollIndicator={false} stickyHeaderIndices={[0]}
@@ -62,7 +112,7 @@ const [image, setImage] = useState<string | null>(null);
                 <Info />
             </ScrollView>
 
-            <TabBarButton title='Finalizar' style={{ backgroundColor: "black" }} onPress={() => {createSalon()}} />
+            <TabBarButton title='Finalizar' style={{ backgroundColor: "black" }} onPress={() => { createSalon() }} />
         </SafeAreaView>
     );
 }

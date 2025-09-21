@@ -36,8 +36,12 @@ const UserOptions: React.FC<UserOptionsProps> = ({
             {image && (<View style={styles.image} />)}
             {icon && (icon)}
 
-            <Text style={[styles.title, titleStyle]}>{title}</Text>
-            <Text style={[styles.subTitle, subtitleStyle]}>{subTitle}</Text>
+            <View style={{flexDirection: "column"}}>
+
+                <Text style={[styles.title, titleStyle]}>{title}</Text>
+                {subTitle && <Text style={[styles.subTitle, subtitleStyle]}>{subTitle}</Text>}
+            </View>
+
             {rightIcon && (<View style={styles.rightIcon}>{rightIcon}</View>)}
         </TouchableOpacity>
     );
@@ -60,7 +64,7 @@ const styles = StyleSheet.create({
     },
     title: {
         color: colors.white,
-        padding: 20,
+        paddingHorizontal: 20,
         fontSize: 18,
         fontWeight: 'bold'
     },
@@ -70,7 +74,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
 
     },
-    rightIcon:{
+    rightIcon: {
         position: "absolute",
         right: 20,
     }

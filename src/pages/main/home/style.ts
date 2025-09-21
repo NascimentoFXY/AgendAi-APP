@@ -38,7 +38,7 @@ export const styles = StyleSheet.create({
     contentHeaderTitle: {
         fontSize: 20,
         flex: 1,
-        fontFamily: font.abrilFatface
+        fontFamily: font.abrilfatface
     },
     especialCards: {
         backgroundColor: "#242424ff",
@@ -58,10 +58,19 @@ export const styles = StyleSheet.create({
         width: 300,
         height: 220,
         borderRadius: 30,
-        padding: 12,
+        overflow: "hidden",
     },
     saloesRating: {
-        backgroundColor: "#fff", width: 100, height: 50, borderRadius: 100, justifyContent: "center", alignItems: "center", flexDirection: "row"
+        backgroundColor: "#fff",
+        width: 100,
+        height: 50,
+        borderRadius: 100,
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "row",
+        position: "absolute",
+        bottom: 10,
+        right: 10
     },
     saloesHeart: {
         backgroundColor: "#fff",
@@ -70,6 +79,9 @@ export const styles = StyleSheet.create({
         borderRadius: 100,
         justifyContent: "center",
         alignItems: "center",
+        position: "absolute",
+        top: 10,
+        right: 10
     },
     link: {
         color: colors.primary,

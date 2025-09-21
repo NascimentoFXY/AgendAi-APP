@@ -57,10 +57,12 @@ export default function MainModal({ navigation }: any) {
         
             <View style={styles.container}>
                 <View style={styles.modalContainer}>
+
                     <View style={styles.SalaoInfoText}>
                         <Text style={styles.SalaoNome}>{salon?.name}</Text>
                         <Text style={styles.SalaoSubTitle}>{salon?.description}</Text>
                     </View>
+                    
                     <View style={styles.SalaoLocContainer}>
                         <View style={styles.SalaoLocText}><MaterialIcons name='location-on' size={20} color={colors.primary} /><Text> {salon?.addres}</Text></View>
                         <View style={styles.SalaoLocText}><FontAwesome5 name='clock' size={20} color={colors.primary} /><Text>Opera entre | {salon?.opHour}</Text></View>

@@ -36,6 +36,7 @@ export default function Perfil({navigation}: any) {
 
             </SafeAreaView>
             {/* =============================================== */}
+            
             <UserOptions image='o' title={user?.name} subTitle={user?.email} />
             {/* Seu Perfil */}
             <UserOptions icon={<FontAwesome5 name='user' size={40} color={colors.secondary} />} title={"seu perfil"}

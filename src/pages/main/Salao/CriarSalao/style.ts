@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
         backgroundColor: colors.lightGray,
         alignItems: "center",
         flexDirection: "row",
-        padding: 20,
+
         zIndex: 1
     },
     modal:{

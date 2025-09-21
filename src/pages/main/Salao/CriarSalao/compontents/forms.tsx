@@ -25,6 +25,7 @@ export interface DataProps {
     rua?: string;
     bairro?: string;
     cidade?: string;
+    image?: any;
     abertura?: string
     fechamento?: string
 }
