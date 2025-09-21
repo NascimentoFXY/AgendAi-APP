@@ -172,7 +172,7 @@ export default function Home({ navigation }: any) {
                     width={80}
                     height={80}
                     style={{ zIndex: 3, backgroundColor: colors.primary, borderWidth: 1, borderColor: "#c5c5c5", bottom: 200, right: 20 }}
-                    onPress={createSalonWithData}
+                    onPress={()=> navigation.navigate("CreateSalon")}
                 />
             </View>
         </ScrollView>

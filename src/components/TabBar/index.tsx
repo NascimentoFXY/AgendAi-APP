@@ -1,6 +1,6 @@
 // TabBarButton.tsx
 import React from "react";
-import { View, TouchableOpacity, Text, StyleSheet, GestureResponderEvent, TextInput } from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet, GestureResponderEvent, TextInput, ViewStyle } from "react-native";
 import colors from "../../configs/theme"; // ajuste o caminho conforme seu projeto
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Input } from "../input";
@@ -12,19 +12,21 @@ type TabBarButtonProps = {
     textInputValue?: string;
     onChangeText?: (text: string) => void;
     onPress?: (event: GestureResponderEvent) => void;
+    style?: ViewStyle;
+    bgColor?: any;
 
 };
 
-export default function TabBarButton({ title, onPress, onChangeText,type = "button", textInputValue, }: TabBarButtonProps) {
+export default function TabBarButton({ title, onPress, onChangeText,type = "button", textInputValue,style, bgColor = colors.background}: TabBarButtonProps) {
 
 
     return (
-        <View>
+        <View style={{zIndex: 999}}>
 
             {/* Button */}
             {type === "button" && (
-                <View style={styles.Tab}>
-                    <TouchableOpacity onPress={onPress} style={styles.TabBarButton}>
+                <View style={[styles.Tab, {backgroundColor: bgColor}]}>
+                    <TouchableOpacity onPress={onPress} style={[styles.TabBarButton, style]}>
                         <Text style={{ color: "#fff" }}>{title}</Text>
                     </TouchableOpacity>
                 </View>
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         width: "100%",
         padding: 30,
-        backgroundColor: colors.background,
+        
         height: 120,
         bottom: 0,
         borderTopColor: "#a5a5a555",

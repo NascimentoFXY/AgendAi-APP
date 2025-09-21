@@ -6,7 +6,9 @@ import {
     View,
     TextInput,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    ViewStyle,
+    TextStyle
 } from 'react-native';
 import { Ionicons, Feather, Entypo } from '@expo/vector-icons';
 
@@ -22,6 +24,8 @@ type ServicesProps = {
     iconRadius?: number,
     textSize?: number,
     bold?: boolean,
+    bgColor?: any,
+    style?: ViewStyle
 }
 
 
@@ -29,18 +33,20 @@ const ServicesCards: React.FC<ServicesProps> = ({
     icon,
     text,
     color,
+    bgColor="#deb49f",
     width = 120,
     iconRadius = width,
     height = 100,
     textSize = 16,
+    style,
     bold = true
 
 }) => {
     return (
         <>
-                <TouchableOpacity activeOpacity={0.6} style={{ width: width, height: height, borderRadius: 30, alignItems: "center", overflow: "visible"}}>
+                <TouchableOpacity activeOpacity={0.6} style={[{ width: width, height: height, borderRadius: 30, alignItems: "center", overflow: "visible"}, style]}>
 
-                    <View style={{ backgroundColor: "#deb49f", width: iconRadius, height: iconRadius, borderRadius: 1000, alignItems: "center", justifyContent: "center" }}>
+                    <View style={{ backgroundColor: bgColor, width: iconRadius, height: iconRadius, borderRadius: 1000, alignItems: "center", justifyContent: "center" }}>
                         {icon}
                     </View>
 

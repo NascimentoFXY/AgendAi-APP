@@ -56,29 +56,30 @@ export default function MainModal({ navigation }: any) {
     return (
         
             <View style={styles.container}>
-
                 <View style={styles.modalContainer}>
                     <View style={styles.SalaoInfoText}>
                         <Text style={styles.SalaoNome}>{salon?.name}</Text>
-                        <Text style={styles.SalaoSubTitle}>Cortes de Cabelo, Maquiagem, Massagem</Text>
+                        <Text style={styles.SalaoSubTitle}>{salon?.description}</Text>
                     </View>
                     <View style={styles.SalaoLocContainer}>
                         <View style={styles.SalaoLocText}><MaterialIcons name='location-on' size={20} color={colors.primary} /><Text> {salon?.addres}</Text></View>
-                        <View style={styles.SalaoLocText}><FontAwesome5 name='clock' size={20} color={colors.primary} /><Text>30 min  3.8km*Sab Dom | {salon?.opHour}</Text></View>
+                        <View style={styles.SalaoLocText}><FontAwesome5 name='clock' size={20} color={colors.primary} /><Text>Opera entre | {salon?.opHour}</Text></View>
                     </View>
                     <View style={styles.SalaoContacts}>
 
 
                         <ServicesCards
-                            icon={<Entypo name='scissors' size={20} color={"#3b000084"} />}
+                            icon={<MaterialCommunityIcons name='web' size={20} color={colors.secondary} />}
                             text='Websites'
                             width={70}
                             iconRadius={55}
                             height={100}
                             textSize={15}
-                            bold={false} />
+                            bold={false} 
+                            
+                            />
                         <ServicesCards
-                            icon={<MaterialIcons name='contacts' size={20} color={"#3b000084"} />}
+                            icon={<MaterialIcons name='contacts' size={20} color={colors.secondary} />}
                             text='Contato'
                             width={70}
                             iconRadius={55}
@@ -86,7 +87,7 @@ export default function MainModal({ navigation }: any) {
                             textSize={15}
                             bold={false} />
                         <ServicesCards
-                            icon={<Ionicons name='call' size={20} color={"#3b000084"} />}
+                            icon={<Ionicons name='call' size={20} color={colors.secondary} />}
                             text='Ligar'
                             width={70}
                             iconRadius={55}
@@ -94,7 +95,7 @@ export default function MainModal({ navigation }: any) {
                             textSize={15}
                             bold={false} />
                         <ServicesCards
-                            icon={<Entypo name='map' size={20} color={"#3b000084"} />}
+                            icon={<Entypo name='map' size={20} color={colors.secondary} />}
                             text='Direção'
                             width={70}
                             iconRadius={55}
@@ -102,7 +103,7 @@ export default function MainModal({ navigation }: any) {
                             textSize={15}
                             bold={false} />
                         <ServicesCards
-                            icon={<Entypo name='share' size={20} color={"#3b000084"} />}
+                            icon={<Entypo name='share' size={20} color={colors.secondary} />}
                             text='Share'
                             width={70}
                             iconRadius={55}

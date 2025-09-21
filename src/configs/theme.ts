@@ -13,16 +13,16 @@ const colors = {
 
 export const font = {
   poppins: {
-    thin: "Poppins-Thin",
-    extraLight: "Poppins-ExtraLight",
-    light: "Poppins-Light",
-    regular: "Poppins-Regular",
-    medium: "Poppins-Medium",
-    semiBold: "Poppins-SemiBold",
-    bold: "Poppins-Bold",
-    extraBold: "Poppins-ExtraBold",
-    black: "Poppins-Black",
+    thin: "poppins-thin",
+    extralight: "poppins-extralight",
+    light: "poppins-light",
+    regular: "poppins-regular",
+    medium: "poppins-medium",
+    semibold: "poppins-semibold",
+    bold: "poppins-bold",
+    extrabold: "poppins-extrabold",
+    black: "poppins-black",
   },
-  abrilFatface: 'abrilFatface-regular'
-}
+  abrilfatface: "abrilFatface-regular",
+} as const;
 export default colors;

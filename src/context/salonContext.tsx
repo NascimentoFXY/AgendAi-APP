@@ -3,6 +3,8 @@ import { AuthContext } from "./auth";
 import { db } from "../services/firebase";
 import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc, deleteDoc, serverTimestamp, Timestamp } from "@firebase/firestore";
 import { User } from "@firebase/auth";
+import { DataProps } from "../pages/main/Salao/CriarSalao/compontents/forms";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 interface Salon {
     id?: string
@@ -14,6 +16,7 @@ interface Salon {
     addres?: string,
     specialists?: Specialists[],
     services?: Services,
+    description?: string,
     createdAt?: any,
 
 }
@@ -32,49 +35,108 @@ interface Services {
     id?: string,
     type: any
 }
+interface Info {
+    nome: string,
+    especialidades: string,
+    cep?: string;
+    cnpj?: string;
+    numero?: string;
+    rua?: string;
+    bairro?: string;
+    cidade?: string;
+    horario?: string;
+}
 interface SalonContextType {
     salon: Salon | null,
     salonList: Salon[] | null,
-    createSalon: (data: Salon) => void,
+    createSalon: () => void,
     useSalon: (salonID: string) => void,
+    setData: (data: DataProps) => void,
+    setIsValid: (value: boolean) => void,
     loading: boolean,
+    isValid: boolean,
 }
+
 
 export const SalonContext = createContext<SalonContextType | null>(null);
 
+// Define your stack param list to include the "Salao" route
+type RootStackParamList = {
+    Salao: undefined;
+    // ...other routes if needed
+};
+
 export default function SalonProvider({ children }: { children: React.ReactNode }) {
-    
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+    const { user } = useContext(AuthContext)!
     const authData = useContext(AuthContext)!
     const [salon, setSalon] = useState<Salon | null>(null)
     const [loading, setLoading] = useState(false)
     const [salonList, setSalonList] = useState<Salon[]>([])
     const [serviceList, setServiceList] = useState<Services[]>([])
+    const [isInputValid, setInputValid] = useState(false)
+    const [info, setInfo] = useState<Info>({
+        cep: "",
+        nome: "",
+        especialidades: "",
+        rua: "",
+        bairro: "",
+        cidade: "",
+        horario: ""
+    })
     // console.log("lista de saloes", salonList, "\n")
-    
+
+    //----recebe os dados-----------------------------------//
+    const setData = (data: DataProps) => {
+        setInfo((prev) => ({
+            ...prev,   // mantém os valores antigos
+            ...data,   // sobrescreve só os que vierem no argumento
+            ...(data.abertura && data.fechamento
+                ? { horario: `${data.abertura}-${data.fechamento}` }
+                : {}),
+        }));
+    }
+
+    useEffect(() => {
+        console.log(info)
+    }, [info])
+    const setIsValid = (value: boolean) => {
+        setInputValid(value)
+    }
     // ----------------------CRIAR SALAO---------------------------------//
-    const createSalon = async (data: Salon) => {
-        try {
-            const salonRef = doc(collection(db, "salon"))
-            console.log("tentando criar salão com: \n ", data.name, data.CNPJ)
+    const createSalon = async () => {
+
+        if (isInputValid) {
+            try {
+                const salonRef = doc(collection(db, "salon"))
+                console.log("tentando criar salão com: \n ", info.nome, info.cnpj, info.cep)
+                await setDoc((salonRef), {
+                    id: salonRef.id,
+                    CNPJ: info.cnpj,
+                    name: info.nome,
+                    ownerID: user?.id,
+                    ownerName: user?.name,
+                    opHour: info?.horario,
+                    addres: `${info.rua}, ${info.bairro}, ${info.cidade}`,
+                    description: info.especialidades,
+                    createdAt: new Date(),
+                })
+                useSalon(salonRef.id)
+                alert(`${info.nome} Foi criado com sucesso!`)
+                navigation.navigate("Salao")
+            } catch (err) {
+                console.log(err)
+            }
             
-            await setDoc((salonRef), {
-                id: salonRef.id,
-                CNPJ: data.CNPJ,
-                name: data.name,
-                owner: data.owner,
-                opHour: data.opHour,
-                createdAt: new Date(),
-            })
-            
-            console.log(data)
-            
-        } catch (err) {
-            console.log(err)
+        }
+        else{
+            alert("preencha todos os campos")
         }
     }
-    
+
     //---------------------------------atualizar Serviços---------------------------//
-    async function addServicesToSalon(data: any){
+    async function addServicesToSalon(data: any) {
         const serviceRef = doc(collection(db, "salon", salon?.id!, "services"))
         await setDoc((serviceRef), {
             id: serviceRef.id,
@@ -82,26 +144,26 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         })
     }
     //-------------------------------usarSalao----------------------------------//
-    const useSalon = async (salonId: string)=>{
+    const useSalon = async (salonId: string) => {
         setLoading(true)
-        try{
+        try {
             const salonSnap = await getDoc(doc(db, "salon", salonId))
-            if(salonSnap.exists()){
-                const salon = {id: salonSnap.id, ...salonSnap.data()} as Salon
+            if (salonSnap.exists()) {
+                const salon = { id: salonSnap.id, ...salonSnap.data() } as Salon
                 setSalon(salon)
                 setLoading(false)
-        
-                
+
+
                 console.log("salao encontrado: ", salon.id)
                 return salon;
             }
-            else{
+            else {
                 alert("nao foi possivel encontrar o chat")
                 setLoading(false)
                 return null
             }
         }
-        catch(err){
+        catch (err) {
             console.log(err)
         }
 
@@ -135,8 +197,11 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             salon: salon,
             createSalon,
             useSalon,
+            setData,
             salonList,
             loading,
+            isValid: isInputValid,
+            setIsValid,
 
         }}>
             {children}
