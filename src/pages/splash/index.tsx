@@ -11,7 +11,7 @@ import {
 import MainScreen from "../../components/MainScreenLogo";
 
 export default function Loading({navigation}:any) {
-    const delay = 2000; // Tempo de espera em milissegundos
+    const delay = 3000; // Tempo de espera em milissegundos
     const screenChange = () => {
      
         const timer = setTimeout(() => {

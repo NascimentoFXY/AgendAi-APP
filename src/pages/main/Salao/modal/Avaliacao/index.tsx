@@ -23,36 +23,13 @@ import Rating from '../../Avaliacoes';
 
 const { width } = Dimensions.get("window")
 //tela principal ao apertar em um salão
-export default function MainModal({ navigation }: any) {
+export default function AddRating({ navigation }: any) {
     const scrollRef = useRef<ScrollView>(null);
     const [currentPage, setCurrentPage] = useState(0)
     const {salon, loading} = useContext(SalonContext)!
     const pages = [<SalaoServices />, <SalaoEspecialistas />, <Rating />]
 
-    const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-        // função chamada quando o usuário arrasta o dedo na tela (scroll)
-        const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width);
-
-        // calcula em qual pagina o usuário está com base na posição horizontal
-        setCurrentPage(pageIndex);
-        // atualiza a página atual
-    };
-    const scrollToPage = (pageIndex: number) => {
-        // Verifica se o índice da página é válido e se a referência da rolagem existe
-        if (pageIndex >= 0 && pageIndex < pages.length && scrollRef.current) {
-            scrollRef.current.scrollTo({ x: width * pageIndex, animated: true });
-        } else {
-
-            console.warn(`Página com índice ${pageIndex} não encontrada.`);
-        }
-    };
-    if (loading) {
-        return (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <ActivityIndicator size="large" />
-          </View>
-        )
-      }
+   
     return (
         
             <View style={styles.container}>
@@ -126,54 +103,12 @@ export default function MainModal({ navigation }: any) {
 
                     >
 
-                        <TouchableOpacity
-                            style={styles.NavigationOptions}
-                            onPress={() => scrollToPage(0)}>
-
-                            <Text style={[styles.NavigationOptionsText, currentPage === 0 ? { color: colors.primary } : styles.NavigationOptionsText]}>Serviços</Text>
-                            <View style={currentPage === 0 ? styles.underline : styles.none} />
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={styles.NavigationOptions}
-                            onPress={() => scrollToPage(1)}>
-
-                            <Text style={[styles.NavigationOptionsText, currentPage === 1 ? { color: colors.primary } : styles.NavigationOptionsText]}>Especialistas</Text>
-                            <View style={currentPage === 1 ? styles.underline : styles.none} />
-                        </TouchableOpacity>
-
-
-                        <TouchableOpacity
-                            style={styles.NavigationOptions}
-                            onPress={() => scrollToPage(2)}>
-
-                            <Text style={[styles.NavigationOptionsText, currentPage === 2 ? { color: colors.primary } : styles.NavigationOptionsText]}>Avalições</Text>
-                            <View style={currentPage === 2 ? styles.underline : styles.none} />
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={styles.NavigationOptions}>
-
-                            <Text style={styles.NavigationOptionsText}>Galeria</Text>
-                            <View style={styles.none} />
-                        </TouchableOpacity>
+                        
 
                     </ScrollView>
 
                 </View>
-                <ScrollView style={{ width: "100%", paddingBottom: 120 }}
-
-                    pagingEnabled
-                    horizontal
-                    overScrollMode='never'
-                    scrollEventThrottle={24}
-                    ref={scrollRef}
-                    onScroll={handleScroll}
-                >
-                    <SalaoServices />
-                    <SalaoEspecialistas />
-                    <Rating/>
-                </ScrollView>
+                
             </View>
 
     

@@ -11,7 +11,7 @@ import {
     StyleSheet
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
-
+import {useNavigation} from '@react-navigation/native'
 import colors from '../../../../configs/theme';
 import { RatingComments } from '../../../../components/Salao/RatingScreenComps';
 
@@ -27,6 +27,7 @@ const colorSet = {
 
 const { width } = Dimensions.get("window")
 export default function Rating() {
+    const navigation= useNavigation()
     return (
         <ScrollView
             overScrollMode='never'
@@ -44,7 +45,7 @@ export default function Rating() {
                     <View style={styles.header}>
                         <Text style={styles.title}>Avaliações</Text>
 
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={()=> navigation.navigate("AddRating")}>
                             <Feather name="edit" size={18} color={colorSet.color.primary} />
                             <Text style={{ color: colorSet.color.primary, marginLeft: 5, fontSize: 16 }}>Avaliar</Text>
                         </TouchableOpacity>
@@ -78,7 +79,7 @@ export default function Rating() {
             <ScrollView
                 horizontal
                 nestedScrollEnabled={true}
-                style={{ flexDirection: 'row', paddingLeft: 20, marginBottom: 20}}>
+                style={{ flexDirection: 'row', paddingLeft: 20, marginBottom: 20 }}>
                 <TouchableOpacity style={{
                     flexDirection: 'row',
                     alignItems: 'center',

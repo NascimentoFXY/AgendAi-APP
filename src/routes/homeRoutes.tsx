@@ -21,6 +21,7 @@ import ChatScreen from "../pages/main/Chat/ChatScreen";
 import ChatProvider from "../context/chatContext";
 import UserSettings from "../pages/main/settings";
 import CreateSalon from "../pages/main/Salao/CriarSalao";
+import AddRating from "../pages/main/Salao/modal/Avaliacao";
 export default function MainRoutes({ navigation }: any) {
     const Stack = createNativeStackNavigator();
 
@@ -31,6 +32,7 @@ export default function MainRoutes({ navigation }: any) {
             <Stack.Screen name="Filter" component={Filters} />
             <Stack.Screen name="Salao" component={SalaoScreen} />
             <Stack.Screen name="CreateSalon" component={CreateSalon} />
+            <Stack.Screen name="AddRating" component={AddRating} />
             <Stack.Screen name="Settings" component={UserSettings} />
             <Stack.Screen name="ChatScreen" component={ChatScreen} />
             <Stack.Screen name="ScheduleFinal" component={ScheduleFinal} />
