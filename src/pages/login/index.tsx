@@ -23,7 +23,7 @@ export default function Login({ navigation }: any) {
         <SafeAreaView style={styles.mainContainer}>
 
             <CustomButton
-                Icon={<AntDesign name="arrowleft" size={30} color={colors.lightGray}/>}
+                Icon={<AntDesign name="arrow-left" size={30} color={colors.lightGray}/>}
                 onPress={()=> navigation.goBack()}
                 style={styles.backButtonContainer}
 

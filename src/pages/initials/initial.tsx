@@ -95,7 +95,7 @@ export default function InitialPrimary({ navigation }: any) {
 
                     >
 
-                        <AntDesign name="arrowleft" size={24} color="white" />
+                        <AntDesign name="arrow-left" size={24} color="white" />
 
                     </TouchableOpacity>
                 </View>
@@ -116,7 +116,7 @@ export default function InitialPrimary({ navigation }: any) {
                 {/*  */}
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <TouchableOpacity style={styles.avanceButton} onPress={() => scrollNextHandler()}>
-                        <AntDesign name="arrowright" size={24} color="white" />
+                        <AntDesign name="arrow-right" size={24} color="white" />
                     </TouchableOpacity>
                 </View>
 
