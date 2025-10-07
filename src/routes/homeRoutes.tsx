@@ -21,7 +21,7 @@ import ChatScreen from "../pages/main/Chat/ChatScreen";
 import ChatProvider from "../context/chatContext";
 import UserSettings from "../pages/main/settings";
 import CreateSalon from "../pages/main/Salao/CriarSalao";
-import AddRating from "../pages/main/Salao/modal/Avaliacao";
+import AddRating from "../pages/main/Salao/modal/AddRating";
 export default function MainRoutes({ navigation }: any) {
     const Stack = createNativeStackNavigator();
 

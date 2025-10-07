@@ -10,36 +10,59 @@ import {
     ScrollView,
     NativeSyntheticEvent,
     NativeScrollEvent,
-    ActivityIndicator
+    ActivityIndicator,
+    Image,
+
 } from 'react-native';
 import { SalonContext } from '../../../../../context/salonContext';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { styles } from '../../style';
-import colors from '../../../../../configs/theme'
+import colors, { font } from '../../../../../configs/theme'
 import ServicesCards from '../../../../../components/homeScreenComponents/ServicesCarroussel';
 import SalaoServices from '../../Services';
 import SalaoEspecialistas from '../../Especialistas';
 import Rating from '../../Avaliacoes';
+import CustomButton from '../../../../../components/customButton';
+import Icon from '../../../../../configs/icons';
+import TabBarButton from '../../../../../components/TabBar';
 
 const { width } = Dimensions.get("window")
 //tela principal ao apertar em um salão
 export default function AddRating({ navigation }: any) {
     const scrollRef = useRef<ScrollView>(null);
     const [currentPage, setCurrentPage] = useState(0)
-    const {salon, loading} = useContext(SalonContext)!
+    const { salon, loading } = useContext(SalonContext)!
     const pages = [<SalaoServices />, <SalaoEspecialistas />, <Rating />]
 
-   
+
     return (
-        
-            <View style={styles.container}>
+
+        <View style={styles.container}>
+            <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
+                {/* IMagem */}
+                <View style={styles.SalaoImagem}>
+                    <Image source={{ uri: salon?.image }} style={{ width: "100%", height: "100%" }} />
+                    <CustomButton
+                        Icon={<Ionicons name="arrow-back" size={24} color="white" />}
+                        border='Circle'
+                        type='absolute'
+                        width={50}
+                        height={50}
+                        style={{ zIndex: 3, backgroundColor: "#ffffff90", borderWidth: 1, borderColor: "#ffffff99" }}
+                        onPress={() => navigation.goBack()}
+                    />
+
+                </View>
+                {/* -------------------- */}
+
+
                 <View style={styles.modalContainer}>
 
                     <View style={styles.SalaoInfoText}>
                         <Text style={styles.SalaoNome}>{salon?.name}</Text>
                         <Text style={styles.SalaoSubTitle}>{salon?.description}</Text>
                     </View>
-                    
+
                     <View style={styles.SalaoLocContainer}>
                         <View style={styles.SalaoLocText}><MaterialIcons name='location-on' size={20} color={colors.primary} /><Text> {salon?.addres}</Text></View>
                         <View style={styles.SalaoLocText}><FontAwesome5 name='clock' size={20} color={colors.primary} /><Text>Opera entre | {salon?.opHour}</Text></View>
@@ -54,9 +77,9 @@ export default function AddRating({ navigation }: any) {
                             iconRadius={55}
                             height={100}
                             textSize={15}
-                            bold={false} 
-                            
-                            />
+                            bold={false}
+
+                        />
                         <ServicesCards
                             icon={<MaterialIcons name='contacts' size={20} color={colors.secondary} />}
                             text='Contato'
@@ -94,24 +117,43 @@ export default function AddRating({ navigation }: any) {
 
 
 
-                    <ScrollView
-                        style={styles.salaoNavigationScroll}
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        overScrollMode='never'
-                        contentContainerStyle={styles.salaoNavigationOptions}
-
-                    >
-
-                        
-
-                    </ScrollView>
 
                 </View>
-                
-            </View>
+                <View style={{ alignItems: "center", paddingHorizontal: 20, paddingVertical: 50, borderBottomWidth: 1, borderBottomRightRadius: 20, borderBottomLeftRadius: 20 }}>
+                    <Text style={{ fontSize: 20, fontFamily: font.poppins.bold }}>Sua avaliação final desse serviço</Text>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
+                        <TouchableOpacity>
+                            <Icon.AntDesign name='star' size={40} />
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <Icon.AntDesign name='star' size={40} />
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <Icon.AntDesign name='star' size={40} />
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <Icon.AntDesign name='star' size={40} />
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <Icon.AntDesign name='star' size={40} />
+                        </TouchableOpacity>
 
-    
+                    </View>
+                </View>
+                <View style={{ padding: 20, paddingVertical: 40 }}>
+                    <Text style={{ fontFamily: font.poppins.bold, fontSize: 20 }}>Adicione um comentário</Text>
+                    <View style={{padding: 5}}>
 
+                        <TextInput style={{ backgroundColor: colors.white, borderWidth: 1, borderRadius: 10, borderColor: colors.lightGray, minHeight: 200 }}>
+
+                        </TextInput>
+                        <View style={{ flexDirection: "row", paddingVertical: 40, gap: 20, alignItems: 'center' }}>
+                            <Icon.Entypo name='camera' size={24} /><Text>Adicione uma foto</Text>
+                        </View>
+                    </View>
+                </View>
+            </ScrollView>
+            <TabBarButton title='enviar' />
+        </View>
     )
 }
