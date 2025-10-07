@@ -21,20 +21,20 @@ import colors, { font } from '../../../../../configs/theme'
 import ServicesCards from '../../../../../components/homeScreenComponents/ServicesCarroussel';
 import SalaoServices from '../../Services';
 import SalaoEspecialistas from '../../Especialistas';
-import Rating from '../../Avaliacoes';
 import CustomButton from '../../../../../components/customButton';
 import Icon from '../../../../../configs/icons';
 import TabBarButton from '../../../../../components/TabBar';
-
+import {Rating} from '../../../../../context/salonContext';
+import { AuthContext } from '../../../../../context/auth';
 const { width } = Dimensions.get("window")
 //tela principal ao apertar em um salão
 export default function AddRating({ navigation }: any) {
-    const scrollRef = useRef<ScrollView>(null);
-    const [currentPage, setCurrentPage] = useState(0)
     const { salon, loading } = useContext(SalonContext)!
-    const pages = [<SalaoServices />, <SalaoEspecialistas />, <Rating />]
-
-
+    const [rating, setRating] = useState<Rating>()
+    const {user} = useContext(AuthContext)!
+    let _ratingNum: string;
+    let _ratingComment: string;
+    // console.log("renderizou tela add avaliação")
     return (
 
         <View style={styles.container}>
@@ -122,20 +122,24 @@ export default function AddRating({ navigation }: any) {
                 <View style={{ alignItems: "center", paddingHorizontal: 20, paddingVertical: 50, borderBottomWidth: 1, borderBottomRightRadius: 20, borderBottomLeftRadius: 20 }}>
                     <Text style={{ fontSize: 20, fontFamily: font.poppins.bold }}>Sua avaliação final desse serviço</Text>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-                        <TouchableOpacity>
-                            <Icon.AntDesign name='star' size={40} />
+                        <TouchableOpacity onPress={()=> setRating(prev => ({...prev as any,  value: 1 }))}>
+                            <Icon.AntDesign name='star' size={40} color={rating?.value >= 1 ? colors.primary: colors.lightGray}/>
                         </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Icon.AntDesign name='star' size={40} />
+
+                        <TouchableOpacity onPress={()=> setRating(prev => ({ ...prev as any,  value: 2 }))}>
+                            <Icon.AntDesign name='star' size={40} color={rating?.value >= 2 ? colors.primary: colors.lightGray} />
                         </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Icon.AntDesign name='star' size={40} />
+
+                        <TouchableOpacity onPress={()=> setRating(prev => ({ ...prev as any,  value: 3 }))}>
+                            <Icon.AntDesign name='star' size={40} color={rating?.value >= 3 ? colors.primary: colors.lightGray}/>
                         </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Icon.AntDesign name='star' size={40} />
+
+                        <TouchableOpacity onPress={()=> setRating(prev => ({...prev as any,  value: 4}))}>
+                            <Icon.AntDesign name='star' size={40} color={rating?.value >= 4 ? colors.primary: colors.lightGray}/>
                         </TouchableOpacity>
-                        <TouchableOpacity>
-                            <Icon.AntDesign name='star' size={40} />
+                        
+                        <TouchableOpacity onPress={()=> setRating(prev => ({ ...prev as any,  value: 5 }))}> 
+                            <Icon.AntDesign name='star' size={40} color={rating?.value == 5 ? colors.primary: colors.lightGray}/>
                         </TouchableOpacity>
 
                     </View>
@@ -144,16 +148,18 @@ export default function AddRating({ navigation }: any) {
                     <Text style={{ fontFamily: font.poppins.bold, fontSize: 20 }}>Adicione um comentário</Text>
                     <View style={{padding: 5}}>
 
-                        <TextInput style={{ backgroundColor: colors.white, borderWidth: 1, borderRadius: 10, borderColor: colors.lightGray, minHeight: 200 }}>
+                        <TextInput style={{ backgroundColor: colors.white, borderWidth: 1, borderRadius: 10, borderColor: colors.lightGray, minHeight: 200 }}
+                        onChangeText={(text)=> {_ratingComment = text, console.log(_ratingComment)}}
+                        >
 
                         </TextInput>
-                        <View style={{ flexDirection: "row", paddingVertical: 40, gap: 20, alignItems: 'center' }}>
+                        <TouchableOpacity style={{ flexDirection: "row", paddingVertical: 40, gap: 20, alignItems: 'center' }}>
                             <Icon.Entypo name='camera' size={24} /><Text>Adicione uma foto</Text>
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </ScrollView>
-            <TabBarButton title='enviar' />
+            <TabBarButton title='enviar' onPress={()=>{setRating(prev => ({...prev as any, comment: _ratingComment})), console.log(rating)}}/>
         </View>
     )
 }

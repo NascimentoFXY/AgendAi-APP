@@ -12,7 +12,7 @@ interface Salon {
     owner: string,
     name: string,
     opHour?: any,
-    rating?: Ratings,
+    rating?: Rating,
     addres?: string,
     specialists?: Specialists[],
     services?: Services,
@@ -21,9 +21,9 @@ interface Salon {
     image?: any
 
 }
-interface Ratings {
+export interface Rating {
     sender: string,
-    ratingPoint: number,
+    value: any,
     comment: string,
 
 }
