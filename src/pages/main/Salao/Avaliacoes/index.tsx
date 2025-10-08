@@ -11,9 +11,10 @@ import {
     StyleSheet
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
-import {useNavigation} from '@react-navigation/native'
-import colors from '../../../../configs/theme';
+import { useNavigation } from '@react-navigation/native'
+import colors, { font } from '../../../../configs/theme';
 import { RatingComments } from '../../../../components/Salao/RatingScreenComps';
+import { SalonContext } from 'context/salonContext';
 
 const colorSet = {
     color: {
@@ -27,7 +28,9 @@ const colorSet = {
 
 const { width } = Dimensions.get("window")
 export default function Rating() {
-    const navigation= useNavigation()
+    const navigation = useNavigation<any>()
+
+    const { ratings, setRatingFilter, ratingFilter } = React.useContext(SalonContext)!
     return (
         <ScrollView
             overScrollMode='never'
@@ -45,7 +48,7 @@ export default function Rating() {
                     <View style={styles.header}>
                         <Text style={styles.title}>Avaliações</Text>
 
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={()=> navigation.navigate("AddRating")}>
+                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => navigation.navigate("AddRating")}>
                             <Feather name="edit" size={18} color={colorSet.color.primary} />
                             <Text style={{ color: colorSet.color.primary, marginLeft: 5, fontSize: 16 }}>Avaliar</Text>
                         </TouchableOpacity>
@@ -53,24 +56,11 @@ export default function Rating() {
                 </View>
 
                 {/* Search Section */}
-                <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
-                    <View style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        backgroundColor: colorSet.lightGray,
-                        borderRadius: 50,
-                        paddingHorizontal: 15,
-                        paddingVertical: 8,
-                        borderColor: colorSet.gray,
-                        borderWidth: 1,
-                    }}>
-                        <Ionicons name="search-outline" size={20} color={colorSet.darkGray} />
-                        <TextInput
-                            placeholder="Procurar por avaliações"
-                            placeholderTextColor={colorSet.darkGray}
-                            style={{ marginLeft: 10, fontSize: 16, flex: 1 }}
-                        />
-                    </View>
+                <View style={{ paddingHorizontal: 20, paddingTop: 10 }}>
+                   <Text
+                   style={{ fontSize: 16, fontFamily: font.poppins.medium, marginBottom: 10 }}>
+                    Filtrar por:
+                   </Text>
                 </View>
 
 
@@ -80,91 +70,62 @@ export default function Rating() {
                 horizontal
                 nestedScrollEnabled={true}
                 style={{ flexDirection: 'row', paddingLeft: 20, marginBottom: 20 }}>
+
+
+
                 <TouchableOpacity style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    backgroundColor: colorSet.lightGray,
+                    backgroundColor: ratingFilter === "desc" ? colorSet.color.primary : colorSet.lightGray,
                     borderRadius: 20,
                     paddingHorizontal: 15,
                     paddingVertical: 8,
                     marginRight: 10,
-                }}>
-                    <Feather name="filter" size={18} color={colorSet.darkGray} />
-                    <Text style={{ marginLeft: 5, color: colorSet.text }}>Filtro</Text>
+                }}
+                    onPress={() => { setRatingFilter && setRatingFilter("desc"); console.log("filtro recentes") }}>
+
+                    <Text style={{ color: ratingFilter === "desc" ? colors.white : colorSet.text, fontWeight: ratingFilter === "desc" ? 'bold' : "normal" }}>Recentes</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={{
-                    backgroundColor: colorSet.color.primary,
+                    backgroundColor: ratingFilter === "asc" ? colorSet.color.primary : colorSet.lightGray,
                     borderRadius: 20,
                     paddingHorizontal: 15,
                     paddingVertical: 8,
-                    marginRight: 10,
-                }}>
-                    <Text style={{ color: colors.background, fontWeight: 'bold' }}>Recentes</Text>
+                    marginRight: 10,}}
+                    onPress={() => { setRatingFilter && setRatingFilter("asc"); console.log("filtro antigos") }}>
+
+                    <Text style={{ color: ratingFilter === "asc" ? colors.white : colorSet.text, fontWeight: ratingFilter === "asc" ? 'bold' : "normal" }}>Antigos</Text>
+
                 </TouchableOpacity>
 
                 <TouchableOpacity style={{
-                    backgroundColor: colorSet.lightGray,
+                    backgroundColor: ratingFilter === "withPhotos" ? colorSet.color.primary : colorSet.lightGray,
                     borderRadius: 20,
                     paddingHorizontal: 15,
-                    paddingVertical: 8,
-                    marginRight: 10,
-                }}>
-                    <Text style={{ color: colorSet.text }}>Antigos</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={{
-                    backgroundColor: colorSet.lightGray,
-                    borderRadius: 20,
-                    paddingHorizontal: 15,
-                    paddingVertical: 8,
-                }}>
-                    <Text style={{ color: colorSet.text }}>Com fotos</Text>
+                    paddingVertical: 8,}}
+                    onPress={() => { setRatingFilter && setRatingFilter("withPhotos"); console.log("filtro com fotos") }}>
+                    <Text style={{color: ratingFilter === "withPhotos" ? colors.white : colorSet.text, fontWeight: ratingFilter === "withPhotos" ? 'bold' : "normal"}}>Com fotos</Text>
                 </TouchableOpacity>
             </ScrollView>
 
-            <RatingComments
-                name="Quandale Dingle"
-                followers="33 Seguidores"
-                rating="5.0"
-                time="8 horas atrás"
-                comment="Fui aí cortar meu cabelo, super recomendo o lugar. Me atenderam muito bem, apesar de eu ser careca."
-            />
-            <RatingComments
-                name="Amanda B. Silva"
-                followers="15 Seguidores"
-                rating="5.0"
-                time="10 horas atrás"
-                comment="Excelente serviço! Adorei o corte e a cor do meu cabelo. O atendimento foi impecável."
-            />
-            <RatingComments
-                name="João Dias"
-                followers="50 Seguidores"
-                rating="5.0"
-                time="1 dia atrás"
-                comment="Amei o corte!"
-            />
-            <RatingComments
-                name="Maria Souza"
-                followers="78 Seguidores"
-                rating="4.5"
-                time="1 semana atrás"
-                comment="Muito bom o atendimento, mas o agendamento demorou um pouco."
-            />
-            <RatingComments
-                name="Roberto Santos"
-                followers="23 Seguidores"
-                rating="5.0"
-                time="2 semanas atrás"
-                comment="Melhor barbearia da região!"
-            />
-            <RatingComments
-                name="Ana Clara"
-                followers="5 Seguidores"
-                rating="5.0"
-                time="3 semanas atrás"
-                comment="Fui muito bem atendida. Ótimo custo benefício."
-            />
+            {/*------------------ Ratings List Section ----------------------------*/}
+            {ratings.length === 0 && (
+                <View style={{ alignItems: 'center', marginTop: 25, marginBottom: 50, paddingHorizontal: 20 }}>
+                    <Text style={{ fontSize: 16, color: colorSet.darkGray, textAlign: 'center' }}>
+                        Nenhuma avaliação encontrada. Seja o primeiro a avaliar este salão!
+                    </Text>
+                </View>
+            )}
+            {ratings.map((rating) => (
+                <RatingComments
+                    id={rating.sender}
+                    key={rating.id}
+                    name={rating.sender.name}
+                    rating={rating.value}
+                    time={new Date(rating.createdAt?.seconds * 1000).toLocaleDateString()}
+                    comment={rating?.comment || ""}
+                    image={rating?.image || null}
+                />))}
+
         </ScrollView>
     );
 }
@@ -176,8 +137,8 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 24,
-        fontWeight: 'bold',
         color: '#000',
+        fontFamily: font.poppins.bold
     },
     header: {
         flexDirection: 'row',

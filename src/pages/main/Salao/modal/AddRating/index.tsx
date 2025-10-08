@@ -24,17 +24,29 @@ import SalaoEspecialistas from '../../Especialistas';
 import CustomButton from '../../../../../components/customButton';
 import Icon from '../../../../../configs/icons';
 import TabBarButton from '../../../../../components/TabBar';
-import {Rating} from '../../../../../context/salonContext';
+import { Rating } from '../../../../../context/salonContext';
 import { AuthContext } from '../../../../../context/auth';
+import pickImage from 'configs/pickImage';
 const { width } = Dimensions.get("window")
 //tela principal ao apertar em um salão
 export default function AddRating({ navigation }: any) {
-    const { salon, loading } = useContext(SalonContext)!
+    const { salon, loading, addRatingToSalon } = useContext(SalonContext)!
     const [rating, setRating] = useState<Rating>()
-    const {user} = useContext(AuthContext)!
-    let _ratingNum: string;
-    let _ratingComment: string;
+    const { user } = useContext(AuthContext)!
     // console.log("renderizou tela add avaliação")
+
+    function sendAllData(){
+        if(rating?.value){
+            const data: Rating ={
+                ...rating,
+                image: rating?.image || null,
+                comment: rating?.comment || "",
+                sender: user?.id
+            }
+            addRatingToSalon(data)
+            navigation.goBack()
+        }
+    }
     return (
 
         <View style={styles.container}>
@@ -122,44 +134,52 @@ export default function AddRating({ navigation }: any) {
                 <View style={{ alignItems: "center", paddingHorizontal: 20, paddingVertical: 50, borderBottomWidth: 1, borderBottomRightRadius: 20, borderBottomLeftRadius: 20 }}>
                     <Text style={{ fontSize: 20, fontFamily: font.poppins.bold }}>Sua avaliação final desse serviço</Text>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", width: "100%" }}>
-                        <TouchableOpacity onPress={()=> setRating(prev => ({...prev as any,  value: 1 }))}>
-                            <Icon.AntDesign name='star' size={40} color={rating?.value >= 1 ? colors.primary: colors.lightGray}/>
+                        <TouchableOpacity onPress={() => setRating(prev => ({ ...prev as any, value: 1 }))}>
+                            <Icon.AntDesign name='star' size={40} color={rating?.value >= 1 ? colors.primary : colors.lightGray} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={()=> setRating(prev => ({ ...prev as any,  value: 2 }))}>
-                            <Icon.AntDesign name='star' size={40} color={rating?.value >= 2 ? colors.primary: colors.lightGray} />
+                        <TouchableOpacity onPress={() => setRating(prev => ({ ...prev as any, value: 2 }))}>
+                            <Icon.AntDesign name='star' size={40} color={rating?.value >= 2 ? colors.primary : colors.lightGray} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={()=> setRating(prev => ({ ...prev as any,  value: 3 }))}>
-                            <Icon.AntDesign name='star' size={40} color={rating?.value >= 3 ? colors.primary: colors.lightGray}/>
+                        <TouchableOpacity onPress={() => setRating(prev => ({ ...prev as any, value: 3 }))}>
+                            <Icon.AntDesign name='star' size={40} color={rating?.value >= 3 ? colors.primary : colors.lightGray} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={()=> setRating(prev => ({...prev as any,  value: 4}))}>
-                            <Icon.AntDesign name='star' size={40} color={rating?.value >= 4 ? colors.primary: colors.lightGray}/>
+                        <TouchableOpacity onPress={() => setRating(prev => ({ ...prev as any, value: 4 }))}>
+                            <Icon.AntDesign name='star' size={40} color={rating?.value >= 4 ? colors.primary : colors.lightGray} />
                         </TouchableOpacity>
-                        
-                        <TouchableOpacity onPress={()=> setRating(prev => ({ ...prev as any,  value: 5 }))}> 
-                            <Icon.AntDesign name='star' size={40} color={rating?.value == 5 ? colors.primary: colors.lightGray}/>
+
+                        <TouchableOpacity onPress={() => setRating(prev => ({ ...prev as any, value: 5 }))}>
+                            <Icon.AntDesign name='star' size={40} color={rating?.value == 5 ? colors.primary : colors.lightGray} />
                         </TouchableOpacity>
 
                     </View>
                 </View>
                 <View style={{ padding: 20, paddingVertical: 40 }}>
                     <Text style={{ fontFamily: font.poppins.bold, fontSize: 20 }}>Adicione um comentário</Text>
-                    <View style={{padding: 5}}>
+                    <View style={{ padding: 5 }}>
 
                         <TextInput style={{ backgroundColor: colors.white, borderWidth: 1, borderRadius: 10, borderColor: colors.lightGray, minHeight: 200 }}
-                        onChangeText={(text)=> {_ratingComment = text, console.log(_ratingComment)}}
+                            onChangeText={(text) => {setRating(prev => ({ ...prev as any, comment: text })); console.log(text)}}
                         >
-
                         </TextInput>
-                        <TouchableOpacity style={{ flexDirection: "row", paddingVertical: 40, gap: 20, alignItems: 'center' }}>
+
+                        <TouchableOpacity
+                            style={{ flexDirection: "row", paddingVertical: 40, gap: 20, alignItems: 'center' }}
+                            onPress={() => { pickImage().then((uri) => { setRating(prev => ({ ...prev as any, image: uri })) }) }}
+                        >
                             <Icon.Entypo name='camera' size={24} /><Text>Adicione uma foto</Text>
                         </TouchableOpacity>
+                        <View>
+                            {/* Imagem */}
+                            <Image source={{ uri: rating?.image }} style={{ width: 100, height: 100, borderRadius: 10 }} />
+                        </View>
                     </View>
                 </View>
             </ScrollView>
-            <TabBarButton title='enviar' onPress={()=>{setRating(prev => ({...prev as any, comment: _ratingComment})), console.log(rating)}}/>
+            <TabBarButton title='enviar'
+                onPress={sendAllData} />
         </View>
     )
 }

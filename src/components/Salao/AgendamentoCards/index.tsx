@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Switch } from 'react-native';
-import colors from '../../../configs/theme';
+import colors, { font } from '../../../configs/theme';
 // src/components/AgendamentoCard/types.ts
 interface AgendamentoCardProps {
   data?: string;
@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 600,
     color: '#333',
+    fontFamily: font.poppins.bold
   },
   lembreteContainer: {
     flexDirection: 'row',
@@ -124,6 +125,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginRight: 5,
     color: '#666',
+    fontFamily: font.poppins.regular
   },
   content: {
     flexDirection: 'row',
@@ -141,18 +143,21 @@ const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: 16,
-    fontWeight: 'bold',
+
     color: '#333',
+    fontFamily: font.poppins.bold
   },
   endereco: {
     fontSize: 12,
     color: '#666',
     marginTop: 2,
+    fontFamily: font.poppins.regular
   },
   idServico: {
     fontSize: 10,
     color: '#999',
     marginTop: 5,
+    fontFamily: font.poppins.regular
   },
   actions: {
     flexDirection: 'row',

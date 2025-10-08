@@ -12,6 +12,9 @@ import {
 
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons, AntDesign } from '@expo/vector-icons';
+import { useEffect, useState } from 'react';
+import { getUserNameById } from '../../../services/firebase'; // Importe sua função de busca
+import Icon from 'configs/icons';
 // import colors from '../../../configs/colors';
 const getInitials = (fullName: string): string => {
     // Se não houver nome, retorna uma string vazia para evitar erros
@@ -48,14 +51,25 @@ const colors = {
 };
 
 const { width } = Dimensions.get("window")
-export const RatingComments = ({ name, followers, rating, time, comment }: any) => {
+
+export const RatingComments = ({ id, followers, rating, time, comment, image }: any) => {
+    const [name, setName] = useState<string>("Usuário Desconhecido");
+    useEffect(() => {
+        const fetchName = async () => {
+            if (id) {
+                const fetchedName = await getUserNameById(id);
+                setName(fetchedName || "Usuário Desconhecido");
+            }
+        };
+        fetchName();
+    }, [id]);
     const initials = getInitials(name);
     const initialsSafe = initials && initials.trim() !== '' ? initials : 'U';
     // Componente para um único item de avaliação
     return (
         <View style={styles.reviewItem}>
             <View style={styles.reviewHeader}>
-                
+
                 {/* ImagePlaceholder */}
                 <View style={{
                     width: 45, height: 45, marginRight: 10, marginVertical: 5, borderRadius: 25,
@@ -63,25 +77,51 @@ export const RatingComments = ({ name, followers, rating, time, comment }: any) 
                 }}>
                     <Text style={{ color: '#fff', fontWeight: 'bold' }}>{initialsSafe}</Text>
                 </View>
-                
+
                 <View style={styles.reviewInfo}>
                     <Text style={{ fontWeight: 'bold', fontSize: 16, color: colors.text }}>{name}</Text>
                     <Text style={{ color: colors.darkGray }}>{followers}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <FontAwesome5 name="star" size={16} color={colors.color.primary} />
-                    <Text style={{ fontWeight: 'bold', fontSize: 16, marginLeft: 5, color: colors.text }}>{rating}</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: 16, marginLeft: 5, color: colors.text }}>{rating + ".0"}</Text>
                 </View>
                 <Text style={{ color: colors.darkGray, marginLeft: 10 }}>{time}</Text>
             </View>
-            <Text style={styles.reviewText}>{comment}</Text>
+           {comment && <Text style={styles.reviewText}>{comment}</Text>}
             <View style={{ flexDirection: 'row' }}>
-                <FontAwesome5 name="star" size={18} color={colors.color.primary} />
-                <FontAwesome5 name="star" size={18} color={colors.color.primary} />
-                <FontAwesome5 name="star" size={18} color={colors.color.primary} />
-                <FontAwesome5 name="star" size={18} color={colors.color.primary} />
-                <FontAwesome5 name="star" size={18} color={colors.color.primary} />
+                <Icon.AntDesign name="star" size={18} color={
+                    rating >= 1 ?
+                        colors.color.primary
+                        : colors.lightGray
+                } />
+                <Icon.AntDesign name="star" size={18} color={
+                    rating >= 2 ?
+                        colors.color.primary
+                        : colors.lightGray
+                } />
+                <Icon.AntDesign name="star" size={18} color={
+                    rating >= 3 ?
+                        colors.color.primary
+                        : colors.lightGray
+                } />
+                <Icon.AntDesign name="star" size={18} color={
+                    rating >= 4 ?
+                        colors.color.primary
+                        : colors.lightGray
+                } />
+                <Icon.AntDesign name="star" size={18} color={
+                    rating === 5 ?
+                        colors.color.primary
+                        : colors.lightGray
+                } />
+
             </View>
+            {image && (
+                <Image
+                    style={{ width: 100, height: 100, borderRadius: 10, marginTop: 10 }}
+                    source={{ uri: image }} />
+            )}
         </View>
     );
 };

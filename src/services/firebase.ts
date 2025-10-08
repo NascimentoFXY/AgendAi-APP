@@ -7,7 +7,7 @@
 import { initializeApp } from "firebase/app";
 
 import { getAuth, getReactNativePersistence, initializeAuth,} from "firebase/auth";
-import { getFirestore } from "@firebase/firestore";
+import { collection, getFirestore, doc, getDoc } from "@firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getStorage } from "firebase/storage";
 
@@ -28,3 +28,18 @@ export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 export const db = getFirestore();
+
+export async function getUserNameById(userId: string): Promise<string | null> {
+  try {
+    const userDocRef = doc(db, "users", userId); // referencia o documento específico
+    const userDoc = await getDoc(userDocRef);    // pega o documento
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      return data?.name ?? null;                 // retorna o nome ou null
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching user name:", error);
+    return null;
+  }
+}

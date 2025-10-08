@@ -13,6 +13,7 @@ import SalonProvider from './src/context/salonContext';
 import * as Font from "expo-font"
 import { useEffect, useState } from 'react';
 import MainScreen from './src/components/MainScreenLogo';
+import { font } from 'configs/theme';
 
 const getFonts = () => Font.loadAsync({
   'poppins-regular': require("./assets/fonts/poppins/Poppins-Regular.ttf"),
@@ -29,7 +30,11 @@ const getFonts = () => Font.loadAsync({
 });
 
 
- 
+
+// define a fonte padrão para todo o app
+(Text as any).defaultProps = (Text as any).defaultProps || {};
+(Text as any).defaultProps.style = { fontFamily: font.poppins.bold };
+
 
  
 

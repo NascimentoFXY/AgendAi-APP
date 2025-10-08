@@ -90,7 +90,14 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     }, [])
 
     //verifica se tem usuario
-
+    useEffect(()=>{
+        if(user){
+            setLoading(false)
+        }else if(user === null){
+            setLoading(true)
+            
+        }
+    },[user])
 //---------------------login-----------------------------------//
     const signIn = async (email: string, password: string) => {
         setLoading(true)

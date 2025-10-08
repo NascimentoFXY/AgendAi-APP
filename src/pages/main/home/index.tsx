@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../../context/auth';
 import {
     Dimensions,
@@ -17,7 +17,7 @@ import { Input } from '../../../components/input'; // Você pode manter esse se 
 import CustomButton from '../../../components/customButton';
 import InputWithIcons from '../../../components/InputIcons';
 import Carroussel from '../../../components/homeScreenComponents/carroussel';
-import colors from '../../../configs/theme';
+import colors, { font } from '../../../configs/theme';
 import ServicesCards from '../../../components/homeScreenComponents/ServicesCarroussel';
 import MainHeader from '../../../components/homeScreenComponents/header';
 import { ServiceCardsData, EspecialCardsData } from './components';
@@ -40,14 +40,14 @@ interface Salon {
 }
 
 export default function Home({ navigation }: any) {
-    console.log("renderizou") // teste de performance
+
     const { user } = useContext(AuthContext)!;
     const salonData = useContext(SalonContext)
     if (!user || !salonData) {
         // Exiba um carregamento ou redirecione para a tela de login
         return <ActivityIndicator />;
     }
-    const { salon, salonList, useSalon } = salonData
+    const { salon, salonList, useSalon, getAverageRating } = salonData
 
 
 
@@ -56,28 +56,50 @@ export default function Home({ navigation }: any) {
             <TouchableOpacity onPress={() => (navigation.navigate("Salao"), useSalon(salonId))} >
                 <View
                     style={styles.SaloesCards}>
-                    <Image source={{ uri: image }} style={{ resizeMode: "cover",position: "absolute", width: "100%", height: "100%" }} />
-                    
-                    
-                        <View style={styles.saloesHeart}>
-                            <FontAwesome5 name='heart' size={30} />
-                        </View>
-                  
-                   
-                        <View style={styles.saloesRating}>
-                            <MaterialIcons name='star' size={30} />
-                            <Text>{rating}</Text>
-                        </View>
+                    <Image source={{ uri: image }} style={{ resizeMode: "cover", position: "absolute", width: "100%", height: "100%" }} />
+
+
+                    <View style={styles.saloesHeart}>
+                        <FontAwesome5 name='heart' size={30} />
+                    </View>
+
+
+                    <View style={styles.saloesRating}>
+                        <MaterialIcons name='star' size={30} />
+                        <Text>{rating}</Text>
+                    </View>
                 </View>
             </TouchableOpacity>
         )
     }
+    const [averageRatings, setAverageRatings] = useState<{ [salonId: string]: number }>({});
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        const fetchAllAverages = async () => {
+            if (!salonList || salonList.length === 0) {
+                return;
+            }
+
+            const ratingsMap: { [salonId: string]: number } = {};
+
+            for (const salon of salonList) {
+                if (!getAverageRating) return;
+                const avg = await getAverageRating(salon);
+                ratingsMap[salon.id!] = avg;
+            }
+
+            setAverageRatings(ratingsMap);
+            setLoading(false);
+        };
+
+        fetchAllAverages();
+    }, [salonList]);
     return (
         <ScrollView contentContainerStyle={styles.container}>
             <MainHeader navigation={navigation} />
             <Text style={{
-                fontWeight: 800, textAlign: "center",
+                fontFamily: font.poppins.bold,
                 fontSize: 30,
                 padding: 20,
                 borderBottomWidth: 1,
@@ -142,11 +164,18 @@ export default function Home({ navigation }: any) {
                     cardsWidth={300}
                     cardsGap={20}
                     contentContainerStyle={{
-                        paddingHorizontal: 20
+                        paddingHorizontal: 20,
+                    
                     }}>
-                    {salonList?.map((key) => (
-                        <TopSaloesCardsData key={key.id} name={"aaa"} owner={"bbbbbb"} rating={"5.0"} salonId={key.id} image={key.image} />
+                    {!loading && salonList?.map((key) => (
+                        <TopSaloesCardsData key={key.id} name={"aaa"} owner={"bbbbbb"} rating={
+                            averageRatings[key.id!] === undefined ? (
+                                <ActivityIndicator size="small" color={colors.primary} />
+                            ) : (
+                                (averageRatings[key.id!] ?? 0).toFixed(1)
+                            )} salonId={key.id} image={key.image} />
                     ))}
+                    {loading && <ActivityIndicator size={70} style={{width: Dimensions.get("window").width, alignItems: "center"}} color={colors.primary} />}
                 </Carroussel>
                 <CustomButton
                     Icon={<Ionicons name="add" size={24} color={"#fff"} />}
