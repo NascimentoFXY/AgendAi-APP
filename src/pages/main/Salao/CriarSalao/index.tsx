@@ -18,7 +18,8 @@ import TabBarButton from '../../../../components/TabBar';
 import { SalonContext } from '../../../../context/salonContext';
 import { Image } from 'react-native';
 import { useState } from 'react';
-import * as ImagePicker from 'expo-image-picker';
+import pickImage from '../../../../configs/pickImage';
+
 
 
 export default function CreateSalon({ navigation }: any) {
@@ -33,28 +34,14 @@ export default function CreateSalon({ navigation }: any) {
         console.log(image)
     },[image])
 
-    const pickImage = async () => {
-        // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
-            allowsEditing: true,
-            aspect: [16, 9],
-            quality: 1,
-        });
-
-        console.log(result);
-
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
-        }
-    };
+    
 
     function Photo() {
         return (
 
             <TouchableOpacity
                 style={{ flex: 1, alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}
-                onPress={pickImage}
+                onPress={()=>{pickImage().then((uri)=>{setImage(uri as string)})}}
                 activeOpacity={0.8}
             >
                 {image ? (
