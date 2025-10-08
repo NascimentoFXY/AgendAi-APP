@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -15,8 +15,10 @@ import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, Materi
 import { styles } from './style';
 import colors from '../../../../configs/theme';
 import CustomButton from '../../../../components/customButton';
+import { ScheduleContext } from 'context/scheduleContext';
 
 export default function ScheduleFinal({ navigation }: any) {
+    const {createSchedule, scheduleData} = useContext(ScheduleContext)!
     return (
         <View style={styles.container}>
             <View style={styles.TopCurve} />
@@ -37,22 +39,18 @@ export default function ScheduleFinal({ navigation }: any) {
                 <View style={styles.content}>
                     <View style={styles.labelContainer}>
                         <Text style={styles.label}>Salão: </Text>
-                        <Text style={styles.label2}>La Mar</Text>
+                        <Text style={styles.label2}>{scheduleData.salonName}</Text>
                     </View>
 
                     <View style={styles.labelContainer}>
                         <Text style={styles.label}>Endereço: </Text>
-                        <Text style={styles.label2}>Rua Euclides Zalgo, Endereço 0293</Text>
-                    </View>
-
-                    <View style={styles.labelContainer}>
-                        <Text style={styles.label}>Nome: </Text>
-                        <Text style={styles.label2}> Johan liebert</Text>
+                        <Text style={styles.label2}>{`${(scheduleData.address).split(",")[0]}\n\n${(scheduleData.address).split(",")[1]}`}</Text>
+                       
                     </View>
 
                     <View style={styles.labelContainer}>
                         <Text style={styles.label}>Data de Reserva: </Text>
-                        <Text style={styles.label2}> La Mar</Text>
+                        <Text style={styles.label2}>{scheduleData.date}</Text>
                     </View>
                     <View style={styles.labelContainer}>
                         <Text style={styles.label}>Telefone: </Text>
@@ -61,7 +59,7 @@ export default function ScheduleFinal({ navigation }: any) {
 
                     <View style={styles.labelContainer}>
                         <Text style={styles.label}>Horario de Reserva:</Text>
-                        <Text style={styles.label2}> 07:00 horas da Manhã</Text>
+                        <Text style={styles.label2}> {scheduleData.time}</Text>
                     </View>
 
                     <View style={styles.labelContainer}>
@@ -74,7 +72,7 @@ export default function ScheduleFinal({ navigation }: any) {
 
             <View style={styles.Tab}>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('ScheduleConclusion')}
+                    onPress={() => {navigation.navigate('ScheduleConclusion'); createSchedule(scheduleData)}}
                     style={styles.TabBarButton}>
                     <Text style={{ color: "#fff" }}>Concluir</Text>
                 </TouchableOpacity>

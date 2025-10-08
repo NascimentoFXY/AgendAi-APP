@@ -14,6 +14,7 @@ import * as Font from "expo-font"
 import { useEffect, useState } from 'react';
 import MainScreen from './src/components/MainScreenLogo';
 import { font } from 'configs/theme';
+import Providers from 'context/providers/providers';
 
 const getFonts = () => Font.loadAsync({
   'poppins-regular': require("./assets/fonts/poppins/Poppins-Regular.ttf"),
@@ -31,20 +32,12 @@ const getFonts = () => Font.loadAsync({
 
 
 
-// define a fonte padrão para todo o app
-(Text as any).defaultProps = (Text as any).defaultProps || {};
-(Text as any).defaultProps.style = { fontFamily: font.poppins.bold };
-
-
- 
-
-
 export function PrivateRoute() {
   const { isAuthenticated, loading } = useContext(AuthContext)!;
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
       </View>
     )
@@ -58,7 +51,7 @@ export function PrivateRoute() {
 
 }
 export default function App() {
-   const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
     getFonts().then(() => setFontsLoaded(true));
@@ -67,19 +60,15 @@ export default function App() {
   if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <MainScreen/>
+        <MainScreen />
       </View>
     );
   }
   return (
     <NavigationContainer>
-      <AuthProvider>
-        <ChatProvider>
-          <SalonProvider>
-            <PrivateRoute />
-          </SalonProvider>
-        </ChatProvider>
-      </AuthProvider>
+      <Providers>
+        <PrivateRoute />
+      </Providers>
     </NavigationContainer>
   );
 

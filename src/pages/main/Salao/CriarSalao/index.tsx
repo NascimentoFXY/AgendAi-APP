@@ -27,24 +27,33 @@ export default function CreateSalon({ navigation }: any) {
     const { createSalon, setData } = useContext(SalonContext)!
 
 
-    useEffect(()=>{
+    useEffect(() => {
         setData({
             image: image
         })
-        console.log(image)
-    },[image])
+        console.log("as",image)
+    }, [image])
 
-    
+
 
     function Photo() {
         return (
 
             <TouchableOpacity
                 style={{ flex: 1, alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}
-                onPress={()=>{pickImage().then((uri)=>{setImage(uri as string)})}}
+                onPress={() => {
+                    try {
+                        pickImage()
+                            .then((uri) => {
+                                setImage(uri as string)
+                            })
+                    } catch (e) {
+                        console.log("deu ruim: " + e)
+                    }
+                }}
                 activeOpacity={0.8}
             >
-                {image ? (
+                {image!=undefined || image != null ? (
                     <>
                         <Image
                             source={{ uri: image }}

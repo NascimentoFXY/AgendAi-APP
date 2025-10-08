@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
     },
     contentContainer:{
         flex: 1,
-        width: "100%",
+        maxWidth: "100%",
         justifyContent: "center",
         alignItems: "center"
     },
@@ -71,11 +71,13 @@ export const styles = StyleSheet.create({
     label:{
         fontSize: 16,
         fontWeight: "bold",
+        textAlignVertical: "center",
         color: "#a0a0a0"
     },
     label2:{
         fontSize: 16,
         fontWeight: "bold",
+        textAlignVertical: "center"
         
     },
     labelContainer:{

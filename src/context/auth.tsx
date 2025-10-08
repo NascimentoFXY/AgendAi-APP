@@ -7,7 +7,7 @@ import {
 } from "firebase/auth";
 import React, { useState, useEffect, createContext, use } from "react";
 import { auth } from "../services/firebase";
-import { getFirestore, setDoc, doc, } from "firebase/firestore";
+import { getFirestore, setDoc, doc, getDoc, } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface User {
@@ -22,6 +22,7 @@ interface AuthContextType {
     signIn: (email: string, password: string) => Promise<void>;
     signOut: () => void;
     register: (name: string, email: string, password: string) => void;
+    refreshUserData: () => Promise<void>;
     isAuthenticated?: boolean;
     loading: boolean;
 }
@@ -58,47 +59,51 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         loadUser();
     }, [])
 
+    const refreshUserData = async () => {
+        if (!user?.id) return;
+
+        const docRef = doc(getFirestore(), "users", user.id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const userData = docSnap.data() as User;
+            setUser(userData);
+            await AsyncStorage.setItem('@agendaiApp:user', JSON.stringify(userData));
+        }
+    };
     // -----------------Verifica se o usuario esta logado------------------------//
     useEffect(() => {
-        setLoading(true)
+        setLoading(true);
+
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
-                const userToken = await firebaseUser.getIdToken()
-                const userData = {
-                    id: firebaseUser.uid,
-                    name: firebaseUser.displayName,
-                    email: firebaseUser.email,
-                    userToken,
-                }
-                setUser({
-                    id: firebaseUser.uid,
-                    name: firebaseUser.displayName || "",
-                    email: firebaseUser.email || "",
-                });
-                try {
-                    await AsyncStorage.setItem('@agendaiApp:user', JSON.stringify(userData));
-                } catch (err) {
-                    console.log("Erro ao salvar no AsyncStorage:", err);
-                }
-            } else {
-                await AsyncStorage.removeItem('@agendaiApp:user');
-                setUser(null);
-            }
-        });
-        setLoading(false)
-        return () => unsubscribe();
-    }, [])
+                const db = getFirestore();
+                const docRef = doc(db, "users", firebaseUser.uid);
+                const docSnap = await getDoc(docRef);
 
-    //verifica se tem usuario
-    useEffect(()=>{
-        if(user){
-            setLoading(false)
-        }else if(user === null){
-            setLoading(true)
-            
-        }
-    },[user])
-//---------------------login-----------------------------------//
+                const userData = docSnap.exists()
+                    ? docSnap.data() as User
+                    : {
+                        id: firebaseUser.uid,
+                        name: firebaseUser.displayName || "",
+                        email: firebaseUser.email || "",
+                    };
+
+                setUser(userData);
+
+                await AsyncStorage.setItem('@agendaiApp:user', JSON.stringify(userData));
+            } else {
+                setUser(null);
+                await AsyncStorage.removeItem('@agendaiApp:user');
+            }
+
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    //---------------------login-----------------------------------//
     const signIn = async (email: string, password: string) => {
         setLoading(true)
         try {
@@ -110,7 +115,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             alert("Falha ao fazer login. Verifique suas credenciais.");
         }
     }
-//--------------------------------cadastro-------------------------//
+    //--------------------------------cadastro-------------------------//
     const register = async (name: string, email: string, password: string) => {
         setLoading(true)
         try {
@@ -150,6 +155,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             register,
             isAuthenticated: !!user,
             loading: loading,
+            refreshUserData
         }}>
             {children}
         </AuthContext.Provider>

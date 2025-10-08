@@ -160,8 +160,9 @@ export default function AddRating({ navigation }: any) {
                     <Text style={{ fontFamily: font.poppins.bold, fontSize: 20 }}>Adicione um comentário</Text>
                     <View style={{ padding: 5 }}>
 
-                        <TextInput style={{ backgroundColor: colors.white, borderWidth: 1, borderRadius: 10, borderColor: colors.lightGray, minHeight: 200 }}
+                        <TextInput style={{textAlignVertical: "top", paddingHorizontal:20, backgroundColor: colors.white, borderWidth: 1, borderRadius: 10, borderColor: colors.lightGray, minHeight: 200 }}
                             onChangeText={(text) => {setRating(prev => ({ ...prev as any, comment: text })); console.log(text)}}
+                            placeholder='Deixe seu comentário aqui'
                         >
                         </TextInput>
 

@@ -22,6 +22,8 @@ import ChatProvider from "../context/chatContext";
 import UserSettings from "../pages/main/settings";
 import CreateSalon from "../pages/main/Salao/CriarSalao";
 import AddRating from "../pages/main/Salao/modal/AddRating";
+import ScheduleCancelConclusion from "pages/main/agenda/AgendaCanceledScreen";
+import Scheduling from "pages/main/Salao/modal/Agendamento";
 export default function MainRoutes({ navigation }: any) {
     const Stack = createNativeStackNavigator();
 
@@ -35,9 +37,11 @@ export default function MainRoutes({ navigation }: any) {
             <Stack.Screen name="AddRating" component={AddRating} />
             <Stack.Screen name="Settings" component={UserSettings} />
             <Stack.Screen name="ChatScreen" component={ChatScreen} />
+            <Stack.Screen name="Scheduling" component={Scheduling} />
             <Stack.Screen name="ScheduleFinal" component={ScheduleFinal} />
             <Stack.Screen name="ScheduleConclusion" component={ScheduleConclusion} />
             <Stack.Screen name="ScheduleCancelScreen" component={ScheduleCancelScreen} />
+            <Stack.Screen name="ScheduleCancelConclusion" component={ScheduleCancelConclusion} />
         </Stack.Navigator>
     );
 }

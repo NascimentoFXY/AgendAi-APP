@@ -53,6 +53,14 @@ export default function MainModal({ navigation }: any) {
           </View>
         )
       }
+
+      function parsedWorkSchedule() {
+        if (!salon?.workSchedule) return "Não definido";
+        const [startNum, endNum] = salon.workSchedule.split("-").map(Number);
+        const today = new Date();
+        const date = new Date(today);
+
+      }
     return (
         
             <View style={styles.container}>
@@ -65,7 +73,7 @@ export default function MainModal({ navigation }: any) {
                     
                     <View style={styles.SalaoLocContainer}>
                         <View style={styles.SalaoLocText}><MaterialIcons name='location-on' size={20} color={colors.primary} /><Text> {salon?.addres}</Text></View>
-                        <View style={styles.SalaoLocText}><FontAwesome5 name='clock' size={20} color={colors.primary} /><Text>Opera entre | {salon?.opHour}</Text></View>
+                        <View style={styles.SalaoLocText}><FontAwesome5 name='clock' size={20} color={colors.primary} /><Text>Opera entre | {salon?.opHour} -</Text></View>
                     </View>
                     <View style={styles.SalaoContacts}>
 

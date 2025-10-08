@@ -1,5 +1,5 @@
 
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -10,7 +10,8 @@ import {
     ScrollView,
     NativeSyntheticEvent,
     NativeScrollEvent,
-    ScrollViewProps
+    ScrollViewProps,
+    Image
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { styles } from '../../style';
@@ -21,42 +22,17 @@ import SalaoEspecialistas from '../../Especialistas';
 import Rating from '../../Avaliacoes';
 import ProfessionalCard from '../../../../../components/Salao/EspecialistaScreen';
 import { SalonContext } from '../../../../../context/salonContext';
+import { ScheduleContext, ScheduleParams } from 'context/scheduleContext';
+import TabBarButton from 'components/TabBar';
+import CustomButton from 'components/customButton';
+import { AuthContext } from 'context/auth';
 
 const scrollProps = {
     showsHorizontalScrollIndicator: false,
     horizontal: true,
     snapToInterval: 110,
 }
-const DayItems: any = [];
-for (let i = 0; i < 30; i++) {
-    DayItems.push({
-        id: `DI-${i + 1}`,
-        content:
-            <TouchableOpacity activeOpacity={0.8} style={styles.cards}>
-                <Text style={styles.cardsText}>Dia</Text>
-                <Text style={styles.cardsText}>{i + 1} de Jun</Text>
-            </TouchableOpacity>
-    }
 
-    )
-}
-const HourItems: any = []
-const parsedHour = (i: any) => {
-    if (i < 10) return "0" + i;
-    else return i;
-
-}
-for (let i = 6; i < 20; i++) {
-    HourItems.push({
-        id: `HI-${i - 5}`,
-        content:
-            <TouchableOpacity activeOpacity={0.8} style={styles.cards}>
-                <Text style={styles.cardsText}>Horário</Text>
-                <Text style={styles.cardsText}>{parsedHour(i)}:00</Text>
-            </TouchableOpacity>
-    }
-    )
-}
 const especialistas: any = []
 for (let i = 6; i < 20; i++) {
     especialistas.push({
@@ -66,19 +42,167 @@ for (let i = 6; i < 20; i++) {
     })
 }
 
-export default function ScheduleModal() {
+export default function Scheduling({ navigation }: any) {
+    const { salon, loading } = useContext(SalonContext)!
+    const { user } = useContext(AuthContext)!
+    const { cancelSchedule, confirmActions } = useContext(ScheduleContext)!
+    const start = (salon?.opHour).split("-")[0] || "08:00";
 
-    const {salon, loading} = useContext(SalonContext)!
+    const end = (salon?.opHour).split("-")[1] || "18:00";
+
+
+    const [startHours, startMinutes] = start.split(":").map(Number);
+    const [endHours, endMinutes] = end.split(":").map(Number);
+    // converte tudo pra minutos
+    const startTotal = startHours * 60 + startMinutes;
+    const endTotal = endHours * 60 + endMinutes;
+    const interval = 5;
+    const HourItems: any = []
+    
+    
+    
+    const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [selectedDay, setSelectedDay] = useState<number | null>(null);
+    const [selectedSchedule, setSelectedSchedule] = useState<ScheduleParams>({
+        salonName: salon?.name || "undefined",
+        salonId: salon?.id || "undefined",
+        userId: user?.id || "undefined",
+        date: null,
+        time: selectedTime || "undefined",
+        address: salon?.addres || "undefined",
+        status: "active",
+        
+    });
+    useEffect(() => {
+        console.log("selectedSchedule", selectedSchedule)
+    },[selectedSchedule])
+
+    for (let t = startTotal; t <= endTotal; t += interval) {
+        const hours = Math.floor(t / 60);
+        const minutes = t % 60;
+        const formattedTime = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+        const isSelected = selectedTime === formattedTime;
+        HourItems.push({
+            id: `HI-${t}`,
+            content:
+                <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={() => {
+                        setSelectedTime(formattedTime);
+                        setSelectedSchedule((prev) => ({
+                            ...prev,
+                            time: `${formattedTime}`, // salva o dia formatado
+                        }));
+                    }} // seleciona o horário
+                    style={[
+                        styles.cards,
+                        {
+                            backgroundColor: isSelected ? colors.primary : "#FFF",
+                            borderColor: isSelected ? "#c16765ff" : colors.transparentLightGray,
+                            borderWidth: 2,
+                        },
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.cardsText,
+                            { color: isSelected ? "#FFF" : "#000" }, // texto branco se selecionado
+                        ]}
+                    >
+                        {formattedTime}
+                    </Text>
+                </TouchableOpacity>
+        }
+        )
+    }
+    const DayItems: any[] = [];
+    const today = new Date();
+    for (let i = 0; i < 30; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() + i);
+
+        const day = date.getDate();
+        const month = date.toLocaleString("pt-BR", { month: "short" }); // "out", "nov", etc
+        const weekDay = date.toLocaleString("pt-BR", { weekday: "short" }); // seg, ter, dom...
+        const isSunday = date.getDay() === 0; // 0 = domingo
+        const isSaturnday = date.getDay() === 6; // 0 = domingo
+        const isSelected = selectedDay === i;
+
+        DayItems.push({
+            id: `DI-${i}`,
+            content: (
+                <TouchableOpacity
+                    disabled={isSunday || isSaturnday} // desabilita domingos
+                    key={`DI-${i}`}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                        setSelectedDay(i);
+                        setSelectedSchedule((prev) => ({
+                            ...prev,
+                            date: `${weekDay} ${day} de ${month}`, // salva o dia formatado
+                        }));
+                    }}
+                    style={[
+                        styles.cards,
+                        {
+                            backgroundColor: isSunday || isSaturnday
+                                ? "#949494ff" // cinza (indisponível)
+                                : isSelected ? colors.primary : "#FFF",
+                            borderColor: isSelected ? "#c16765ff" : colors.transparentLightGray,
+                            borderWidth: 2,
+                        },
+                    ]}
+                >
+                    <Text style={[
+                        styles.cardsText,
+                        {
+                            color: isSunday || isSaturnday
+                                ? "#ffffffff"
+                                : isSelected ? "#FFF" : "#000"
+                        },
+                    ]}>
+                        {weekDay}
+                    </Text>
+                    <Text
+                        style={[
+                            styles.cardsText,
+                            {
+                                color: isSunday || isSaturnday
+                                    ? "#ffffffff"
+                                    : isSelected ? "#FFF" : "#000"
+                            },
+                        ]}
+                    >
+                        {day} de {month}
+                    </Text>
+                </TouchableOpacity>
+            ),
+        });
+    }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            {/* Imagem principal */}
+            <View style={styles.SalaoImagem}>
+                <Image source={{uri:salon?.image }} style={{width: "100%", height: "100%"}}/>
+                <CustomButton
+                    Icon={<Ionicons name="arrow-back" size={24} color="white" />}
+                    border='Circle'
+                    type='absolute'
+                    width={50}
+                    height={50}
+                    style={{ zIndex: 3, backgroundColor: "#ffffff90", borderWidth: 1, borderColor: "#ffffff99" }}
+                    onPress={() => (navigation.goBack())}
+                />
+
+            </View>
 
             <View style={styles.modalContainer}>
                 <View style={styles.SalaoInfoText}>
                     <Text style={styles.SalaoNome}>
                         {salon?.name}
                     </Text>
-                    <Text style={styles.SalaoSubTitle}>Cortes de Cabelo, Maquiagem, Massagem</Text>
+                    <Text style={styles.SalaoSubTitle}>{salon?.description}</Text>
                 </View>
                 <View style={styles.SalaoLocContainer}>
                     <View style={styles.SalaoLocText}>
@@ -144,7 +268,8 @@ export default function ScheduleModal() {
                 </View>
 
             </ScrollView>
-        </View>
+            <TabBarButton title='Reservar horário' onPress={()=>{confirmActions(selectedSchedule); navigation.navigate("ScheduleFinal")}} />
+        </SafeAreaView>
 
 
 

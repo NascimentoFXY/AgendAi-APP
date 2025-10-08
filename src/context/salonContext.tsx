@@ -18,6 +18,7 @@ interface Salon {
     services?: Services,
     description?: string,
     createdAt?: any,
+    workSchedule?: any,
     image?: any
 
 }
@@ -49,7 +50,8 @@ interface Info {
     bairro?: string;
     cidade?: string;
     horario?: string;
-    image?: any
+    image?: any;
+    escala?: any;
 }
 interface SalonContextType {
     salon: Salon | null,
@@ -94,6 +96,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         cidade: "",
         horario: "",
         image: "",
+        escala: "",
     })
     // console.log("lista de saloes", salonList, "\n")
 
@@ -128,6 +131,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                     addres: `${info.rua}, ${info.bairro}, ${info.cidade}`,
                     description: info.especialidades,
                     image: info.image,
+                    workSchedule: info.escala, // exemplo de escala de trabalho em inglês
                     createdAt: new Date(),
                     rating: 0,
                 })

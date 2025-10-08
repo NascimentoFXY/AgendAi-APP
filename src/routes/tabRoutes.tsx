@@ -60,6 +60,8 @@ export default function TabRoutes() {
                             routeName === 'ScheduleConclusion'||
                             routeName === 'Filter'||
                             routeName === 'ScheduleCancelScreen'||
+                            routeName === 'ScheduleCancelConclusion'||
+                            routeName === 'Scheduling'||
                             routeName === 'ChatScreen'||
                             routeName === 'CreateSalon'
                         ) {

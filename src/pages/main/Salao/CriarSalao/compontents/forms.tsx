@@ -8,13 +8,15 @@ import {
     TouchableOpacity,
     StyleSheet,
     ViewStyle,
-    TextStyle
+    TextStyle,
+
 } from 'react-native';
 import colors, { font } from '../../../../../configs/theme';
 import Icon from '../../../../../configs/icons';
 import Input from './Input/input';
 import Horario from './horario';
 import { SalonContext } from '../../../../../context/salonContext';
+import { Picker } from '@react-native-picker/picker';
 
 export interface DataProps {
     nome?: string;
@@ -28,6 +30,7 @@ export interface DataProps {
     image?: any;
     abertura?: string
     fechamento?: string
+    escala?: any;
 }
 export default function Forms() {
     const { setData, setIsValid } = useContext(SalonContext)!
@@ -77,25 +80,26 @@ export default function Forms() {
         }
     }
 
+    const [selectedValue, setSelectedValue] = useState("1-5");
     useEffect(() => {
         setData({
             nome: nome,
             especialidades: especialidades,
-            cnpj: cnpj
+            cnpj: cnpj,
+            escala: selectedValue,
         })
-    }, [nome, especialidades, cnpj])
+    }, [nome, especialidades, cnpj, selectedValue])
 
     useEffect(() => {
-       if(nome && especialidades && cnpj&& cep&& rua&& bairro&& cidade){
-        setValidInput(true)
-        setIsValid(true)
-        console.log(validInput)
-       }
-       else{
-        setValidInput(false)
-       }
+        if (nome && especialidades && cnpj && cep && rua && bairro && cidade) {
+            setValidInput(true)
+            setIsValid(true)
+            console.log(validInput)
+        }
+        else {
+            setValidInput(false)
+        }
     }, [nome, especialidades, cnpj, cep, rua, bairro, cidade, validInput])
-    
 
     return (
         <SafeAreaView style={styles.container}>
@@ -111,6 +115,13 @@ export default function Forms() {
                 <Input placeholder='Bairro' icon={false} value={bairro} style={{ fontSize: 15, width: "32%" }} />
             </View>
 
+            <Text style={styles.label}>Dias de funcionamento</Text>
+            <Picker style={{borderWidth: 12, height: 'auto'}} selectedValue={selectedValue} onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}>
+                <Picker.Item label="Seg. a Sex." value="1-5" />
+                <Picker.Item label="Seg. a Sáb." value="1-6" />
+                <Picker.Item label="Seg. a Dom." value="1-0" />
+                <Picker.Item label="Seg. a Seg." value="1-1" />
+            </Picker>
             <Text style={styles.label}>Horário de funcionamento</Text>
             <Horario />
         </SafeAreaView>

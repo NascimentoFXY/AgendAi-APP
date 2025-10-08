@@ -42,14 +42,13 @@ export default function SalaoScreen({ navigation }: any) {
             </View>
             {/* modal com informaçoes do salao */}
 
-            {
-                isScheduling ?
-                    <ScheduleModal/> : <MainModal/>
-            }
+            
+                <MainModal/>
+            
 
             <View style={styles.Tab}>
                 <TouchableOpacity
-                    onPress={() => isScheduling? navigation.navigate('ScheduleFinal'): setScheduling(true)}
+                    onPress={() => isScheduling? navigation.navigate('Scheduling'): setScheduling(true)}
                     style={styles.TabBarButton}>
                     <Text style={{ color: "#fff" }}>Reserve um Horário</Text>
                 </TouchableOpacity>

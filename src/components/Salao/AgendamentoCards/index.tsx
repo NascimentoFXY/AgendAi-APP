@@ -12,9 +12,9 @@ interface AgendamentoCardProps {
   endereco?: string;
   idServico?: string;
   imagem?: string; // Ou um tipo de imagem mais específico se necessário
-  tipoAgendamento?: 'proximo' | 'concluido' | 'cancelado';
+  tipoAgendamento?: 'active' | 'done' | 'canceled';
   onLembreteChange?: (newValue: boolean) => void;
-  onCancelar?: () => void;
+  onPress?: () => void;
   onVisaoGeral?: () => void;
 }
 const AgendamentoCard: React.FC<AgendamentoCardProps> = ({
@@ -26,7 +26,7 @@ const AgendamentoCard: React.FC<AgendamentoCardProps> = ({
   endereco,
   idServico,
   imagem,
-  onCancelar,
+  onPress,
   onVisaoGeral,
   onLembreteChange,
 }) => {
@@ -36,7 +36,7 @@ const AgendamentoCard: React.FC<AgendamentoCardProps> = ({
       <View style={styles.header}>
         <Text style={styles.headerText}>{data} - {hora}</Text>
         {
-          tipoAgendamento === 'proximo' &&
+          tipoAgendamento === 'active' &&
           <View style={styles.lembreteContainer}>
             <Text style={styles.lembreteText}>Me lembre</Text>
             <Switch
@@ -63,8 +63,8 @@ const AgendamentoCard: React.FC<AgendamentoCardProps> = ({
       {/* Rodapé com botões */}
 
       {
-      tipoAgendamento === 'proximo' && <View style={styles.actions}>
-        <TouchableOpacity style={styles.btnCancelar} onPress={onCancelar}>
+      tipoAgendamento === 'active' && <View style={styles.actions}>
+        <TouchableOpacity style={styles.btnCancelar} onPress={onPress}>
           <Text style={styles.CancelBtnText}>Cancelar</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnVisaoGeral} onPress={onVisaoGeral}>
@@ -73,16 +73,16 @@ const AgendamentoCard: React.FC<AgendamentoCardProps> = ({
       </View>
       }
       {
-      tipoAgendamento === 'concluido' && <View style={styles.actions}>
-        <TouchableOpacity style={styles.btnCancelar} onPress={onCancelar}>
+      tipoAgendamento === 'done' && <View style={styles.actions}>
+        <TouchableOpacity style={styles.btnCancelar} onPress={onPress}>
           <Text style={styles.CancelBtnText}>Visão Geral</Text>
         </TouchableOpacity>
     
       </View>
       }
       {
-      tipoAgendamento === 'cancelado' && <View style={styles.actions}>
-        <TouchableOpacity style={styles.btnCancelar} onPress={onCancelar}>
+      tipoAgendamento === 'canceled' && <View style={styles.actions}>
+        <TouchableOpacity style={styles.btnCancelar} onPress={onPress}>
           <Text style={styles.CancelBtnText}>Re-agendar</Text>
         </TouchableOpacity>
     

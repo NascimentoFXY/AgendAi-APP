@@ -9,7 +9,8 @@ import {
     TouchableOpacity,
     ScrollView,
     Image,
-    ActivityIndicator
+    ActivityIndicator,
+    RefreshControl
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { styles } from './style'
@@ -22,6 +23,7 @@ import ServicesCards from '../../../components/homeScreenComponents/ServicesCarr
 import MainHeader from '../../../components/homeScreenComponents/header';
 import { ServiceCardsData, EspecialCardsData } from './components';
 import { SalonContext } from '../../../context/salonContext';
+import { ScheduleContext } from 'context/scheduleContext';
 
 
 const cardsWidth = 400;
@@ -40,14 +42,23 @@ interface Salon {
 }
 
 export default function Home({ navigation }: any) {
-
-    const { user } = useContext(AuthContext)!;
+    const { user, refreshUserData } = useContext(AuthContext)!;
     const salonData = useContext(SalonContext)
-    if (!user || !salonData) {
+    const scheduleData = useContext(ScheduleContext)!
+    if (!user || !salonData || !scheduleData) {
         // Exiba um carregamento ou redirecione para a tela de login
         return <ActivityIndicator />;
     }
     const { salon, salonList, useSalon, getAverageRating } = salonData
+    const { createSchedule, schedules, schedule, useSchedule, cancelSchedule, fetchSchedules } = scheduleData!;
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        refreshUserData && refreshUserData();
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 500);
+    }, []);
 
 
 
@@ -96,7 +107,11 @@ export default function Home({ navigation }: any) {
         fetchAllAverages();
     }, [salonList]);
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+        >
             <MainHeader navigation={navigation} />
             <Text style={{
                 fontFamily: font.poppins.bold,
@@ -165,7 +180,7 @@ export default function Home({ navigation }: any) {
                     cardsGap={20}
                     contentContainerStyle={{
                         paddingHorizontal: 20,
-                    
+
                     }}>
                     {!loading && salonList?.map((key) => (
                         <TopSaloesCardsData key={key.id} name={"aaa"} owner={"bbbbbb"} rating={
@@ -175,7 +190,7 @@ export default function Home({ navigation }: any) {
                                 (averageRatings[key.id!] ?? 0).toFixed(1)
                             )} salonId={key.id} image={key.image} />
                     ))}
-                    {loading && <ActivityIndicator size={70} style={{width: Dimensions.get("window").width, alignItems: "center"}} color={colors.primary} />}
+                    {loading && <ActivityIndicator size={70} style={{ width: Dimensions.get("window").width, alignItems: "center" }} color={colors.primary} />}
                 </Carroussel>
                 <CustomButton
                     Icon={<Ionicons name="add" size={24} color={"#fff"} />}
