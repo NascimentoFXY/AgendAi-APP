@@ -11,7 +11,7 @@ export interface ScheduleParams {
     salonName: string;
     serviceId?: string;
     address: string;
-    date: any;
+    date: string;
     time: string;
     image?: string;
     status: string;
@@ -41,8 +41,10 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         try {
             const q = query(collection(db, 'users', user.id, 'schedules'));
             const snapshot = await getDocs(q);
+
             const fetchedSchedules = snapshot.docs.map(doc => doc.data() as ScheduleParams);
             setSchedules(fetchedSchedules);
+            // console.log("Fetched schedules:", fetchedSchedules);
             
         } catch (error) {
             console.error("Erro ao buscar agendamentos: ", error);
@@ -50,7 +52,9 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
     };
     useEffect(()=>{
         fetchSchedules(); 
-    },[]);
+    },[user]);
+
+
     const confirmActions = (data: ScheduleParams) => {
         try{
             setScheduleData({ ...data });
@@ -59,6 +63,7 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
             return null;
         }
     }
+
     const createSchedule = async (data: ScheduleParams) => {
         const scheduleRef = doc(collection(db, 'users', data.userId, 'schedules'));
         try {

@@ -1,7 +1,7 @@
 import React, { useState, createContext, use, useEffect, useContext } from "react";
 import { AuthContext } from "./auth";
 import { db } from "../services/firebase";
-import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc, deleteDoc, serverTimestamp, Timestamp } from "@firebase/firestore";
+import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc, deleteDoc, serverTimestamp, Timestamp, updateDoc } from "@firebase/firestore";
 import { User } from "@firebase/auth";
 import { DataProps } from "../pages/main/Salao/CriarSalao/compontents/forms";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
@@ -128,12 +128,12 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                     ownerID: user?.id,
                     ownerName: user?.name,
                     opHour: info?.horario,
-                    addres: `${info.rua}, ${info.bairro}, ${info.cidade}`,
+                    addres: `${info.rua}, ${info.bairro}, ${info.cidade}, ${info.cep}`,
                     description: info.especialidades,
                     image: info.image,
                     workSchedule: info.escala, // exemplo de escala de trabalho em inglês
                     createdAt: new Date(),
-                    rating: 0,
+                    rating: 5.0,
                 })
                 useSalon(salonRef.id)
                 alert(`${info.nome} Foi criado com sucesso!`)
@@ -208,7 +208,6 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     const fetchSalonRatings = async (salonId: string) => {
         if (!salonId) return;
 
-
         try {
             const ratingsRef = collection(db, "salon", salonId, "ratings");
             if (ratingFilter === "withPhotos") {
@@ -253,6 +252,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             if (ratings.length === 0) return 0;
             
             const total = ratings.reduce((sum, value) => sum + value, 0);
+
             return total / ratings.length;
         } catch (err) {
             console.error("Erro ao calcular média de avaliações:", err);

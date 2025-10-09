@@ -58,24 +58,24 @@ export default function Scheduling({ navigation }: any) {
     const endTotal = endHours * 60 + endMinutes;
     const interval = 5;
     const HourItems: any = []
-    
-    
-    
+
+
+
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [selectedDay, setSelectedDay] = useState<number | null>(null);
     const [selectedSchedule, setSelectedSchedule] = useState<ScheduleParams>({
         salonName: salon?.name || "undefined",
         salonId: salon?.id || "undefined",
         userId: user?.id || "undefined",
-        date: null,
+        date: "undefined",
         time: selectedTime || "undefined",
         address: salon?.addres || "undefined",
         status: "active",
-        
+
     });
     useEffect(() => {
         console.log("selectedSchedule", selectedSchedule)
-    },[selectedSchedule])
+    }, [selectedSchedule])
 
     for (let t = startTotal; t <= endTotal; t += interval) {
         const hours = Math.floor(t / 60);
@@ -124,15 +124,23 @@ export default function Scheduling({ navigation }: any) {
         const day = date.getDate();
         const month = date.toLocaleString("pt-BR", { month: "short" }); // "out", "nov", etc
         const weekDay = date.toLocaleString("pt-BR", { weekday: "short" }); // seg, ter, dom...
-        const isSunday = date.getDay() === 0; // 0 = domingo
-        const isSaturnday = date.getDay() === 6; // 0 = domingo
         const isSelected = selectedDay === i;
+
+        const workSchedule = salon?.workSchedule || "1-5"; 
+        const weekDayNumber = date.getDay();
+        const [startDay, endDay] = workSchedule.split("-").map(Number);
+
+        const isDisabled =
+            weekDayNumber === 0 || 
+            (startDay <= endDay
+                ? weekDayNumber < startDay || weekDayNumber > endDay
+                : weekDayNumber < startDay && weekDayNumber > endDay); // caso wrap-around, ex: 5-1
 
         DayItems.push({
             id: `DI-${i}`,
             content: (
                 <TouchableOpacity
-                    disabled={isSunday || isSaturnday} // desabilita domingos
+                    disabled={isDisabled} // desabilita domingos
                     key={`DI-${i}`}
                     activeOpacity={0.8}
                     onPress={() => {
@@ -145,7 +153,7 @@ export default function Scheduling({ navigation }: any) {
                     style={[
                         styles.cards,
                         {
-                            backgroundColor: isSunday || isSaturnday
+                            backgroundColor: isDisabled
                                 ? "#949494ff" // cinza (indisponível)
                                 : isSelected ? colors.primary : "#FFF",
                             borderColor: isSelected ? "#c16765ff" : colors.transparentLightGray,
@@ -156,7 +164,7 @@ export default function Scheduling({ navigation }: any) {
                     <Text style={[
                         styles.cardsText,
                         {
-                            color: isSunday || isSaturnday
+                            color: isDisabled
                                 ? "#ffffffff"
                                 : isSelected ? "#FFF" : "#000"
                         },
@@ -167,7 +175,7 @@ export default function Scheduling({ navigation }: any) {
                         style={[
                             styles.cardsText,
                             {
-                                color: isSunday || isSaturnday
+                                color: isDisabled
                                     ? "#ffffffff"
                                     : isSelected ? "#FFF" : "#000"
                             },
@@ -184,7 +192,7 @@ export default function Scheduling({ navigation }: any) {
         <SafeAreaView style={styles.container}>
             {/* Imagem principal */}
             <View style={styles.SalaoImagem}>
-                <Image source={{uri:salon?.image }} style={{width: "100%", height: "100%"}}/>
+                <Image source={{ uri: salon?.image }} style={{ width: "100%", height: "100%" }} />
                 <CustomButton
                     Icon={<Ionicons name="arrow-back" size={24} color="white" />}
                     border='Circle'
@@ -268,7 +276,7 @@ export default function Scheduling({ navigation }: any) {
                 </View>
 
             </ScrollView>
-            <TabBarButton title='Reservar horário' onPress={()=>{confirmActions(selectedSchedule); navigation.navigate("ScheduleFinal")}} />
+            <TabBarButton title='Reservar horário' onPress={() => { confirmActions(selectedSchedule); navigation.navigate("ScheduleFinal") }} />
         </SafeAreaView>
 
 

@@ -104,35 +104,39 @@ export default function Agenda({ navigation }: any) {
                         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                     } >
                     {/* ==============================PRÓXIMOS ======================================== */}
-                    {schedules.filter((item) => item.status === "active").map((item, index) => (
-                        <AgendamentoCard
-                            key={item.id}
-                            imagem={item.image}
-                            idServico={"#" + item.id}
-                            titulo={item.salonName}
-                            tipoAgendamento={item.status as 'active' | 'done' | 'canceled'}
-                            endereco={item.address}
-                            data={item.date}
-                            hora={item.time}
-                            onLembreteChange={(newValue) => handleSwitchChange(index, newValue)}
-                            onPress={async () => {
+                    {schedules.filter((item) => item.status === "active").map((item, index) => {
+                        return (
+                            // console.log("Schedule item:", JSON.stringify(item, null, 2)),
 
-                                try {
+                            <AgendamentoCard
+                                key={item.id}
+                                imagem={item.image}
+                                idServico={"#" + item.id}
+                                titulo={item.salonName}
+                                tipoAgendamento={item.status as 'active' | 'done' | 'canceled'}
+                                endereco={item.address}
+                                data={item.date}
+                                hora={item.time}
+                                onLembreteChange={(newValue) => handleSwitchChange(index, newValue)}
+                                onPress={async () => {
 
-                                    await useSchedule(item.id).then((res) => {
-                                        console.log("Schedule usado: ", res?.salonName);
-                                        navigation.navigate("Home", { screen: "ScheduleCancelScreen" });
-                                    }).catch((error) => {
-                                        console.error("Erro ao usar agendamento: ", error);
-                                    });
+                                    try {
+
+                                        await useSchedule(item.id).then((res) => {
+                                            console.log("Schedule usado: ", res?.salonName);
+                                            navigation.navigate("Home", { screen: "ScheduleCancelScreen" });
+                                        }).catch((error) => {
+                                            console.error("Erro ao usar agendamento: ", error);
+                                        });
+                                    }
+                                    catch (error) {
+                                        console.error("Erro ao navegar para cancelar agendamento: ", error);
+                                    }
                                 }
-                                catch (error) {
-                                    console.error("Erro ao navegar para cancelar agendamento: ", error);
                                 }
-                            }
-                            }
-                        />
-                    ))}
+                            />
+                        )
+                    })}
                 </ScrollView>
                 <ScrollView style={{ width: width }} >
                     {/* ==============================CONCLUÍDOS======================================== */}

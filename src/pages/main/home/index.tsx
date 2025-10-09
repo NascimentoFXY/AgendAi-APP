@@ -91,7 +91,6 @@ export default function Home({ navigation }: any) {
             if (!salonList || salonList.length === 0) {
                 return;
             }
-
             const ratingsMap: { [salonId: string]: number } = {};
 
             for (const salon of salonList) {
