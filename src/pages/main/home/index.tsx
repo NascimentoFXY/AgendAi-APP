@@ -24,6 +24,7 @@ import MainHeader from '../../../components/homeScreenComponents/header';
 import { ServiceCardsData, EspecialCardsData } from './components';
 import { SalonContext } from '../../../context/salonContext';
 import { ScheduleContext } from 'context/scheduleContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 const cardsWidth = 400;
@@ -74,10 +75,20 @@ export default function Home({ navigation }: any) {
                         <FontAwesome5 name='heart' size={30} />
                     </View>
 
+                    <LinearGradient
+                        colors={['rgba(255, 255, 255, 0)', '#000000ff']} // degrade roxo > rosa > laranja
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={styles.linearGradient}
+                        />
+                    
+                    <View style={styles.cardBottom}>
 
-                    <View style={styles.saloesRating}>
-                        <MaterialIcons name='star' size={30} />
-                        <Text>{rating}</Text>
+                        <View style={styles.saloesRating}>
+                            <MaterialIcons name='star' size={30} />
+                            <Text>{rating}</Text>
+                        </View>
+                        <Text style={styles.cardTitle} numberOfLines={1} lineBreakMode='tail'>{name}</Text>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -182,7 +193,7 @@ export default function Home({ navigation }: any) {
 
                     }}>
                     {!loading && salonList?.map((key) => (
-                        <TopSaloesCardsData key={key.id} name={"aaa"} owner={"bbbbbb"} rating={
+                        <TopSaloesCardsData key={key.id} name={key.name} owner={"bbbbbb"} rating={
                             averageRatings[key.id!] === undefined ? (
                                 <ActivityIndicator size="small" color={colors.primary} />
                             ) : (

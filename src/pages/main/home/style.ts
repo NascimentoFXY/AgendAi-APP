@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import colors, { font } from "../../../configs/theme";
+import { LinearGradient } from "expo-linear-gradient";
 
 export const styles = StyleSheet.create({
 
@@ -68,9 +69,25 @@ export const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "row",
-        position: "absolute",
-        bottom: 10,
-        right: 10
+    },
+    cardBottom:{
+        flexDirection: "row-reverse",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop: "auto",
+        padding: 10,
+        paddingLeft: 20,
+    },
+    cardTitle:{
+        fontFamily: font.poppins.bold,
+        fontSize: 15,
+        color: colors.white,
+        shadowColor: colors.primary,
+        shadowOffset: { width: 5, height: 5 },
+        shadowOpacity: 1,
+        shadowRadius: 10,
+        elevation: 5,
+        width: 130,
     },
     saloesHeart: {
         backgroundColor: "#fff",
@@ -86,5 +103,13 @@ export const styles = StyleSheet.create({
     link: {
         color: colors.primary,
     },
+    linearGradient:{
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 100,
+     
+    }
 })
 

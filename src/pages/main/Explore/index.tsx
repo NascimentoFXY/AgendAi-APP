@@ -3,6 +3,7 @@ import Icon from 'configs/icons';
 import colors, { font } from 'configs/theme';
 import { AuthContext } from 'context/auth';
 import { SalonContext } from 'context/salonContext';
+import { useUserLocation } from 'context/userLocation';
 import React, { useContext, useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
@@ -25,12 +26,16 @@ interface Salon {
 
 }
 export default function Explore({ navigation }: any) {
-
+    const {location, setLocation} = useUserLocation();
+    const userLocation = {
+        latitude: location?.coords.latitude || -23.55052,
+        longitude: location?.coords.longitude || -46.633308,
+    }
     const getCoordinates = async (address: string) => {
         const apiKey = 'AIzaSyDa-bdUYrEY94QiQ8RVqLlcHK7HNRhSSz0';
         const cep = "06786350"
         const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
-        console.log(url)
+        // console.log(url)
         const response = await fetch(url);
         const data = await response.json();
 
@@ -89,11 +94,16 @@ export default function Explore({ navigation }: any) {
         <View style={styles.container}>
             <MapView
                 style={styles.map}
+                followsUserLocation={true}
+                showsUserLocation={true}
+                showsMyLocationButton={true}
+                
                 initialRegion={{
-                    latitude: -23.55052, // exemplo: São Paulo
-                    longitude: -46.633308,
-                    latitudeDelta: 0.05,
-                    longitudeDelta: 0.05,
+                    latitude: userLocation.latitude, 
+                    longitude: userLocation.longitude,
+
+                    latitudeDelta: 0.005,
+                    longitudeDelta: 0.005,
                 }}
             >
 
@@ -104,6 +114,8 @@ export default function Explore({ navigation }: any) {
                         coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
                         title={marker.title}
                         description={marker.addres}
+                        pinColor={colors.primary}
+                        
 
                     />
                 ))}
