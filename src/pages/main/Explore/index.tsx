@@ -7,6 +7,7 @@ import { useUserLocation } from 'context/userLocation';
 import React, { useContext, useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
+import { getCoordinates } from 'services/geocodeAPI';
 
 interface Salon {
     id?: string
@@ -31,22 +32,7 @@ export default function Explore({ navigation }: any) {
         latitude: location?.coords.latitude || -23.55052,
         longitude: location?.coords.longitude || -46.633308,
     }
-    const getCoordinates = async (address: string) => {
-        const apiKey = 'AIzaSyDa-bdUYrEY94QiQ8RVqLlcHK7HNRhSSz0';
-        const cep = "06786350"
-        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
-        // console.log(url)
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.status === 'OK') {
-            const { lat, lng } = data.results[0].geometry.location;
-            return { latitude: lat, longitude: lng };
-        } else {
-            console.error('Erro no geocoding:', data.status);
-            return null;
-        }
-    };
+    
     const { user } = useContext(AuthContext)!
     const [selectedMarker, setSelectedMarker] = useState<Salon | null>(null);
     const { salon, salonList, getAverageRating, useSalon } = useContext(SalonContext)!

@@ -3,6 +3,10 @@
 # dependencies
 node_modules/
 
+
+# api
+src/services/geocodeAPI.ts
+
 # Expo
 .expo/
 dist/
