@@ -24,12 +24,14 @@ import CreateSalon from "../pages/main/Salao/CriarSalao";
 import AddRating from "../pages/main/Salao/modal/AddRating";
 import ScheduleCancelConclusion from "pages/main/agenda/AgendaCanceledScreen";
 import Scheduling from "pages/main/Salao/modal/Agendamento";
+import CompletePerfil from "pages/completePerfil";
 export default function MainRoutes({ navigation }: any) {
     const Stack = createNativeStackNavigator();
 
     return (
 
         <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="Filter" component={Filters} />
             <Stack.Screen name="Salao" component={SalaoScreen} />
@@ -41,6 +43,7 @@ export default function MainRoutes({ navigation }: any) {
             <Stack.Screen name="ScheduleFinal" component={ScheduleFinal} />
             <Stack.Screen name="ScheduleConclusion" component={ScheduleConclusion} />
             <Stack.Screen name="ScheduleCancelScreen" component={ScheduleCancelScreen} />
+
             <Stack.Screen name="ScheduleCancelConclusion" component={ScheduleCancelConclusion} />
         </Stack.Navigator>
     );

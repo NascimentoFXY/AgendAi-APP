@@ -13,17 +13,28 @@ import FinalScreen from "../pages/initials/finalScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainRoutes from "./homeRoutes";
 import TabRoutes from "./tabRoutes";
-
-export default function Routes() {
-   const Stack = createNativeStackNavigator();
+import CompletePerfil from "pages/completePerfil";
+export function CompleteProfile() {
+    
+    const Stack = createNativeStackNavigator();
 
     return (
-            <Stack.Navigator initialRouteName="Loading" screenOptions={{headerShown: false}}>
-                <Stack.Screen name="Loading" component={Loading}/>
-                <Stack.Screen name="Initial" component={InitialPrimary}/>
-                <Stack.Screen name="Login" component={Login}/>
-                <Stack.Screen name="Cadastro" component={Cadastro}/>
-                <Stack.Screen name="Fscreen" component={FinalScreen}/>
-            </Stack.Navigator>
+        <Stack.Navigator initialRouteName="CompletePerfil" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="CompletePerfil" component={CompletePerfil} />
+        </Stack.Navigator>
+    )
+}
+export default function Routes() {
+    const Stack = createNativeStackNavigator();
+
+    return (
+        <Stack.Navigator initialRouteName="Loading" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Loading" component={Loading} />
+            <Stack.Screen name="Initial" component={InitialPrimary} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Cadastro" component={Cadastro} />
+            <Stack.Screen name="Fscreen" component={FinalScreen} />
+
+        </Stack.Navigator>
     );
 }

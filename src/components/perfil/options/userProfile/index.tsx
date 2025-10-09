@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TextStyle, View, ViewStyle, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextStyle, View, ViewStyle, Text, TouchableOpacity, Image } from 'react-native';
 import colors from '../../../../configs/theme';
 
 interface UserOptionsProps {
@@ -33,7 +33,7 @@ const UserOptions: React.FC<UserOptionsProps> = ({
             style={[styles.container, style]}>
 
 
-            {image && (<View style={styles.image} />)}
+            {image && (<Image source={{uri: image}} style={styles.image} />)}
             {icon && (icon)}
 
             <View style={{flexDirection: "column"}}>

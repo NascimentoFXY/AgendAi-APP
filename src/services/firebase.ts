@@ -6,10 +6,11 @@
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 import { initializeApp } from "firebase/app";
 
-import { getAuth, getReactNativePersistence, initializeAuth,} from "firebase/auth";
-import { collection, getFirestore, doc, getDoc } from "@firebase/firestore";
+import { getAuth, getReactNativePersistence, initializeAuth, } from "firebase/auth";
+import { collection, getFirestore, doc, getDoc, addDoc, setDoc } from "@firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getStorage } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import { updateDoc } from "@firebase/firestore/lite";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDz02HFYTNFWquEMeHiniW086WgTPDqwKU",
@@ -30,9 +31,9 @@ export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
 
-export async function getUserNameById(userId: string): Promise<string | null> {
+export async function getUserNameById(salonID: string): Promise<string | null> {
   try {
-    const userDocRef = doc(db, "users", userId); // referencia o documento específico
+    const userDocRef = doc(db, "users", salonID); // referencia o documento específico
     const userDoc = await getDoc(userDocRef);    // pega o documento
     if (userDoc.exists()) {
       const data = userDoc.data();
@@ -42,5 +43,60 @@ export async function getUserNameById(userId: string): Promise<string | null> {
   } catch (error) {
     console.error("Error fetching user name:", error);
     return null;
+  }
+}
+
+export const uploadImageAndSaveToFirestore = async (imageUri: string, salonID: string) => {
+  try {
+    if (!imageUri || !salonID) return console.log("algo não esta sendoo salvo");
+    const response = await fetch(imageUri);
+    const blob = await response.blob(); // Converte o URI da imagem em um Blob
+
+    // Cria uma referência única no Storage (ex: 'images/salonID/timestamp_imageName.jpg')
+    const imageName = imageUri.substring(imageUri.lastIndexOf('/') + 1);
+    const storageRef = ref(storage, `images/salons/${salonID}/${Date.now()}_${imageName}`);
+
+    // Faz o upload da imagem
+    const snapshot = await uploadBytes(storageRef, blob);
+    alert('Imagem carregada com sucesso!' + JSON.stringify(snapshot));
+
+    // Obtém o URL de download público
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    console.log('Download URL:', downloadURL);
+
+
+    return downloadURL;
+  } catch (error) {
+    console.error("Erro ao carregar imagem ou salvar no Firestore:", error);
+    throw error;
+  }
+};
+
+export const uploadUserImage = async (URI: string, userID: string) => {
+  try {
+    if (!URI || !userID) {
+      console.log("deu ruim imagem do usuario")
+      return
+    }
+    const response = await fetch(URI);
+    const blob = await response.blob();
+    const imageName = URI.substring(URI.lastIndexOf('/') + 1);
+    const storageRef = ref(storage, `images/users/${userID}/${Date.now()}_${imageName}`);
+
+    // Faz o upload da imagem
+    const snapshot = await uploadBytes(storageRef, blob);
+    // alert('Imagem carregada com sucesso!' + JSON.stringify(snapshot));
+
+    // Obtém o URL de download público
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    console.log('Download URL:', downloadURL);
+
+
+    return downloadURL;
+
+  }
+  catch (error) {
+    console.error("Erro ao carregar imagem ou salvar no Firestore:", error);
+    throw error;
   }
 }

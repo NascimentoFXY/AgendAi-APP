@@ -1,6 +1,6 @@
 import React, { useState, createContext, use, useEffect, useContext } from "react";
 import { AuthContext } from "./auth";
-import { db } from "../services/firebase";
+import { db, uploadImageAndSaveToFirestore } from "../services/firebase";
 import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc, deleteDoc, serverTimestamp, Timestamp, updateDoc } from "@firebase/firestore";
 import { User } from "@firebase/auth";
 import { DataProps } from "../pages/main/Salao/CriarSalao/compontents/forms";
@@ -119,7 +119,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         if (isInputValid) {
             try {
                 const salonRef = doc(collection(db, "salon"))
-
+                
                 // console.log("tentando criar salão com: \n ", info.nome, info.cnpj, info.cep)
                 await setDoc((salonRef), {
                     id: salonRef.id,
@@ -127,10 +127,10 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                     name: info.nome,
                     ownerID: user?.id,
                     ownerName: user?.name,
+                    image: await uploadImageAndSaveToFirestore(info.image, salonRef.id),
                     opHour: info?.horario,
                     addres: `${info.rua}, ${info.bairro}, ${info.cidade}, ${info.cep}`,
                     description: info.especialidades,
-                    image: info.image,
                     workSchedule: info.escala, // exemplo de escala de trabalho em inglês
                     createdAt: new Date(),
                     rating: 5.0,

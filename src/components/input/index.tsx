@@ -34,6 +34,7 @@ export const Input = forwardRef((Props: InputProps, ref: Ref<TextInput> | null) 
         <Fragment>
             {title && <Text>{title}</Text>}
             <TextInput
+                value={value}
                 ref={ref}
                 style={[
                     styles.input,
@@ -45,12 +46,12 @@ export const Input = forwardRef((Props: InputProps, ref: Ref<TextInput> | null) 
                         height: height ?? "auto",
                     },
                     style
-                    
+
                 ]}
                 {...rest}
                 secureTextEntry={secureTextEntry}
                 onChangeText={onTextChange}
-                >
+            >
             </TextInput >
 
         </Fragment >

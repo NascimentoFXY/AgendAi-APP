@@ -117,13 +117,14 @@ export default function Rating() {
             )}
             {ratings.map((rating) => (
                 <RatingComments
-                    id={rating.sender}
+                    id={rating.sender.id}
                     key={rating.id}
                     name={rating.sender.name}
                     rating={rating.value}
                     time={new Date(rating.createdAt?.seconds * 1000).toLocaleDateString()}
                     comment={rating?.comment || ""}
                     image={rating?.image || null}
+                    userPhoto={rating.sender.image}
                 />))}
 
         </ScrollView>

@@ -37,6 +37,7 @@ export default function CreateSalon({ navigation }: any) {
 
 
     function Photo() {
+       
         return (
 
             <TouchableOpacity

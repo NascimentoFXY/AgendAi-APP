@@ -52,7 +52,7 @@ const colors = {
 
 const { width } = Dimensions.get("window")
 
-export const RatingComments = ({ id, followers, rating, time, comment, image }: any) => {
+export const RatingComments = ({ id, followers, rating, time, comment, image, userPhoto }: any) => {
     const [name, setName] = useState<string>("Usuário Desconhecido");
     useEffect(() => {
         const fetchName = async () => {
@@ -71,12 +71,14 @@ export const RatingComments = ({ id, followers, rating, time, comment, image }: 
             <View style={styles.reviewHeader}>
 
                 {/* ImagePlaceholder */}
-                <View style={{
+                {!userPhoto ? (<View style={{
                     width: 45, height: 45, marginRight: 10, marginVertical: 5, borderRadius: 25,
                     backgroundColor: '#E0777B', justifyContent: 'center', alignItems: 'center'
                 }}>
                     <Text style={{ color: '#fff', fontWeight: 'bold' }}>{initialsSafe}</Text>
-                </View>
+                </View>):(
+                    <Image style={{width: 45, marginRight: 10, marginVertical: 5, borderRadius: 25, height: 45, backgroundColor: '#E0777B'}} source={{uri: userPhoto}}/>
+                )}
 
                 <View style={styles.reviewInfo}>
                     <Text style={{ fontWeight: 'bold', fontSize: 16, color: colors.text }}>{name}</Text>

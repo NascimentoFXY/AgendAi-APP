@@ -37,7 +37,7 @@ export default function Perfil({navigation}: any) {
             </SafeAreaView>
             {/* =============================================== */}
             
-            <UserOptions image='o' title={user?.name} subTitle={user?.email} />
+            <UserOptions image={user?.image!} title={user?.name} subTitle={user?.email} />
             {/* Seu Perfil */}
             <UserOptions icon={<FontAwesome5 name='user' size={40} color={colors.secondary} />} title={"seu perfil"}
                 rightIcon={<AntDesign name='right' size={40} color={colors.primary} />}

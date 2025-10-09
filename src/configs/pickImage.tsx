@@ -1,11 +1,11 @@
 import * as ImagePicker from 'expo-image-picker';
 
-export default async function pickImage() {
+export default async function pickImage(aspectN1: number = 16, aspect2:number = 9) {
     try {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
             allowsEditing: true,
-            aspect: [16, 9],
+            aspect: [aspectN1, aspect2],
             quality: 1,
         });
 

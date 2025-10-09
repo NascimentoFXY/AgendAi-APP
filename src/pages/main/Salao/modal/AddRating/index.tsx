@@ -41,7 +41,7 @@ export default function AddRating({ navigation }: any) {
                 ...rating,
                 image: rating?.image || null,
                 comment: rating?.comment || "",
-                sender: user?.id
+                sender: user
             }
             addRatingToSalon(data)
             navigation.goBack()
