@@ -5,7 +5,7 @@ node_modules/
 
 
 # api
-src/services/geocodeAPI.ts
+# src/services/geocodeAPI.ts
 
 # Expo
 .expo/
