@@ -11,7 +11,8 @@ import {
     TextInput,
     TouchableOpacity,
     StyleSheet,
-    FlatList
+    FlatList,
+    Modal
 } from 'react-native';
 
 interface Address {
@@ -37,12 +38,12 @@ const ResultCard = ({ address, onPress }: { address: Address, onPress: (address:
     )
 }
 
-export default function Location() {
+export default function Location({navigation}: any) {
 
     const [textValue, setTextValue] = useState('');
     const [results, setResults] = useState<Address[]>([]);
+    const [modalVisible, setModalVisible] = useState(false);
     const { setLocation, getCurrentLocation } = useUserLocation();
-
     const searchAddresses = async (text: string) => {
         setTextValue(text);
         if (!text) return setResults([]);
@@ -53,6 +54,22 @@ export default function Location() {
                 `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(text)}&key=${apiKey}`
             );
             const data = await response.json();
+            const result = data.results[0];
+            const components = result.address_components;
+
+            // 🔹 Extrai a cidade
+            const cityComponent = components.find((c: any) =>
+                c.types.includes("administrative_area_level_2")
+            );
+            const city = cityComponent ? cityComponent.long_name : "Cidade não encontrada";
+
+            // 🔹 Extrai o CEP
+            const cepComponent = components.find((c: any) =>
+                c.types.includes("postal_code")
+            );
+            const cep = cepComponent ? cepComponent.long_name : "CEP não encontrado";
+
+
             if (data.status === 'OK') {
                 const addresses: Address[] = data.results.map((item: any) => ({
                     id: item.place_id,
@@ -61,8 +78,17 @@ export default function Location() {
                     longitude: item.geometry.location.lng,
                 }));
                 setResults(addresses);
+                return {
+                    cidade: city,
+                    cep,
+                    formattedAddress: result.formatted_address,
+                    latitude: result.geometry.location.lat,
+                    longitude: result.geometry.location.lng,
+                };
+
             } else {
                 setResults([]);
+                return null
             }
         } catch (error) {
             console.error('Erro ao buscar endereços:', error);
@@ -72,11 +98,33 @@ export default function Location() {
 
     const handleSelectAddress = (address: Address) => {
         setLocation({ latitude: address.latitude, longitude: address.longitude });
-        console.log('Localização definida:', address);
+        searchAddresses(address.formattedAddress)
+        setModalVisible(true)
+
     };
 
     return (
         <SafeAreaView style={styles.container}>
+            <Modal
+                visible={modalVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.overlay}>
+                    <View style={styles.alertBox}>
+                        <Text style={styles.title}>Localização definida!</Text>
+
+
+                        <TouchableOpacity
+                            style={styles.okButton}
+                            onPress={() => {setModalVisible(false), navigation.replace("Home")}}
+                        >
+                            <Text style={styles.okText}>OK</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Insira sua localização</Text>
 
@@ -96,10 +144,11 @@ export default function Location() {
                 </View>
 
                 <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", paddingVertical: 20 }}
-                onPress={async()=>{
-                    await getCurrentLocation().then((res)=>{
-                    searchAddresses(`${res.latitude}, ${res.longitude}`)
-                })}}
+                    onPress={async () => {
+                        await getCurrentLocation().then((res) => {
+                            searchAddresses(`${res.latitude}, ${res.longitude}`)
+                        })
+                    }}
                 >
                     <Icon.Entypo name="location-pin" color={colors.primary} size={30} />
                     <Text>Usar minha localização atual</Text>
@@ -162,5 +211,30 @@ const styles = StyleSheet.create({
     resultAddress: {
         fontFamily: font.poppins.medium,
         color: colors.lightGray
-    }
+    },
+    button: { backgroundColor: "#4A90E2", padding: 10, borderRadius: 8 },
+    buttonText: { color: "#fff", fontSize: 16 },
+    overlay: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    alertBox: {
+        backgroundColor: "#fff",
+        width: 280,
+        padding: 20,
+        borderRadius: 16,
+        alignItems: "center",
+        elevation: 5,
+    },
+    title: { fontSize: 20, fontWeight: "bold", marginBottom: 10 },
+    message: { fontSize: 16, textAlign: "center", marginBottom: 20 },
+    okButton: {
+        backgroundColor:colors.primary,
+        borderRadius: 8,
+        paddingVertical: 8,
+        paddingHorizontal: 24,
+    },
+    okText: { color: "#fff", fontWeight: "600" },
 });
