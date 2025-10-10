@@ -12,15 +12,19 @@ import {
     TouchableOpacity,
     StyleSheet,
     FlatList,
-    Modal
+    Modal,
+    ActivityIndicator
 } from 'react-native';
 
-interface Address {
-    id: string;
-    formattedAddress: string;
-    latitude: number;
-    longitude: number;
-}
+type Address = {
+    id?: any,
+    cidade?: any,
+    cep?: any,
+    formattedAddress?: any,
+    latitude?: any,
+    longitude?: any,
+    bairro?: any
+};
 
 const ResultCard = ({ address, onPress }: { address: Address, onPress: (address: Address) => void }) => {
     return (
@@ -38,67 +42,75 @@ const ResultCard = ({ address, onPress }: { address: Address, onPress: (address:
     )
 }
 
-export default function Location({navigation}: any) {
+export default function Location({ navigation }: any) {
 
     const [textValue, setTextValue] = useState('');
     const [results, setResults] = useState<Address[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
-    const { setLocation, getCurrentLocation } = useUserLocation();
-    const searchAddresses = async (text: string) => {
+    const { setLocation, getCurrentLocation, loading, searchAddresses } = useUserLocation();
+    const search = async (text: string) => {
         setTextValue(text);
         if (!text) return setResults([]);
-
         try {
-            const apiKey = 'AIzaSyDa-bdUYrEY94QiQ8RVqLlcHK7HNRhSSz0';
-            const response = await fetch(
-                `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(text)}&key=${apiKey}`
-            );
-            const data = await response.json();
-            const result = data.results[0];
-            const components = result.address_components;
-
-            // 🔹 Extrai a cidade
-            const cityComponent = components.find((c: any) =>
-                c.types.includes("administrative_area_level_2")
-            );
-            const city = cityComponent ? cityComponent.long_name : "Cidade não encontrada";
-
-            // 🔹 Extrai o CEP
-            const cepComponent = components.find((c: any) =>
-                c.types.includes("postal_code")
-            );
-            const cep = cepComponent ? cepComponent.long_name : "CEP não encontrado";
-
-
-            if (data.status === 'OK') {
-                const addresses: Address[] = data.results.map((item: any) => ({
-                    id: item.place_id,
-                    formattedAddress: item.formatted_address,
-                    latitude: item.geometry.location.lat,
-                    longitude: item.geometry.location.lng,
-                }));
-                setResults(addresses);
-                return {
-                    cidade: city,
-                    cep,
-                    formattedAddress: result.formatted_address,
-                    latitude: result.geometry.location.lat,
-                    longitude: result.geometry.location.lng,
-                };
-
-            } else {
-                setResults([]);
-                return null
-            }
-        } catch (error) {
-            console.error('Erro ao buscar endereços:', error);
+            const addresses = await searchAddresses(text);
+           setResults(addresses)
+           console.log(addresses)
+        } catch (er) {
+            console.log(er);
             setResults([]);
         }
+
+        // try {
+        //     const apiKey = 'AIzaSyDa-bdUYrEY94QiQ8RVqLlcHK7HNRhSSz0';
+        //     const response = await fetch(
+        //         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(text)}&key=${apiKey}`
+        //     );
+        //     const data = await response.json();
+        //     const result = data.results[0];
+        //     const components = result.address_components;
+
+        //     // 🔹 Extrai a cidade
+        //     const cityComponent = components.find((c: any) =>
+        //         c.types.includes("administrative_area_level_2")
+        //     );
+        //     const city = cityComponent ? cityComponent.long_name : "Cidade não encontrada";
+
+        //     // 🔹 Extrai o CEP
+        //     const cepComponent = components.find((c: any) =>
+        //         c.types.includes("postal_code")
+        //     );
+        //     const cep = cepComponent ? cepComponent.long_name : "CEP não encontrado";
+
+
+        //     if (data.status === 'OK') {
+        //         const addresses: Address[] = data.results.map((item: any) => ({
+        //             id: item.place_id,
+        //             formattedAddress: item.formatted_address,
+        //             latitude: item.geometry.location.lat,
+        //             longitude: item.geometry.location.lng,
+        //         }));
+        //         setResults(addresses);
+        //         return {
+        //             cidade: city,
+        //             cep,
+        //             formattedAddress: result.formatted_address,
+        //             latitude: result.geometry.location.lat,
+        //             longitude: result.geometry.location.lng,
+        //         };
+
+        //     } else {
+        //         setResults([]);
+        //         return null
+        //     }
+        // } catch (error) {
+        //     console.error('Erro ao buscar endereços:', error);
+        //     setResults([]);
+        // }
     };
 
     const handleSelectAddress = (address: Address) => {
         setLocation({ latitude: address.latitude, longitude: address.longitude });
-        searchAddresses(address.formattedAddress)
+        search(address.formattedAddress)
         setModalVisible(true)
 
     };
@@ -118,7 +130,7 @@ export default function Location({navigation}: any) {
 
                         <TouchableOpacity
                             style={styles.okButton}
-                            onPress={() => {setModalVisible(false), navigation.replace("Home")}}
+                            onPress={() => { setModalVisible(false), navigation.replace("Home") }}
                         >
                             <Text style={styles.okText}>OK</Text>
                         </TouchableOpacity>
@@ -132,7 +144,7 @@ export default function Location({navigation}: any) {
                     <Icon.Ionicons name='search' size={20} color={colors.lightGray} />
                     <TextInput
                         style={{ flex: 1 }}
-                        onChangeText={searchAddresses}
+                        onChangeText={search}
                         value={textValue}
                         placeholder='Endereço, CEP ou cidade'
                     />
@@ -145,8 +157,11 @@ export default function Location({navigation}: any) {
 
                 <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", paddingVertical: 20 }}
                     onPress={async () => {
-                        await getCurrentLocation().then((res) => {
-                            searchAddresses(`${res.latitude}, ${res.longitude}`)
+                        await getCurrentLocation().then(async (res) => {
+                            const result = await searchAddresses(`${res.latitude}, ${res.longitude}`)
+                            if(Array.isArray(result)){
+                                search(`${result[0].cidade}, ${result[0].bairro}, ${result[0].numero}`)
+                            }
                         })
                     }}
                 >
@@ -157,14 +172,14 @@ export default function Location({navigation}: any) {
 
             <Text style={{ marginBottom: 10 }}>Resultados</Text>
 
-            <FlatList
+            {!loading ? <FlatList
                 data={results}
                 keyExtractor={item => item.id}
                 renderItem={({ item }) => <ResultCard address={item} onPress={handleSelectAddress} />}
                 ListEmptyComponent={() => textValue.length > 0 ? (
                     <Text style={{ textAlign: 'center', marginTop: 20 }}>Nenhum endereço encontrado</Text>
                 ) : null}
-            />
+            /> : <ActivityIndicator size={50} color={colors.primary} style={{ justifyContent: "center", alignItems: "center", flex: 1 }} />}
         </SafeAreaView>
     );
 }
@@ -231,7 +246,7 @@ const styles = StyleSheet.create({
     title: { fontSize: 20, fontWeight: "bold", marginBottom: 10 },
     message: { fontSize: 16, textAlign: "center", marginBottom: 20 },
     okButton: {
-        backgroundColor:colors.primary,
+        backgroundColor: colors.primary,
         borderRadius: 8,
         paddingVertical: 8,
         paddingHorizontal: 24,
