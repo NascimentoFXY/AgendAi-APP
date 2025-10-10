@@ -29,10 +29,10 @@ export default function MainHeader({navigation}: any) {
 
                         <Text style={{ fontSize: 12, color: '#999' }}>Localização</Text>
 
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+                        <TouchableOpacity onPress={()=>{navigation.navigate("Location")}} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
                             <Ionicons name="location-sharp" size={24} color="#d77a7a" />
                             <Text style={{ fontSize: 14, fontWeight: '600', marginLeft: 4 }}>Taboão das Trevas, Brasil</Text>
-                        </View>
+                        </TouchableOpacity>
 
                     </View>
 

@@ -11,6 +11,8 @@ import { collection, getFirestore, doc, getDoc, addDoc, setDoc } from "@firebase
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { updateDoc } from "@firebase/firestore/lite";
+import { useContext } from "react";
+import { AuthContext } from "context/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDz02HFYTNFWquEMeHiniW086WgTPDqwKU",
@@ -30,7 +32,6 @@ export const db = getFirestore();
 export const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
 });
-
 export async function getUserNameById(salonID: string): Promise<string | null> {
   try {
     const userDocRef = doc(db, "users", salonID); // referencia o documento específico
@@ -46,6 +47,7 @@ export async function getUserNameById(salonID: string): Promise<string | null> {
   }
 }
 
+// const {user, updateUser} = useContext(AuthContext)!
 export const uploadImageAndSaveToFirestore = async (imageUri: string, salonID: string) => {
   try {
     if (!imageUri || !salonID) return console.log("algo não esta sendoo salvo");
@@ -73,15 +75,17 @@ export const uploadImageAndSaveToFirestore = async (imageUri: string, salonID: s
 };
 
 export const uploadUserImage = async (URI: string, userID: string) => {
+  console.log("ID usuario:",userID)
+  console.log("URI: ",URI)
+  if (!URI || !userID) {
+    console.log("deu ruim imagem do usuario")
+    return
+  }
   try {
-    if (!URI || !userID) {
-      console.log("deu ruim imagem do usuario")
-      return
-    }
     const response = await fetch(URI);
     const blob = await response.blob();
     const imageName = URI.substring(URI.lastIndexOf('/') + 1);
-    const storageRef = ref(storage, `images/users/${userID}/${Date.now()}_${imageName}`);
+    const storageRef = ref(storage, `images/users/${userID}`);
 
     // Faz o upload da imagem
     const snapshot = await uploadBytes(storageRef, blob);
@@ -90,8 +94,8 @@ export const uploadUserImage = async (URI: string, userID: string) => {
     // Obtém o URL de download público
     const downloadURL = await getDownloadURL(snapshot.ref);
     console.log('Download URL:', downloadURL);
-
-
+    // updateUser({image: downloadURL, isComplete: true})
+    
     return downloadURL;
 
   }

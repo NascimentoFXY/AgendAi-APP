@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, ReactNode, use, useEffect }
 import { auth, db } from 'services/firebase';
 import { AuthContext } from './auth';
 import { SalonContext } from './salonContext';
-import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc } from '@firebase/firestore';
+import { collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where } from '@firebase/firestore';
 
 export interface ScheduleParams {
     id?: string;
@@ -34,12 +34,12 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useContext(AuthContext)!;
     const { salon } = useContext(SalonContext)!;
     const [scheduleData, setScheduleData] = useState<ScheduleParams>();
-    
+
     const fetchSchedules = async () => {
         if (!user) return;
         // Lógica para buscar agendamentos do usuário
         try {
-            const q = query(collection(db, 'users', user.id, 'schedules'));
+            const q = query(collection(db, 'users', user.id, 'schedules'), orderBy("date", "asc"));
             const snapshot = await getDocs(q);
 
             const fetchedSchedules = snapshot.docs.map(doc => doc.data() as ScheduleParams);
@@ -47,7 +47,7 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
             // console.log("Fetched schedules:", fetchedSchedules);
             
         } catch (error) {
-            console.error("Erro ao buscar agendamentos: ", error);
+            throw error; 
         }
     };
     useEffect(()=>{
@@ -73,7 +73,8 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
                 id: scheduleRef.id,
                 salonId: data.salonId,
                 salonName: data.salonName,
-                status: 'active'
+                status: 'active',
+                
             });
             fetchSchedules();
             

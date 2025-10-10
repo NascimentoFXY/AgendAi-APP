@@ -1,11 +1,12 @@
+import CustomButton from 'components/customButton';
 import Carroussel from 'components/homeScreenComponents/carroussel';
 import Icon from 'configs/icons';
 import colors, { font } from 'configs/theme';
 import { AuthContext } from 'context/auth';
 import { SalonContext } from 'context/salonContext';
 import { useUserLocation } from 'context/userLocation';
-import React, { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, Dimensions, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, Dimensions, Text, ScrollView, Image, TouchableOpacity, FlatList, Button } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { getCoordinates } from 'services/geocodeAPI';
 
@@ -26,18 +27,42 @@ interface Salon {
     title: string;
 
 }
-export default function Explore({ navigation }: any) {
-    const {location, setLocation} = useUserLocation();
-    const userLocation = {
-        latitude: location?.coords.latitude || -23.55052,
-        longitude: location?.coords.longitude || -46.633308,
+const { width } = Dimensions.get("window");
+export default function ExploreWrapper({ navigation }: any) {
+    const [refreshKey, setRefreshKey] = useState(0);
+    return (
+        <View style={{ flex: 1 }}>
+            <CustomButton
+                Icon={<Icon.AntDesign name='reload' size={20} />}
+                type='absolute'
+                top={20}
+                left={20}
+                border='Circle'
+                style={{ zIndex: 99, elevation: 2, opacity: 0.8, backgroundColor: colors.background }}
+                onPress={() => { setRefreshKey(0); setRefreshKey(refreshKey + 1) }}
+            />
+            <Explore key={refreshKey} navigation={navigation} />
+        </View>
+    );
+}
+
+export function Explore({ navigation }: any) {
+    const { location } = useUserLocation();
+    let userLocation = {
+        latitude: location?.latitude || -23.55052,
+        longitude: location?.longitude || -46.633308,
     }
-    
-    const { user } = useContext(AuthContext)!
+
+    const { user, } = useContext(AuthContext)!
     const [selectedMarker, setSelectedMarker] = useState<Salon | null>(null);
     const { salon, salonList, getAverageRating, useSalon } = useContext(SalonContext)!
     const [markers, setMarkers] = useState<Salon[]>([]);
 
+    const mapRef = useRef<MapView>(null);
+    const scrollRef = useRef<FlatList>(null);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [show, setShow] = useState(true)
+    const [reload, setReload] = useState(1)
     useEffect(() => {
         const fetchMarkers = async () => {
             if (!salonList) return;
@@ -73,19 +98,36 @@ export default function Explore({ navigation }: any) {
         fetchMarkers();
     }, [salonList]);
 
-    const handleMarkerPress = (marker: Salon) => {
-        setSelectedMarker(marker);
+
+    const handleMarkerPress = (marker: Salon, index: number) => {
+        setSelectedIndex(index);
+
+        // Centraliza o mapa nesse marcador
+        mapRef.current?.animateToRegion(
+            {
+                latitude: marker.latitude,
+                longitude: marker.longitude,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.005,
+            },
+            350
+        );
+
+
     };
     return (
         <View style={styles.container}>
+
+
             <MapView
+                ref={mapRef}
                 style={styles.map}
-                followsUserLocation={true}
-                showsUserLocation={true}
-                showsMyLocationButton={true}
-                
+                followsUserLocation={show}
+                showsUserLocation={show}
+                showsMyLocationButton={show}
+
                 initialRegion={{
-                    latitude: userLocation.latitude, 
+                    latitude: userLocation.latitude,
                     longitude: userLocation.longitude,
 
                     latitudeDelta: 0.005,
@@ -95,48 +137,125 @@ export default function Explore({ navigation }: any) {
 
                 {markers.map((marker, index) => (
                     <Marker
-                        onPress={() => handleMarkerPress(marker)}
+                        onPress={() => handleMarkerPress(marker, index)}
                         key={index}
                         coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
                         title={marker.title}
                         description={marker.addres}
                         pinColor={colors.primary}
-                        
+
 
                     />
                 ))}
             </MapView>
 
             {/* Modal */}
-            <ScrollView style={{ position: 'absolute', bottom: 20, paddingHorizontal: 20 }} horizontal contentContainerStyle={{ gap: 10 }}>
+            {/* <ScrollView
+                ref={scrollRef}
+                style={styles.scrollContainer}
+                horizontal
+                contentContainerStyle={styles.scrollContent}
+            >
                 {salonList?.map((salon, index) => (
                     <TouchableOpacity
-                    activeOpacity={0.8}
-                    onPress={() => {
-                        useSalon(salon.id!);
-                        navigation.navigate("Home", { screen: "Salao" });
-                    }}
-                    style={{ backgroundColor: colors.background, width: 300, height: 200, borderRadius: 10, overflow: 'hidden' }} key={index}>
-                        <Image source={{ uri: salon.image }} style={{ width: '100%', height: 100, backgroundColor: colors.lightGray }} />
-                        <View style={{ borderRadius: 20, marginTop: -20, padding: 10, height: "100%", backgroundColor: colors.background }}>
-                            <Text style={{ fontFamily: font.poppins.bold }}> {salon.name}</Text>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 5 }}>
-                                <Icon.MaterialIcons name='location-pin' color={colors.primary} size={20} />
-                                <Text style={{ fontFamily: font.poppins.regular }}>{`${salon.addres?.split(",")[0]}, ${salon.addres?.split(",")[3]}`}</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, marginTop: 5 }}>
-                            <Text>5.0 (2k+ avaliações)</Text>
+                        activeOpacity={0.8}
+                        onPress={() => {
+                            let isPressed = false;
+                            console.log(isPressed)
+                            useSalon(salon.id!);
+                            handleMarkerPress(markers[index], index);
+                            isPressed ? navigation.navigate("Home", { screen: "Salao" }) : (isPressed = !isPressed);
+                            console.log(isPressed)
+                        }}
+                        style={styles.card}
+                        key={index}
+                    >
+                        <Image source={{ uri: salon.image }} style={styles.cardImage} />
+                        <View style={styles.cardContent}>
+                            <Text style={styles.salonName}>{salon.name}</Text>
 
-                                <Icon.Ionicons name='star' color={colors.primary} size={15} />
-                                <Icon.Ionicons name='star' color={colors.primary} size={15} />
-                                <Icon.Ionicons name='star' color={colors.primary} size={15} />
-                                <Icon.Ionicons name='star' color={colors.primary} size={15} />
-                                <Icon.Ionicons name='star' color={colors.primary} size={15} />
+                            <View style={styles.locationRow}>
+                                <Icon.MaterialIcons name="location-pin" color={colors.primary} size={20} />
+                                <Text style={styles.salonAddress}>
+                                    {`${salon.addres?.split(",")[0]}, ${salon.addres?.split(",")[3]}`}
+                                </Text>
+                            </View>
+
+                            <View style={styles.ratingRow}>
+                                <Text>5.0 (2k+ avaliações)</Text>
+                                <Icon.Ionicons name="star" color={colors.primary} size={15} />
+                                <Icon.Ionicons name="star" color={colors.primary} size={15} />
+                                <Icon.Ionicons name="star" color={colors.primary} size={15} />
+                                <Icon.Ionicons name="star" color={colors.primary} size={15} />
+                                <Icon.Ionicons name="star" color={colors.primary} size={15} />
                             </View>
                         </View>
                     </TouchableOpacity>
                 ))}
-            </ScrollView>
+            </ScrollView> */}
+            <FlatList
+                horizontal
+                data={salonList}
+                keyExtractor={(_, index) => index.toString()}
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.scrollContent}
+                style={styles.scrollContainer}
+                snapToInterval={width * 0.8 + 10} // trava no item
+                decelerationRate="fast"
+                onScroll={(e) => {
+                    const index = Math.round(e.nativeEvent.contentOffset.x / (width * 0.8 + 10));
+                    if (index !== selectedIndex) {
+                        setSelectedIndex(index);
+                        const marker = markers[index];
+                        if (marker) {
+                            mapRef.current?.animateToRegion(
+                                {
+                                    latitude: marker.latitude,
+                                    longitude: marker.longitude,
+                                    latitudeDelta: 0.005,
+                                    longitudeDelta: 0.005,
+                                },
+                                350
+                            );
+                        }
+                    }
+                }}
+                scrollEventThrottle={16}
+                renderItem={({ item: salon, index }) => (
+                    <TouchableOpacity
+                        activeOpacity={0.8}
+                        onPress={() => {
+                            useSalon(salon.id!);
+                            handleMarkerPress(markers[index], index);
+
+                        }}
+                        onLongPress={() => {
+                            navigation.navigate("Home", { screen: "Salao" });
+                        }}
+                        
+                        style={[styles.card]}
+                    >
+                        <Image source={{ uri: salon.image }} style={styles.cardImage} />
+                        <View style={styles.cardContent}>
+                            <Text style={styles.salonName}>{salon.name}</Text>
+
+                            <View style={styles.locationRow}>
+                                <Icon.MaterialIcons name="location-pin" color={colors.primary} size={20} />
+                                <Text style={styles.salonAddress}>
+                                    {`${salon.addres?.split(",")[0]}, ${salon.addres?.split(",")[3]}`}
+                                </Text>
+                            </View>
+
+                            <View style={styles.ratingRow}>
+                                <Text>5.0 (2k+ avaliações)</Text>
+                                {[...Array(5)].map((_, i) => (
+                                    <Icon.Ionicons key={i} name="star" color={colors.primary} size={15} />
+                                ))}
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                )}
+            />
 
         </View>
     );
@@ -149,5 +268,50 @@ const styles = StyleSheet.create({
     map: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
+    },
+    scrollContainer: {
+        position: "absolute",
+        bottom: 20,
+        paddingHorizontal: 20,
+    },
+    scrollContent: {
+        gap: 10,
+    },
+    card: {
+        backgroundColor: colors.background,
+        width: 300,
+        height: 200,
+        borderRadius: 10,
+        overflow: "hidden",
+    },
+    cardImage: {
+        width: "100%",
+        height: 100,
+        backgroundColor: colors.lightGray,
+    },
+    cardContent: {
+        borderRadius: 20,
+        marginTop: -20,
+        padding: 10,
+        height: "100%",
+        backgroundColor: colors.background,
+    },
+    salonName: {
+        fontFamily: font.poppins.bold,
+    },
+    locationRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 5,
+        marginTop: 5,
+    },
+    salonAddress: {
+        fontFamily: font.poppins.regular,
+    },
+    ratingRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 2,
+        marginTop: 5,
     },
 });

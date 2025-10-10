@@ -25,8 +25,8 @@ interface AuthContextType {
     signOut: () => void;
     register: (name: string, email: string, password: string) => void;
     refreshUserData: () => Promise<void>;
-    updateUser: (data: any)=> void;
-    setComplete: (value: boolean)=> void;
+    updateUser: (data: any) => void;
+    setComplete: (value: boolean) => void;
     isAuthenticated?: boolean;
     loading: boolean;
     isComplete: boolean;
@@ -38,8 +38,16 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-    const [isComplete, setComplete] = useState(false);
-  
+
+    const isComplete = !!user?.isComplete;
+    const setComplete = (value: boolean) => {
+        if (user) {
+            const updatedUser = { ...user, isComplete: value };
+            setUser(updatedUser);
+            AsyncStorage.setItem('@agendaiApp:user', JSON.stringify(updatedUser));
+        }
+    };
+
     //----------------------------verifica se ja tem um usuario no asyncStorage
 
     //persistência
@@ -66,7 +74,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         }
         loadUser();
     }, [])
-
     const refreshUserData = async () => {
         if (!user?.id) return;
 
@@ -85,6 +92,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
+                // console.log("useffect1: ", user?.isComplete)
                 const db = getFirestore();
                 const docRef = doc(db, "users", firebaseUser.uid);
                 const docSnap = await getDoc(docRef);
@@ -99,6 +107,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                     };
 
                 setUser(userData);
+                // console.log("useffect2: ", user?.isComplete)
                 setComplete(userData.isComplete ?? false)
                 await AsyncStorage.setItem('@agendaiApp:user', JSON.stringify(userData));
             } else {
@@ -117,17 +126,19 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const signIn = async (email: string, password: string) => {
         setLoading(true)
         try {
-            const cred = await signInWithEmailAndPassword(auth, email, password)
+            await signInWithEmailAndPassword(auth, email, password)
             setLoading(false)
-            alert("Bem vindo, " + cred.user.displayName + "!");
+            // alert("Bem vindo, " + cred.user.displayName + "!");
         } catch (error) {
             console.error("Erro ao fazer login:", error);
             alert("Falha ao fazer login. Verifique suas credenciais.");
+            setLoading(false)
         }
     }
     //--------------------------------cadastro-------------------------//
     const register = async (name: string, email: string, password: string) => {
         setLoading(true)
+        console.log("Cadastro1: ", isComplete)
         try {
             const cred = await createUserWithEmailAndPassword(auth, email, password);
             const db = getFirestore();
@@ -137,6 +148,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                 email: email,
                 name: cred.user.displayName,
                 id: cred.user.uid,
+                image: "",
                 isComplete: isComplete
             });
             setUser({
@@ -145,12 +157,14 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                 email: cred.user.email || email,
                 isComplete: isComplete
             })
+            console.log("Cadastro2: ", isComplete)
             alert("Bem vindo, " + cred.user.displayName?.split(" ")[0] + "!");
             setLoading(false)
         }
         catch (error) {
             console.error("Erro ao registrar usuário:", error);
             alert("Verifique suas credenciais.");
+            setLoading(false)
         }
     };
     //--------------------------logout------------------------//
@@ -159,14 +173,27 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         setUser(null);
     };
 
-    const updateUser = async (data: User) => {
-        setUser(prev => prev ? { ...prev, ...data } : null);
-        if (user) {
-            const db = getFirestore();
-            await setDoc(doc(db, "users", user.id), { ...user, ...data }, { merge: true });
-            await AsyncStorage.setItem('@agendaiApp:user', JSON.stringify({ ...user, ...data }));
+    const updateUser = async (data: Partial<User>) => {
+        
+        try{
+
+            setUser(prev => {
+                if (!prev) return null;
+                const updatedUser = { ...prev, ...data };
+                
+                // Atualiza Firestore e AsyncStorage usando o objeto atualizado
+                const db = getFirestore();
+                setDoc(doc(db, "users", prev.id), updatedUser, { merge: true });
+                AsyncStorage.setItem('@agendaiApp:user', JSON.stringify(updatedUser));
+                
+           
+                return updatedUser;
+            });
+        }catch(er){
+            console.log(er)
+        
         }
-    }
+    };
     //---------------------------------------------------------//
     return (
         <AuthContext.Provider value={{

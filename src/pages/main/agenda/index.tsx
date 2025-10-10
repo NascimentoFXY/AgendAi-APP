@@ -115,7 +115,7 @@ export default function Agenda({ navigation }: any) {
                                 titulo={item.salonName}
                                 tipoAgendamento={item.status as 'active' | 'done' | 'canceled'}
                                 endereco={item.address}
-                                data={item.date}
+                                data={item.date.split("|")[1]}
                                 hora={item.time}
                                 onLembreteChange={(newValue) => handleSwitchChange(index, newValue)}
                                 onPress={async () => {

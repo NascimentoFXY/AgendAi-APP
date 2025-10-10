@@ -42,7 +42,30 @@ interface Salon {
     services?: Services,
 }
 
-export default function Home({ navigation }: any) {
+
+export default function HomeWrapper({ navigation }: any) {
+    const [refreshing, setRefreshing] = useState(false);
+    const [refreshingState, setRefreshingState] = useState(0)
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setRefreshingState(0)
+        setTimeout(() => {
+            setRefreshing(false);
+            setRefreshingState(refreshingState + 1)
+        }, 500);
+    }, []);
+    return (
+        <ScrollView
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+        >
+
+            <Home key={refreshingState} navigation={navigation} />
+        </ScrollView>
+    )
+}
+export function Home({ navigation }: any) {
     const { user, refreshUserData } = useContext(AuthContext)!;
     const salonData = useContext(SalonContext)
     const scheduleData = useContext(ScheduleContext)!
@@ -52,14 +75,7 @@ export default function Home({ navigation }: any) {
     }
     const { salon, salonList, useSalon, getAverageRating } = salonData
     const { createSchedule, schedules, schedule, useSchedule, cancelSchedule, fetchSchedules } = scheduleData!;
-    const [refreshing, setRefreshing] = useState(false);
-    const onRefresh = React.useCallback(() => {
-        setRefreshing(true);
-        refreshUserData && refreshUserData();
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 500);
-    }, []);
+
 
 
 
@@ -67,6 +83,7 @@ export default function Home({ navigation }: any) {
         return (
             <TouchableOpacity onPress={() => (navigation.navigate("Salao"), useSalon(salonId))} >
                 <View
+
                     style={styles.SaloesCards}>
                     <Image source={{ uri: image }} style={{ resizeMode: "cover", position: "absolute", width: "100%", height: "100%" }} />
 
@@ -80,8 +97,8 @@ export default function Home({ navigation }: any) {
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
                         style={styles.linearGradient}
-                        />
-                    
+                    />
+
                     <View style={styles.cardBottom}>
 
                         <View style={styles.saloesRating}>
@@ -118,9 +135,7 @@ export default function Home({ navigation }: any) {
     }, [salonList]);
     return (
         <ScrollView contentContainerStyle={styles.container}
-            refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
+
         >
             <MainHeader navigation={navigation} />
             <Text style={{

@@ -2,35 +2,63 @@ import React, { createContext, useState, useContext, ReactNode, useEffect } from
 
 import * as Location from 'expo-location';
 
+type Coordinates = {
+    latitude: number;
+    longitude: number;
+};
 
 type UserLocationContextType = {
-    location: Location.LocationObject | null;
-    setLocation: (location: Location.LocationObject) => void;
+    location: Coordinates | null;
+    getCurrentLocation: () => Promise<any | null>
+    setLocation: (location: Coordinates | { useCurrent: true }) => Promise<void>;
+
 };
 
 
 const UserLocationContext = createContext<UserLocationContextType | undefined>(undefined);
 
 export const UserLocationProvider = ({ children }: { children: ReactNode }) => {
-    const [location, setLocation] = useState<Location.LocationObject | null>(null);
+    const [location, setLocationState] = useState<Coordinates | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
-    useEffect(() => {
-        async function getCurrentLocation() {
+    
+    async function getCurrentLocation() {
 
+        try {
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
-                setErrorMsg('Permission to access location was denied');
+                setErrorMsg('Permissão de acesso negada.');
                 return;
             }
 
-            let location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
+            const loc = await Location.getCurrentPositionAsync({});
+         
+            const coords = {
+                latitude: loc.coords.latitude,
+                longitude: loc.coords.longitude,
+            };
+            setLocationState(coords);
+            return coords
         }
+        catch (er) {
 
-        getCurrentLocation();
-    }, []);
+        }
+    };
+    // Função para setar localização manual ou via GPS
+    const setLocation = async (loc: Coordinates | { useCurrent: true }) => {
+        if ('useCurrent' in loc && loc.useCurrent) {
+            await getCurrentLocation();
+        } else {
+            setLocationState(loc as Coordinates);
+            console.log(loc)
+        }
+    };
+
+    // Pega localização do usuário assim que o app inicia
+    // useEffect(() => {
+    //     getCurrentLocation();
+    // }, []);
     return (
-        <UserLocationContext.Provider value={{ location, setLocation }}>
+        <UserLocationContext.Provider value={{ location, setLocation, getCurrentLocation }}>
             {children}
         </UserLocationContext.Provider>
     );

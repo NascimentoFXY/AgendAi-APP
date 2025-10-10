@@ -34,27 +34,14 @@ const getFonts = () => Font.loadAsync({
 
 export function PrivateRoute() {
   const { isAuthenticated, loading, isComplete } = useContext(AuthContext)!;
-  console.log("esta completo? ", isComplete)
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
-      </View>
-    )
+  // console.log("esta completo? ", isComplete)
+  if (loading) return <ActivityIndicator size="large" />;
+
+  if (isAuthenticated && !isComplete) {
+    return <CompleteProfile />;
   }
-  if(isAuthenticated && !isComplete){
-    return(
-      <>
-      <CompleteProfile/>
-      </>
-    )
-  }
-  return (
-    <>
-      {isAuthenticated && isComplete ?
-        <TabRoutes /> : <Routes />}
-    </>
-  )
+
+  return isAuthenticated && isComplete ? <TabRoutes /> : <Routes />;
 
 }
 export default function App() {

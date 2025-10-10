@@ -79,7 +79,7 @@ export default function Cadastro({ navigation }: any) {
                         <Text>Concordo com os <Text style={styles.link}>Termos e condicões</Text></Text>
                     </View>
 
-                    <TouchableOpacity style={styles.button} onPress={() => {register(name, email, password); navigation.navigate("CompletePerfil")}}>
+                    <TouchableOpacity style={styles.button} onPress={() => {register(name, email, password);}}>
                         <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Cadastrar</Text>
                     </TouchableOpacity>
                 </View>

@@ -18,23 +18,19 @@ import { db, uploadUserImage } from 'services/firebase';
 import { doc, getDoc, updateDoc } from '@firebase/firestore';
 export default function CompletePerfil({ navigation }: any) {
 
-    const { user, setComplete } = useContext(AuthContext)!;
+    const { user, setComplete, updateUser } = useContext(AuthContext)!;
 
     const [image, setImage] = React.useState('');
     const updateUserData = async () => {
-        try{
-
-            const userRef = doc(db, "users", user?.id!)
-            updateDoc(userRef,{
+        try {
+            updateUser({
                 image: await uploadUserImage(image, user?.id!),
                 isComplete: true,
-            }).then(()=>{
-                alert("informações alteradas!");
-                setComplete(true);
             })
-        }catch(er){
+            console.log("tentando atualizar user")
+        } catch (er) {
             setComplete(false);
-            console.log(er)
+            console.log("erro",er)
         }
     }
     return (
@@ -49,20 +45,23 @@ export default function CompletePerfil({ navigation }: any) {
                     <View>
                         <TouchableOpacity activeOpacity={0.9} style={styles.selectImage}
                             onPress={() => {
-                                pickImage(1,1)
+                                console.log("apertou o botão")
+                                pickImage(1, 1)
                                     .then((res) => {
                                         if (!res) return;
+                                        console.log("ID", user?.id)
+                                        console.log("imagem selecionada: ", res)
                                         setImage(res)
                                     })
                             }}>
 
-                                {!image && <Icon.FontAwesome5 name='user' size={100} color="#7c7c7cff" style={{margin: "auto"}}/>}
+                            {!image && <Icon.FontAwesome5 name='user' size={100} color="#7c7c7cff" style={{ margin: "auto" }} />}
                             {image && (
-                                <Image  style={{ flex: 1, objectFit: "cover"}} source={{ uri: image }} />
+                                <Image style={{ flex: 1, objectFit: "cover" }} source={{ uri: image }} />
                             )}
                         </TouchableOpacity>
                         <View style={styles.cameraIcon}>
-                            <Icon.Entypo name='camera' size={20} color={colors.secondary}/>
+                            <Icon.Entypo name='camera' size={20} color={colors.secondary} />
                         </View>
                     </View>
                 </View>
@@ -115,7 +114,7 @@ export const styles = StyleSheet.create({
         height: 200,
         backgroundColor: colors.lightGray,
         borderRadius: 1000,
-        
+
         overflow: "hidden"
     },
     contentContainer: {

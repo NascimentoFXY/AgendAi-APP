@@ -1,7 +1,12 @@
 import * as ImagePicker from 'expo-image-picker';
 
-export default async function pickImage(aspectN1: number = 16, aspect2:number = 9) {
+export default async function pickImage(aspectN1: number = 16, aspect2: number = 9) {
     try {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            alert("Precisamos de permissão para acessar suas fotos!");
+            return null;
+        }
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
             allowsEditing: true,

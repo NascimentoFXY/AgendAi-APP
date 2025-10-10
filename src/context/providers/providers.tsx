@@ -18,6 +18,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     return (
         <AuthProvider>
             <UserLocationProvider>
+            
                 <SalonProvider>
                     <ScheduleProvider>
                         <ChatProvider>

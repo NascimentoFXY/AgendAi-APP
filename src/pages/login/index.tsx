@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, { useContext, useState } from 'react';
 import { AuthContext } from '../../context/auth';
 import {
     SafeAreaView,
@@ -12,19 +12,20 @@ import colors from "../../configs/theme";
 import { Input } from "../../components/input";
 import CustomButton from "../../components/customButton";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import Icon from 'configs/icons';
 export default function Login({ navigation }: any) {
 
     const { signIn, signOut } = useContext(AuthContext)!;
 
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
-
+    const [secureTextEntry, setSecureTextEntry] = useState(true)
     return (
         <SafeAreaView style={styles.mainContainer}>
 
             <CustomButton
-                Icon={<AntDesign name="arrow-left" size={30} color={colors.lightGray}/>}
-                onPress={()=> navigation.goBack()}
+                Icon={<AntDesign name="arrow-left" size={30} color={colors.lightGray} />}
+                onPress={() => navigation.goBack()}
                 style={styles.backButtonContainer}
 
             />
@@ -43,24 +44,38 @@ export default function Login({ navigation }: any) {
                         title="Email"
                         placeholder="Digite seu Email"
                         onTextChange={setEmail}
+
                     />
-                    <Input
-                        title="Senha"
-                        placeholder="Digite sua senha"
-                        secureTextEntry={false}
-                        onTextChange={setPassword}
-                    />
+
+                    <View style={{
+                        borderWidth: 1,
+                        borderColor: "#ccc",
+                        paddingHorizontal: 10,
+                        paddingVertical: 2,
+                        borderRadius: 5,
+                        marginBottom: 10,
+                        backgroundColor: "#fff",
+                        width: "100%",
+                        flexDirection: "row",
+                        alignItems: "center"
+                    }}>
+                        <TextInput secureTextEntry={secureTextEntry} onChangeText={setPassword} placeholder='Senha' style={{ fontSize: 12, flex: 1 }} />
+                        <TouchableOpacity onPress={()=>{setSecureTextEntry(!secureTextEntry)}}>
+                            <Icon.AntDesign name='eye' size={20} color={colors.lightGray} />
+                        </TouchableOpacity>
+                    </View>
+
                     <TouchableOpacity
                         style={{ flexDirection: "row-reverse" }}
                         onPress={() => (alert("Função de recuperação de senha ainda não implementada. Deslogando..."), signOut())}
-                        >
+                    >
                         <Text style={{ color: colors.primary }}>Esqueceu sua senha?</Text></TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={()=> {signIn(email, password); navigation.navigate("CompletePerfil")}}>
+                <TouchableOpacity style={styles.button} onPress={() => { signIn(email, password) }}>
                     <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Entrar</Text>
                 </TouchableOpacity>
-                
+
                 <View style={{ width: "100%", flex: 1, alignItems: "center", justifyContent: "center" }}>
                     <Text>Ou entre com</Text>
                     <View style={styles.optionsContainer}>

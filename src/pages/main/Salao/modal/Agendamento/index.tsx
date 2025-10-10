@@ -147,7 +147,7 @@ export default function Scheduling({ navigation }: any) {
                         setSelectedDay(i);
                         setSelectedSchedule((prev) => ({
                             ...prev,
-                            date: `${weekDay} ${day} de ${month}`, // salva o dia formatado
+                            date: `${date.getMonth()+day}|${weekDay} ${day} de ${month}`, // salva o dia formatado
                         }));
                     }}
                     style={[
