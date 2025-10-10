@@ -25,6 +25,7 @@ import { ServiceCardsData, EspecialCardsData } from './components';
 import { SalonContext } from '../../../context/salonContext';
 import { ScheduleContext } from 'context/scheduleContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useUserLocation } from 'context/userLocation';
 
 
 const cardsWidth = 400;
@@ -67,6 +68,7 @@ export default function HomeWrapper({ navigation }: any) {
 }
 export function Home({ navigation }: any) {
     const { user, refreshUserData } = useContext(AuthContext)!;
+    const {searchAddresses} = useUserLocation();
     const salonData = useContext(SalonContext)
     const scheduleData = useContext(ScheduleContext)!
     if (!user || !salonData || !scheduleData) {
@@ -75,7 +77,7 @@ export function Home({ navigation }: any) {
     }
     const { salon, salonList, useSalon, getAverageRating } = salonData
     const { createSchedule, schedules, schedule, useSchedule, cancelSchedule, fetchSchedules } = scheduleData!;
-
+    
 
 
 

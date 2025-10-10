@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -12,12 +12,24 @@ import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from 
 import { styles } from '../../../pages/main/home/style';
 import CustomButton from '../../../components/customButton';
 import InputWithIcons from '../../../components/InputIcons';
+import { useUserLocation } from 'context/userLocation';
 
 
 const cardsWidth = 400;
 
 
 export default function MainHeader({navigation}: any) {
+    const {searchAddresses, location} = useUserLocation();
+    const [cidade, setCidade] = useState("Taboão da Serra")
+    const [bairro, setBairro] = useState("Taboão da Serra")
+    useEffect(()=>{
+        searchAddresses(`${location?.latitude}, ${location?.longitude}`)
+        .then((res)=>{
+            setCidade(res?.cidade)
+            setBairro(res?.bairro)
+        })
+
+    },[location])
     return (
         <>
             {/* ===============HEADER=============== */}
@@ -31,7 +43,7 @@ export default function MainHeader({navigation}: any) {
 
                         <TouchableOpacity onPress={()=>{navigation.navigate("Location")}} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
                             <Ionicons name="location-sharp" size={24} color="#d77a7a" />
-                            <Text style={{ fontSize: 14, fontWeight: '600', marginLeft: 4 }}>Taboão das Trevas, Brasil</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '600', marginLeft: 4 }}>{cidade} - {bairro}</Text>
                         </TouchableOpacity>
 
                     </View>
