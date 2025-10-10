@@ -198,7 +198,7 @@ export function Home({ navigation }: any) {
 
                 <View style={styles.contentHeader}>
                     <Text style={styles.contentHeaderTitle}>Top salões</Text>
-                    <TouchableOpacity><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>{navigation.navigate("Explore")}}><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
 
                 </View>
 
@@ -219,15 +219,7 @@ export function Home({ navigation }: any) {
                     ))}
                     {loading && <ActivityIndicator size={70} style={{ width: Dimensions.get("window").width, alignItems: "center" }} color={colors.primary} />}
                 </Carroussel>
-                <CustomButton
-                    Icon={<Ionicons name="add" size={24} color={"#fff"} />}
-                    border='Circle'
-                    type='absolute'
-                    width={80}
-                    height={80}
-                    style={{ zIndex: 3, backgroundColor: colors.primary, borderWidth: 1, borderColor: "#c5c5c5", bottom: 200, right: 20 }}
-                    onPress={() => navigation.navigate("CreateSalon")}
-                />
+                
             </View>
         </ScrollView>
     );

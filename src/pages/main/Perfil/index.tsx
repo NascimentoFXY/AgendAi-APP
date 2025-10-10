@@ -15,6 +15,7 @@ import UserOptions from '../../../components/perfil/options/userProfile';
 import colors from '../../../configs/theme';
 import { styles } from './style';
 import CustomButton from '../../../components/customButton';
+import Icon from 'configs/icons';
 export default function Perfil({navigation}: any) {
     const { user, signOut } = useContext(AuthContext)!
 
@@ -50,6 +51,12 @@ export default function Perfil({navigation}: any) {
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }}
                 onPress={()=> navigation.navigate('Home', {screen: "Settings"})} />
+            {/* Salão */}
+            <UserOptions icon={<Icon.MaterialIcons name='add-box' size={40} color={colors.secondary} />} title={"Cadastrar estabelecimento"}
+                rightIcon={<AntDesign name='right' size={40} color={colors.primary} />}
+                style={styles.secondaryOptions}
+                titleStyle={{ color: colors.secondary }}
+                onPress={()=> navigation.navigate('Home', {screen: "CreateSalon"})} />
 
             {/* Politica */}
             <UserOptions icon={<Feather name='lock' size={40} color={colors.secondary} />}
