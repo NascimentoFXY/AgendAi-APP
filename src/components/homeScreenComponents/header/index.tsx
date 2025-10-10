@@ -6,7 +6,8 @@ import {
     View,
     TextInput,
     TouchableOpacity,
-    ScrollView
+    ScrollView,
+    ActivityIndicator
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from '../../../pages/main/home/style';
@@ -18,18 +19,30 @@ import { useUserLocation } from 'context/userLocation';
 const cardsWidth = 400;
 
 
-export default function MainHeader({navigation}: any) {
-    const {searchAddresses, location} = useUserLocation();
-    const [cidade, setCidade] = useState("Taboão da Serra")
-    const [bairro, setBairro] = useState("Taboão da Serra")
-    useEffect(()=>{
-        searchAddresses(`${location?.latitude}, ${location?.longitude}`)
-        .then((res)=>{
-            setCidade(res?.cidade)
-            setBairro(res?.bairro)
-        })
+export default function MainHeader({ navigation }: any) {
+    const { searchAddresses, location } = useUserLocation();
+    const [cidade, setCidade] = useState(<ActivityIndicator/>)
+    const [bairro, setBairro] = useState()
+    useEffect(() => {
+        const loadAddress = async () => {
+            if (location?.latitude && location?.longitude) {
+                try{
 
-    },[location])
+                    const res = await searchAddresses(`${location.latitude}, ${location.longitude}`);
+                    const first = res[0];
+                    if (first) {
+                        setCidade(first.cidade);
+                        setBairro(first.bairro);
+                    }
+                }catch(er){
+                    console.log("erro localização header",er)
+                }
+                }
+            };
+
+        loadAddress();
+
+    }, [location])
     return (
         <>
             {/* ===============HEADER=============== */}
@@ -41,7 +54,7 @@ export default function MainHeader({navigation}: any) {
 
                         <Text style={{ fontSize: 12, color: '#999' }}>Localização</Text>
 
-                        <TouchableOpacity onPress={()=>{navigation.navigate("Location")}} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+                        <TouchableOpacity onPress={() => { navigation.navigate("Location") }} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
                             <Ionicons name="location-sharp" size={24} color="#d77a7a" />
                             <Text style={{ fontSize: 14, fontWeight: '600', marginLeft: 4 }}>{cidade} - {bairro}</Text>
                         </TouchableOpacity>
@@ -64,7 +77,7 @@ export default function MainHeader({navigation}: any) {
                         Icon={<Feather name="sliders" size={18} color="#fff" />}
                         style={styles.filterButton}
                         border='Circle'
-                        onPress={()=> navigation.navigate("Filter")}
+                        onPress={() => navigation.navigate("Filter")}
                     />
                 </View>
             </View>

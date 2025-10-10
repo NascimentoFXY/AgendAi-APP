@@ -11,7 +11,8 @@ type UserLocationContextType = {
     location: Coordinates | null;
     getCurrentLocation: () => Promise<any | null>
     setLocation: (location: Coordinates | { useCurrent: true }) => Promise<void>;
-    searchAddresses: (addres: string) => Promise<Address | null>
+    searchAddresses: (addres: string) => Promise<Address[] | void>
+    loading?: boolean
 
 };
 type Address = {
@@ -20,7 +21,8 @@ type Address = {
     formattedAddress?: any,
     latitude?: any,
     longitude?: any,
-    bairro?: any
+    bairro?: any,
+    numero?: any
 };
 
 const UserLocationContext = createContext<UserLocationContextType | undefined>(undefined);
@@ -29,8 +31,10 @@ export const UserLocationProvider = ({ children }: { children: ReactNode }) => {
     const [location, setLocationState] = useState<Coordinates | null>(null);
     const [fullLocation, setFullLocation] = useState<Address | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
+    const [loading, setLoading] = useState(true)
     const searchAddresses = async (addres: string) => {
+        setLoading(true)
+        if (!addres) return
         try {
             const apiKey = 'AIzaSyDa-bdUYrEY94QiQ8RVqLlcHK7HNRhSSz0';
             const response = await fetch(
@@ -40,38 +44,47 @@ export const UserLocationProvider = ({ children }: { children: ReactNode }) => {
             const result = data.results[0];
             const components = result.address_components;
 
-            // 🔹 Extrai a cidade
-            const cityComponent = components.find((c: any) =>
-                c.types.includes("administrative_area_level_2")
-            );
-            const city = cityComponent ? cityComponent.long_name : "Cidade não encontrada";
+            if (data.status !== 'OK') {
+                return [];
+            }
+            const addresses: Address[] = data.results.map((result: any) => {
+                if (!result) return
+                const components = result.address_components;
 
-            // 🔹 Extrai o CEP
-            const cepComponent = components.find((c: any) =>
-                c.types.includes("postal_code")
-            );
-            const bairroComponent = components.find((c: any) =>
-                c.types.includes("sublocality") || c.types.includes("sublocality_level_1")
-            );
-            const bairro = bairroComponent ? bairroComponent.long_name : "Bairro não encontrado";
-            const cep = cepComponent ? cepComponent.long_name : "CEP não encontrado";
+                const cityComponent = components.find((c: any) =>
+                    c.types.includes("administrative_area_level_2")
+                );
+                const city = cityComponent ? cityComponent.long_name : "Cidade não encontrada";
 
-            if (data.status === 'OK') {
+                const cepComponent = components.find((c: any) =>
+                    c.types.includes("postal_code")
+                );
+                const cep = cepComponent ? cepComponent.long_name : "CEP não encontrado";
+
+                const bairroComponent = components.find((c: any) =>
+                    c.types.includes("sublocality") || c.types.includes("political")
+                );
+                const bairro = bairroComponent ? bairroComponent.long_name : "";
+                const numeroComponent = components.find((c: any) =>
+                    c.types.includes("street_number")
+                );
+                const numero = numeroComponent ? numeroComponent.long_name : "";
                 return {
+                    id: result.place_id,
                     cidade: city,
                     cep,
                     formattedAddress: result.formatted_address,
                     latitude: result.geometry.location.lat,
                     longitude: result.geometry.location.lng,
-                    bairro: bairro
+                    bairro,
+                    numero
                 };
-
-            } else {
-
-                return null
-            }
+            });
+            setLoading(false)
+            return addresses; // retorna o array formatado
         } catch (error) {
             console.error('Erro ao buscar endereços:', error);
+            setLoading(false)
         }
     };
     async function getCurrentLocation() {
@@ -111,7 +124,7 @@ export const UserLocationProvider = ({ children }: { children: ReactNode }) => {
     //     getCurrentLocation();
     // }, []);
     return (
-        <UserLocationContext.Provider value={{ location, setLocation, getCurrentLocation, searchAddresses }}>
+        <UserLocationContext.Provider value={{ location, setLocation, getCurrentLocation, searchAddresses, loading: loading }}>
             {children}
         </UserLocationContext.Provider>
     );
