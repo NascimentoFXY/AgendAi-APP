@@ -43,7 +43,7 @@ export default function SalaoScreen({ navigation }: any) {
             {/* modal com informaçoes do salao */}
 
             
-                <MainModal/>
+                <MainModal navigation={navigation}/>
             
 
             <View style={styles.Tab}>

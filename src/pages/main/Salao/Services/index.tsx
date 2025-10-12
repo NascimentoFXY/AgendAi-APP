@@ -34,7 +34,7 @@ export default function SalaoServices() {
             {/* ServicosOptions */}
 
          
-              <CustomButton
+              {/* <CustomButton
                       Icon={<Ionicons name="add" size={24} color={"#fff"} />}
                       border='Circle'
                       type='absolute'
@@ -42,7 +42,7 @@ export default function SalaoServices() {
                       height={80}
                       style={{ zIndex: 3, backgroundColor: colors.primary, borderWidth: 1, borderColor: "#c5c5c5", bottom: 0, right: 20 }}
                   
-                  />
+                  /> */}
           
             <View style={{ justifyContent: "center", alignItems: "center", gap: 10, paddingBottom: 10 }}>
 

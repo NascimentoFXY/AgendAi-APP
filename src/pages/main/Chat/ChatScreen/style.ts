@@ -26,28 +26,34 @@ export const styles = StyleSheet.create({
         marginTop: -20,
         backgroundColor: colors.background,
     },
-    message1:{
-        borderWidth: 1,
-        padding:20,
-        borderRadius: 10,
-        alignSelf: "flex-start",
-        maxWidth: "70%",
-        marginVertical: 3,
+
+    message: {
+        borderRadius: 20,
+        borderTopLeftRadius: 0,
         marginLeft: 20,
-     
-
-    },
-    message2:{
-        padding:20,
-        borderRadius: 10,
-        alignSelf: "flex-end",
         maxWidth: "70%",
-        marginRight: 20,
         marginVertical: 3,
-        backgroundColor: colors.primary,
-        color: colors.white,
+        paddingHorizontal: 20,
+        paddingTop: 10,
+        borderWidth: 1,
+        borderColor: colors.lightGray,
+        alignSelf: "flex-start",
 
     },
+    senderMessage: {
+        marginLeft: 0,
+        marginRight: 20,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 0,
+        backgroundColor: colors.primary,
+        alignSelf: "flex-end",
+        borderColor: colors.secondary
+    },
+    lastMessageStyle: {
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+    },
+
     title: {
         padding: 20,
         textAlign: "center",
@@ -59,10 +65,13 @@ export const styles = StyleSheet.create({
         color: colors.lightGray,
         fontWeight: 500
     },
-    userDataShow:{
-        
+    closebtn: {
+        position: "absolute", borderRadius: 100, borderWidth: 1, right: 10, top: 10, zIndex: 10, width: 20, height: 20, backgroundColor: colors.background, justifyContent: "center", alignItems: "center"
     },
-    none:{
+    userDataShow: {
+
+    },
+    none: {
         display: "none"
     }
 

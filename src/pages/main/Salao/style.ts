@@ -1,6 +1,6 @@
 import React from "react";
 import { Dimensions, StyleSheet } from "react-native";
-import colors from "../../../configs/theme";
+import colors, { font } from "../../../configs/theme";
 const { width } = Dimensions.get("window");
 export const styles = StyleSheet.create({
     container: {
@@ -33,13 +33,14 @@ export const styles = StyleSheet.create({
     SalaoNome: {
         paddingHorizontal: 20,
         fontSize: 24,
-        fontWeight: "bold",
-        marginBottom: 10,
+        fontFamily: font.poppins.bold,
+     
     },
     SalaoSubTitle: {
         paddingHorizontal: 20,
         fontSize: 16,
         marginBottom: 20,
+        fontFamily: font.poppins.regular
     },
     SalaoInfoText: {
 

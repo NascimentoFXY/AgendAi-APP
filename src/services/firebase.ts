@@ -48,7 +48,7 @@ export async function getUserNameById(salonID: string): Promise<string | null> {
 }
 
 // const {user, updateUser} = useContext(AuthContext)!
-export const uploadImageAndSaveToFirestore = async (imageUri: string, salonID: string) => {
+export const uploadImageAndSaveToFirestore = async (imageUri: string, salonID?: string) => {
   try {
     if (!imageUri || !salonID) return console.log("algo não esta sendoo salvo");
     const response = await fetch(imageUri);

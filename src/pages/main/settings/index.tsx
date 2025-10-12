@@ -47,6 +47,14 @@ export default function UserSettings({ navigation }: any) {
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }}
             />
+            {
+
+                <UserOptions icon={<Feather name='lock' size={40} color={colors.secondary} />} title='Seu estabelecimento'
+                rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
+                style={styles.secondaryOptions}
+                titleStyle={{ color: colors.secondary }}
+                />
+            }
             <UserOptions icon={<Ionicons name='notifications' size={40} color={colors.secondary} />} title='Notificação'
                 rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 style={styles.secondaryOptions}

@@ -9,7 +9,8 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 interface Salon {
     id?: string
     CNPJ: string,
-    owner: string,
+    ownerID: string,
+    ownerName: string,
     name: string,
     opHour?: any,
     rating?: any,
@@ -119,7 +120,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         if (isInputValid) {
             try {
                 const salonRef = doc(collection(db, "salon"))
-                
+                const userRef = doc(db, "users", user?.id!)
                 // console.log("tentando criar salão com: \n ", info.nome, info.cnpj, info.cep)
                 await setDoc((salonRef), {
                     id: salonRef.id,
@@ -134,6 +135,10 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                     workSchedule: info.escala, // exemplo de escala de trabalho em inglês
                     createdAt: new Date(),
                     rating: 5.0,
+                })
+                
+                await updateDoc((userRef),{
+                    ownerOf: salonRef.id
                 })
                 useSalon(salonRef.id)
                 alert(`${info.nome} Foi criado com sucesso!`)

@@ -12,12 +12,13 @@ type TabBarButtonProps = {
     textInputValue?: string;
     onChangeText?: (text: string) => void;
     onPress?: (event: GestureResponderEvent) => void;
+    onAction?: ()=> void
     style?: ViewStyle;
     bgColor?: any;
 
 };
 
-export default function TabBarButton({ title, onPress, onChangeText,type = "button", textInputValue,style, bgColor = colors.background}: TabBarButtonProps) {
+export default function TabBarButton({onAction, title, onPress, onChangeText,type = "button", textInputValue,style, bgColor = colors.background}: TabBarButtonProps) {
 
 
     return (
@@ -34,9 +35,11 @@ export default function TabBarButton({ title, onPress, onChangeText,type = "butt
 
             {/* Input */}
             {type === "input1" && (
-                <View style={styles.Tab}>
+                <View style={[styles.Tab, {backgroundColor: bgColor}]}>
                     <View style={styles.inputContainer}>
-                        <TouchableOpacity style={[styles.icons, {backgroundColor: colors.white, borderWidth: 1, borderColor: colors.transparentLightGray}]}>
+                        <TouchableOpacity style={[styles.icons, {backgroundColor: colors.white, borderWidth: 1, borderColor: colors.transparentLightGray}]}
+                        onPress={onAction}
+                        >
                             <MaterialCommunityIcons name="plus" size={24} color={colors.secondary} />
                         </TouchableOpacity>
 
@@ -96,7 +99,6 @@ const styles = StyleSheet.create({
         position: "absolute",
         width: "100%",
         padding: 30,
-        
         height: 120,
         bottom: 0,
         borderTopColor: "#a5a5a555",

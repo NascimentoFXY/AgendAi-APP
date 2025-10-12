@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet } from 'react-native';
-import colors from '../../../configs/theme';
+import colors, { font } from '../../../configs/theme';
 
 const { width, height } = Dimensions.get('window');
 
@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     title: {
         flex: 1,
         textAlign: "center",
-        fontWeight: "bold"
+        fontFamily: font.poppins.bold
     },
     label: {
         padding: 20,
@@ -36,20 +36,20 @@ export const styles = StyleSheet.create({
     },
     chatTop: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         marginBottom: 20,
     },
-    
+
     chatName: {
         fontSize: 18,
-        fontWeight: "bold",
+        fontFamily: font.poppins.bold,
+        flex: 1
 
     },
     chatLastMessage: {
         color: colors.transparentLightGray,
         fontSize: 16,
-        width: "90%" 
-    
+        width: "90%"
+
     },
     chatImage: {
         width: 80,
@@ -59,7 +59,7 @@ export const styles = StyleSheet.create({
         marginRight: 20,
 
     },
-    chatPersonStatus:{
+    chatPersonStatus: {
         width: 20,
         height: 20,
         borderRadius: 100,

@@ -119,7 +119,6 @@ export default function Forms() {
             <Picker style={{borderWidth: 12, height: 'auto'}} selectedValue={selectedValue} onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}>
                 <Picker.Item label="Seg. a Sex." value="1-5" />
                 <Picker.Item label="Seg. a Sáb." value="1-6" />
-                <Picker.Item label="Seg. a Dom." value="1-0" />
                 <Picker.Item label="Seg. a Seg." value="1-1" />
             </Picker>
             <Text style={styles.label}>Horário de funcionamento</Text>
