@@ -36,7 +36,7 @@ export default function SalaoScreen({ navigation }: any) {
                     width={50}
                     height={50}
                     style={{ zIndex: 3, backgroundColor: "#ffffff90", borderWidth: 1, borderColor: "#ffffff99" }}
-                    onPress={() => isScheduling ? setScheduling(false) : (navigation.goBack(), setScheduling(false))}
+                    onPress={() => (navigation.goBack())}
                 />
 
             </View>
@@ -48,7 +48,7 @@ export default function SalaoScreen({ navigation }: any) {
 
             <View style={styles.Tab}>
                 <TouchableOpacity
-                    onPress={() => isScheduling? navigation.navigate('Scheduling'): setScheduling(true)}
+                    onPress={() => navigation.navigate('Scheduling')}
                     style={styles.TabBarButton}>
                     <Text style={{ color: "#fff" }}>Reserve um Horário</Text>
                 </TouchableOpacity>

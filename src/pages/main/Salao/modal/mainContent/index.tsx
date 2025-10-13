@@ -23,6 +23,7 @@ import Rating from '../../Avaliacoes';
 import Icon from 'configs/icons';
 import { AuthContext } from 'context/auth';
 import { ChatContext } from 'context/chatContext';
+import Agenda from 'pages/main/agenda';
 
 const { width } = Dimensions.get("window")
 //tela principal ao apertar em um salão
@@ -87,6 +88,8 @@ export default function MainModal({ navigation }: any) {
         await useChat(chatID);
 
     }
+
+    
     return (
 
         <View style={styles.container}>
@@ -212,6 +215,23 @@ export default function MainModal({ navigation }: any) {
                         <View style={currentPage === 2 ? styles.underline : styles.none} />
                     </TouchableOpacity>
 
+                    {/* <TouchableOpacity
+                        style={styles.NavigationOptions}
+                        onPress={() => scrollToPage(3)}
+                        >
+
+                        <Text style={styles.NavigationOptionsText}>Agendamentos Futuros</Text>
+                        <View style={currentPage === 3 ? styles.underline : styles.none} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.NavigationOptions}
+                        onPress={() => scrollToPage(4)}
+                        >
+
+                        <Text style={styles.NavigationOptionsText}>Agendamentos Cancelados</Text>
+                        <View style={currentPage === 4 ? styles.underline : styles.none} />
+                    </TouchableOpacity> */}
+
                     <TouchableOpacity
                         style={styles.NavigationOptions}>
 
@@ -231,9 +251,12 @@ export default function MainModal({ navigation }: any) {
                 ref={scrollRef}
                 onScroll={handleScroll}
             >
-                <SalaoServices />
-                <SalaoEspecialistas />
-                <Rating />
+                {pages.map((PageComponent, index) => (
+                    <View key={index}>
+                        {PageComponent}
+                    </View>
+                ))}
+
             </ScrollView>
         </View>
 

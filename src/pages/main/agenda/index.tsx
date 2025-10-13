@@ -43,7 +43,7 @@ const InitialMockData = [
 const { width } = Dimensions.get("window");
 
 
-export default function Agenda({ navigation }: any) {
+export default function Agenda({ showHeader = true, navigation  }: { showHeader?: boolean,navigation?: any}) {
 
     const scrollRef = useRef<ScrollView>(null);
 
@@ -91,9 +91,9 @@ export default function Agenda({ navigation }: any) {
     return (
         <View style={{ flex: 1 }}>
             {/* ========HEADER=================== */}
-            <SafeAreaView style={{ zIndex: 2 }}>
+            {showHeader && <SafeAreaView style={{ zIndex: 2 }}>
                 <ScheduleHeader navigation={navigation} currentPage={currentPage} scrollToPage={scrollToPage} />
-            </SafeAreaView>
+            </SafeAreaView>}
             {/* ================================== */}
 
 
@@ -123,7 +123,7 @@ export default function Agenda({ navigation }: any) {
                                     try {
 
                                         await useSchedule(item.id).then((res) => {
-                                            console.log("Schedule usado: ", res?.salonName);
+                                            console.log("Schedule usado: ", res?.id);
                                             navigation.navigate("Home", { screen: "ScheduleCancelScreen" });
                                         }).catch((error) => {
                                             console.error("Erro ao usar agendamento: ", error);

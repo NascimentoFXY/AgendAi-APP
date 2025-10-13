@@ -56,9 +56,11 @@ export default function Scheduling({ navigation }: any) {
     // converte tudo pra minutos
     const startTotal = startHours * 60 + startMinutes;
     const endTotal = endHours * 60 + endMinutes;
-    const interval = 5;
+    const interval = 20;
     const HourItems: any = []
-
+    const now = new Date();
+    const currentTotal = now.getHours() * 60 + now.getMinutes();
+    console.log("currentTotla", currentTotal)
 
 
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -67,6 +69,7 @@ export default function Scheduling({ navigation }: any) {
         salonName: salon?.name || "undefined",
         salonId: salon?.id || "undefined",
         userId: user?.id || "undefined",
+        userName: user?.name || "undefined",
         date: "undefined",
         time: selectedTime || "undefined",
         address: salon?.addres || "undefined",
@@ -77,7 +80,13 @@ export default function Scheduling({ navigation }: any) {
         console.log("selectedSchedule", selectedSchedule)
     }, [selectedSchedule])
 
+    const today = new Date();
+    const isTodaySelected = selectedDay === 0;
     for (let t = startTotal; t <= endTotal; t += interval) {
+        if (isTodaySelected) {
+            const currentTotal = today.getHours() * 60 + today.getMinutes();
+            if (t < currentTotal) continue;
+        } // pula horários já passados
         const hours = Math.floor(t / 60);
         const minutes = t % 60;
         const formattedTime = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
@@ -116,7 +125,6 @@ export default function Scheduling({ navigation }: any) {
         )
     }
     const DayItems: any[] = [];
-    const today = new Date();
     for (let i = 0; i < 30; i++) {
         const date = new Date(today);
         date.setDate(today.getDate() + i);
@@ -126,16 +134,21 @@ export default function Scheduling({ navigation }: any) {
         const weekDay = date.toLocaleString("pt-BR", { weekday: "short" }); // seg, ter, dom...
         const isSelected = selectedDay === i;
 
-        const workSchedule = salon?.workSchedule || "1-5"; 
+        const workSchedule = salon?.workSchedule || "1-5";
         const weekDayNumber = date.getDay();
         const [startDay, endDay] = workSchedule.split("-").map(Number);
 
-        const isDisabled =
-            weekDayNumber === 0 || 
-            (startDay <= endDay
-                ? weekDayNumber < startDay || weekDayNumber > endDay
-                : weekDayNumber < startDay && weekDayNumber > endDay); // caso wrap-around, ex: 5-1
+        let isDisabled = false;
 
+        if (startDay === endDay) {
+            isDisabled = false;
+        } else if (startDay < endDay) {
+            // Horário contínuo normal (ex: 1-5)
+            isDisabled = weekDayNumber < startDay || weekDayNumber > endDay;
+        } else {
+            // Wrap-around (ex: 5-1)
+            isDisabled = weekDayNumber < startDay && weekDayNumber > endDay; // caso wrap-around, ex: 5-1
+        }
         DayItems.push({
             id: `DI-${i}`,
             content: (
@@ -147,7 +160,7 @@ export default function Scheduling({ navigation }: any) {
                         setSelectedDay(i);
                         setSelectedSchedule((prev) => ({
                             ...prev,
-                            date: `${date.getMonth()+day}|${weekDay} ${day} de ${month}`, // salva o dia formatado
+                            date: `${date.getMonth() + day}|${weekDay} ${day} de ${month}`, // salva o dia formatado
                         }));
                     }}
                     style={[

@@ -72,7 +72,7 @@ export default function ScheduleCancelScreen({ navigation }: any) {
             {/* TODO: Criar tela de confirmar cancelamento */}
             <View style={styles.Tab}>
                 <TouchableOpacity
-                    onPress={() => {navigation.navigate('ScheduleCancelConclusion'); cancelSchedule(schedule); console.log("Agendamento cancelado: ", schedule.id)}}
+                    onPress={() => {navigation.navigate('ScheduleCancelConclusion'); cancelSchedule(schedule, schedule.salonId); console.log("Agendamento cancelado: ", schedule.id)}}
                     style={styles.TabBarButton}>
                     <Text style={{ color: "#fff" }}>Concluir</Text>
                 </TouchableOpacity>
