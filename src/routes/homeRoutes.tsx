@@ -26,6 +26,8 @@ import ScheduleCancelConclusion from "pages/main/agenda/AgendaCanceledScreen";
 import Scheduling from "pages/main/Salao/modal/Agendamento";
 import CompletePerfil from "pages/completePerfil";
 import Location from "pages/main/location";
+import UserEstablishment from "pages/main/UserEtablishment/establishmentList";
+import EstablishmentTools from "pages/main/UserEtablishment/establishmentTools";
 export default function MainRoutes({ navigation }: any) {
     const Stack = createNativeStackNavigator();
 
@@ -45,6 +47,8 @@ export default function MainRoutes({ navigation }: any) {
             <Stack.Screen name="ScheduleFinal" component={ScheduleFinal} />
             <Stack.Screen name="ScheduleConclusion" component={ScheduleConclusion} />
             <Stack.Screen name="ScheduleCancelScreen" component={ScheduleCancelScreen} />
+            <Stack.Screen name="UserEstablishment" component={UserEstablishment} />
+            <Stack.Screen name="EstablishmentTools" component={EstablishmentTools} />
 
             <Stack.Screen name="ScheduleCancelConclusion" component={ScheduleCancelConclusion} />
         </Stack.Navigator>

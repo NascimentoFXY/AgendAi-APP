@@ -45,7 +45,7 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
 
             const fetchedSchedules = snapshot.docs.map(doc => doc.data() as ScheduleParams);
             setSchedules(fetchedSchedules);
-            // console.log("Fetched schedules:", fetchedSchedules);
+            // console.log("[schedule]Fetched schedules:", fetchedSchedules);
 
         } catch (error) {
             throw error;
@@ -87,7 +87,7 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
 
         try {
             await batch.commit();
-            console.log("Agendamento criado nos dois lugares com batch!");
+            console.log("[schedule]Agendamento criado nos dois lugares com batch!");
         } catch (err) {
             console.error("Erro ao criar agendamento:", err);
         }
@@ -119,7 +119,7 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         try {
             await batch.commit(); // Executa as duas atualizações de uma vez
             fetchSchedules(); // Atualiza o estado local após commit
-            console.log("Agendamento cancelado com sucesso!");
+            console.log("[schedule]Agendamento cancelado com sucesso!");
         } catch (error) {
             console.error("Erro ao cancelar agendamento: ", error);
         }

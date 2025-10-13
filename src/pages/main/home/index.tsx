@@ -210,7 +210,7 @@ export function Home({ navigation }: any) {
 
                     }}>
                     {!loading && salonList?.map((key) => (
-                        <TopSaloesCardsData key={key.id} name={key.name} owner={"bbbbbb"} rating={
+                        <TopSaloesCardsData key={key.id} name={key.name} rating={
                             averageRatings[key.id!] === undefined ? (
                                 <ActivityIndicator size="small" color={colors.primary} />
                             ) : (

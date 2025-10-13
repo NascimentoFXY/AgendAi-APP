@@ -12,7 +12,7 @@ interface InputProps {
     numeric?: boolean
 
 }
-const Input = ({ placeholder, style, icon = true, onChangeText, value, maxChar, numeric = false }: InputProps) => {
+export const Input = ({ placeholder, style, icon = true, onChangeText, value, maxChar, numeric = false }: InputProps) => {
     return (
         <View style={{ borderBottomColor: colors.lightGray, borderBottomWidth: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
             <TextInput

@@ -50,7 +50,7 @@ export async function getUserNameById(salonID: string): Promise<string | null> {
 // const {user, updateUser} = useContext(AuthContext)!
 export const uploadImageAndSaveToFirestore = async (imageUri: string, salonID?: string) => {
   try {
-    if (!imageUri || !salonID) return console.log("algo não esta sendoo salvo");
+    if (!imageUri || !salonID) return console.log("[services]algo não esta sendoo salvo");
     const response = await fetch(imageUri);
     const blob = await response.blob(); // Converte o URI da imagem em um Blob
 
@@ -75,10 +75,10 @@ export const uploadImageAndSaveToFirestore = async (imageUri: string, salonID?: 
 };
 
 export const uploadUserImage = async (URI: string, userID: string) => {
-  console.log("ID usuario:",userID)
-  console.log("URI: ",URI)
+  console.log("[services]ID usuario:",userID)
+  console.log("[services]URI: ",URI)
   if (!URI || !userID) {
-    console.log("deu ruim imagem do usuario")
+    console.log("[services]deu ruim imagem do usuario")
     return
   }
   try {

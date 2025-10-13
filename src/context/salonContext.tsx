@@ -68,6 +68,7 @@ interface SalonContextType {
     ratingFilter?: string,
     loading: boolean,
     isValid: boolean,
+    isOwner: boolean,
 }
 
 
@@ -99,7 +100,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         image: "",
         escala: "",
     })
-    // console.log("lista de saloes", salonList, "\n")
+    // console.log("[salon]lista de saloes", salonList, "\n")
 
     //----------------recebe os dados-----------------------------------//
     const setData = (data: DataProps) => {
@@ -121,7 +122,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             try {
                 const salonRef = doc(collection(db, "salon"))
                 const userRef = doc(db, "users", user?.id!)
-                // console.log("tentando criar salão com: \n ", info.nome, info.cnpj, info.cep)
+                // console.log("[salon]tentando criar salão com: \n ", info.nome, info.cnpj, info.cep)
                 await setDoc((salonRef), {
                     id: salonRef.id,
                     CNPJ: info.cnpj,
@@ -154,13 +155,13 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     }
 
     //---------------------------------atualizar Serviços---------------------------//
-    async function addServicesToSalon(data: any) {
+    /*async function addServicesToSalon(data: Services) {
         const serviceRef = doc(collection(db, "salon", salon?.id!, "services"))
         await setDoc((serviceRef), {
             id: serviceRef.id,
             type: data.services?.type
         })
-    }
+    }*/
     //--------------------------------adicionar avaliação--------------------------//
     async function addRatingToSalon(data: Rating) {
         const RatingseRef = doc(collection(db, "salon", salon?.id!, "ratings"))
@@ -175,7 +176,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             })
             fetchSalonRatings(salon?.id!)
         } catch (err) {
-            console.log("erro ao adicionar avaliação: ", err)
+            console.log("[salon]erro ao adicionar avaliação: ", err)
         }
     }
     //-------------------------------usarSalao----------------------------------//
@@ -189,7 +190,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                 setLoading(false)
                 fetchSalonRatings(salonId); // Buscar avaliações ao selecionar um salão
 
-                // console.log("salao encontrado: ", salon.id)
+                // console.log("[salon]salao encontrado: ", salon.id)
                 return salon;
             }
             else {
@@ -265,20 +266,28 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         }
     };
 
-    // -----------------------atualizar em tempo real----------------------------------//
+    // -----------------------atualizar----------------------------------//
     useEffect(() => {
-        const q = query(collection(db, "salon"))
-        const unsubscribe = onSnapshot(q, (snapshot) => {
+    const fetchSalons = async () => {
+        try {
+            const q = query(collection(db, "salon"));
+            const snapshot = await getDocs(q);
+
             const list = snapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data()
-            } as Salon))
+            })) as Salon[];
 
-            setSalonList(list)
-            setLoading(false)
-        })
-        return () => unsubscribe()
-    }, [])
+            setSalonList(list);
+        } catch (error) {
+            console.error("Erro ao buscar salões:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchSalons();
+}, []);
 
     //-----------------------------apagar todos saloes---------------//
 
@@ -292,7 +301,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
 
             await Promise.all(deletePromises);
 
-            console.log("✅ Todos os documentos da coleção 'salon' foram deletados com sucesso!");
+            console.log("[salon]✅ Todos os documentos da coleção 'salon' foram deletados com sucesso!");
         } catch (error) {
             console.error("❌ Erro ao deletar documentos:", error);
         }
@@ -313,8 +322,13 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             setRatingFilter: setRatingFilter,
             ratingFilter: ratingFilter,
             getAverageRating,
+            isOwner: salon?.ownerID === user?.id
         }}>
             {children}
         </SalonContext.Provider>
     )
+}
+export function useSalonContext(){
+    const context = useContext(SalonContext);
+    if(context) return context;
 }

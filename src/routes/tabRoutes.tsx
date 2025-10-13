@@ -17,11 +17,12 @@ import MainRoutes from "./homeRoutes";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import colors from "../configs/theme";
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { useSalonContext } from "context/salonContext";
 
 
 const Tab = createBottomTabNavigator()
 export default function TabRoutes() {
-
+    const {isOwner} = useSalonContext()!;
     const CustomTabBarButton = (props: any) => (
         <TouchableOpacity
             {...props}
@@ -55,7 +56,8 @@ export default function TabRoutes() {
                     tabBarStyle: ((route) => {
 
                         const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
-                        if (routeName === 'Salao' ||
+                        if (
+                            routeName === 'Salao' && !isOwner ||
                             routeName === 'ScheduleFinal' ||
                             routeName === 'ScheduleConclusion'||
                             routeName === 'Filter'||

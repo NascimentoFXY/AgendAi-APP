@@ -103,7 +103,7 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
                 })
             })
             setChatList(fetchedChats)
-            // console.log("Chats carregados: ", fetchedChats.map((doc: Chat) => (doc.id)))
+            // console.log("[chat] Chats carregados: ", fetchedChats.map((doc: Chat) => (doc.id)))
         })
         return () => unsubscribe()
 
@@ -118,12 +118,12 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
 
             if (chatSnap.exists()) {
                 const chat = { id: chatSnap.id, ...chatSnap.data() } as Chat;
-                // console.log("Chat encontrado:", chat);
+                // console.log("[chat] Chat encontrado:", chat);
                 setChat(chat)
-                // console.log("chat clicado: ", chat)
+                // console.log("[chat] chat clicado: ", chat)
                 return chat;
             } else {
-                console.log("Chat não encontrado");
+                console.log("[chat] Chat não encontrado");
                 return null;
             }
         }

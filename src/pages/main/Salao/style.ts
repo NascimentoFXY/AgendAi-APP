@@ -29,7 +29,11 @@ export const styles = StyleSheet.create({
         zIndex: 2,
 
     },
-
+    tools:{ 
+        flexDirection: "row",
+        gap: 10,
+        marginLeft: "auto"
+    },
     SalaoNome: {
         paddingHorizontal: 20,
         fontSize: 24,
@@ -119,6 +123,19 @@ export const styles = StyleSheet.create({
         bottom: 0,
         borderTopColor: "#a5a5a555",
         borderTopWidth: 1
+    },
+     amount: {
+        fontSize: 18, fontWeight: "bold", color: colors.primary
+    },
+    serviceTitle: {
+        fontSize: 18, fontWeight: "bold"
+    },
+    titleContainer: {
+        flexDirection: "row", 
+        alignItems: "center", 
+        paddingHorizontal: 20, 
+        paddingVertical: 10, 
+        gap: 10
     },
     //---------------------------------------- modal de agendamento
     title: {

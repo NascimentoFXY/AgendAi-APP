@@ -13,7 +13,7 @@ import { getCoordinates } from 'services/geocodeAPI';
 interface Salon {
     id?: string
     CNPJ: string,
-    owner: string,
+    ownerID?: string,
     name: string,
     opHour?: any,
     rating?: any,
@@ -77,7 +77,8 @@ export function Explore({ navigation }: any) {
                             name: salon.name,
                             id: salon.id,
                             CNPJ: salon.CNPJ,
-                            owner: salon.owner,
+                            ownerID: salon.ownerID,
+                            ownerName: salon.ownerName,
                             opHour: salon.opHour,
                             rating: salon.rating,
                             addres: salon.addres,
@@ -89,6 +90,7 @@ export function Explore({ navigation }: any) {
                             longitude: coords.longitude,
                             title: salon.name,
                         });
+                        // console.log(newMarkers)
                     }
                 }
             }
@@ -147,52 +149,11 @@ export function Explore({ navigation }: any) {
 
                     />
                 ))}
+
             </MapView>
 
             {/* Modal */}
-            {/* <ScrollView
-                ref={scrollRef}
-                style={styles.scrollContainer}
-                horizontal
-                contentContainerStyle={styles.scrollContent}
-            >
-                {salonList?.map((salon, index) => (
-                    <TouchableOpacity
-                        activeOpacity={0.8}
-                        onPress={() => {
-                            let isPressed = false;
-                            console.log(isPressed)
-                            useSalon(salon.id!);
-                            handleMarkerPress(markers[index], index);
-                            isPressed ? navigation.navigate("Home", { screen: "Salao" }) : (isPressed = !isPressed);
-                            console.log(isPressed)
-                        }}
-                        style={styles.card}
-                        key={index}
-                    >
-                        <Image source={{ uri: salon.image }} style={styles.cardImage} />
-                        <View style={styles.cardContent}>
-                            <Text style={styles.salonName}>{salon.name}</Text>
 
-                            <View style={styles.locationRow}>
-                                <Icon.MaterialIcons name="location-pin" color={colors.primary} size={20} />
-                                <Text style={styles.salonAddress}>
-                                    {`${salon.addres?.split(",")[0]}, ${salon.addres?.split(",")[3]}`}
-                                </Text>
-                            </View>
-
-                            <View style={styles.ratingRow}>
-                                <Text>5.0 (2k+ avaliações)</Text>
-                                <Icon.Ionicons name="star" color={colors.primary} size={15} />
-                                <Icon.Ionicons name="star" color={colors.primary} size={15} />
-                                <Icon.Ionicons name="star" color={colors.primary} size={15} />
-                                <Icon.Ionicons name="star" color={colors.primary} size={15} />
-                                <Icon.Ionicons name="star" color={colors.primary} size={15} />
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                ))}
-            </ScrollView> */}
             <FlatList
                 horizontal
                 data={salonList}
@@ -200,10 +161,10 @@ export function Explore({ navigation }: any) {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
                 style={styles.scrollContainer}
-                snapToInterval={width * 0.8 + 10} // trava no item
+                snapToInterval={310} // trava no item
                 decelerationRate="fast"
                 onScroll={(e) => {
-                    const index = Math.round(e.nativeEvent.contentOffset.x / (width * 0.8 + 10));
+                    const index = Math.round(e.nativeEvent.contentOffset.x / (310));
                     if (index !== selectedIndex) {
                         setSelectedIndex(index);
                         const marker = markers[index];
@@ -232,7 +193,7 @@ export function Explore({ navigation }: any) {
                         onLongPress={() => {
                             navigation.navigate("Home", { screen: "Salao" });
                         }}
-                        
+
                         style={[styles.card]}
                     >
                         <Image source={{ uri: salon.image }} style={styles.cardImage} />
@@ -247,10 +208,14 @@ export function Explore({ navigation }: any) {
                             </View>
 
                             <View style={styles.ratingRow}>
-                                <Text>5.0 (2k+ avaliações)</Text>
+                                <Text>5.0 ({ } avaliações)</Text>
                                 {[...Array(5)].map((_, i) => (
                                     <Icon.Ionicons key={i} name="star" color={colors.primary} size={15} />
                                 ))}
+                            </View>
+                            <View style={{flexDirection: "row", gap: 5, alignItems:"center",}}>
+                                <Icon.Ionicons name='information-circle' size={15} color={colors.lightGray}/>
+                                <Text style={{ fontSize: 12, fontFamily: font.poppins.bold, color: colors.lightGray }}>Toque e segure para mais informações.</Text>
                             </View>
                         </View>
                     </TouchableOpacity>
@@ -272,10 +237,10 @@ const styles = StyleSheet.create({
     scrollContainer: {
         position: "absolute",
         bottom: 20,
-        paddingHorizontal: 20,
     },
     scrollContent: {
         gap: 10,
+        paddingHorizontal: 20,
     },
     card: {
         backgroundColor: colors.background,

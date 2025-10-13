@@ -23,7 +23,7 @@ const width = Dimensions.get("window").width;
 
 export default function SalaoScreen({ navigation }: any) {
     const [isScheduling, setScheduling] = useState(false);
-    const {salon} = useContext(SalonContext)!
+    const {salon, isOwner} = useContext(SalonContext)!
     return (
         <SafeAreaView style={styles.container}>
             {/* Imagem principal */}
@@ -46,13 +46,13 @@ export default function SalaoScreen({ navigation }: any) {
                 <MainModal navigation={navigation}/>
             
 
-            <View style={styles.Tab}>
+           {!isOwner &&<View style={styles.Tab}>
                 <TouchableOpacity
                     onPress={() => navigation.navigate('Scheduling')}
                     style={styles.TabBarButton}>
                     <Text style={{ color: "#fff" }}>Reserve um Horário</Text>
                 </TouchableOpacity>
-            </View>
+            </View>}
 
 
         </SafeAreaView>

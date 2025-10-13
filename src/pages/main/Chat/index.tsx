@@ -97,7 +97,7 @@ export default function Chat() {
     }, [chatList]);
 
     const renderedChats = React.useMemo(() => {
-        console.log("renderizou")
+        console.log("[chat]renderizou")
         return chatList
             ?.filter(chat => chat.senderID === user?.id || chat.targetID === user?.id)
             .map(chat => {

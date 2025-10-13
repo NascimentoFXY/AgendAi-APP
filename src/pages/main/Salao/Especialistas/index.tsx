@@ -24,8 +24,8 @@ export default function SalaoEspecialistas() {
         <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
 
             {/* EspecialistasTitle */}
-            <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 20, paddingVertical: 10, gap: 10 }}>
-                <Text style={{ fontSize: 18, fontWeight: "bold" }}>Especialistas</Text><Text style={{ fontSize: 18, fontWeight: "bold", color: colors.primary }}>(5)</Text>
+            <View style={styles.titleContainer}>
+                <Text style={styles.serviceTitle}>Especialistas</Text><Text style={styles.amount}>(5)</Text>
             </View>
             {/* EspecialistasOptions */}
             <View style={{

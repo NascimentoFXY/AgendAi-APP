@@ -80,7 +80,7 @@ export default function Rating() {
                     paddingVertical: 8,
                     marginRight: 10,
                 }}
-                    onPress={() => { setRatingFilter && setRatingFilter("desc"); console.log("filtro recentes") }}>
+                    onPress={() => { setRatingFilter && setRatingFilter("desc"); console.log("[avaliações][avaliações]filtro recentes") }}>
 
                     <Text style={{ color: ratingFilter === "desc" ? colors.white : colorSet.text, fontWeight: ratingFilter === "desc" ? 'bold' : "normal" }}>Recentes</Text>
                 </TouchableOpacity>
@@ -91,7 +91,7 @@ export default function Rating() {
                     paddingHorizontal: 15,
                     paddingVertical: 8,
                     marginRight: 10,}}
-                    onPress={() => { setRatingFilter && setRatingFilter("asc"); console.log("filtro antigos") }}>
+                    onPress={() => { setRatingFilter && setRatingFilter("asc"); console.log("[avaliações]filtro antigos") }}>
 
                     <Text style={{ color: ratingFilter === "asc" ? colors.white : colorSet.text, fontWeight: ratingFilter === "asc" ? 'bold' : "normal" }}>Antigos</Text>
 
@@ -102,7 +102,7 @@ export default function Rating() {
                     borderRadius: 20,
                     paddingHorizontal: 15,
                     paddingVertical: 8,}}
-                    onPress={() => { setRatingFilter && setRatingFilter("withPhotos"); console.log("filtro com fotos") }}>
+                    onPress={() => { setRatingFilter && setRatingFilter("withPhotos"); console.log("[avaliações]filtro com fotos") }}>
                     <Text style={{color: ratingFilter === "withPhotos" ? colors.white : colorSet.text, fontWeight: ratingFilter === "withPhotos" ? 'bold' : "normal"}}>Com fotos</Text>
                 </TouchableOpacity>
             </ScrollView>

@@ -5,7 +5,7 @@ import {
     updateProfile,
     signOut as firebaseSignOut
 } from "firebase/auth";
-import React, { useState, useEffect, createContext, use } from "react";
+import React, { useState, useEffect, createContext, use, useContext } from "react";
 import { auth } from "../services/firebase";
 import { getFirestore, setDoc, doc, getDoc, } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -65,7 +65,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                     })
                     setComplete(parsedResponse.isComplete);
                 } else {
-                    console.log("nao encontrado no AS");
+                    console.log("[auth]nao encontrado no AS");
                 }
             }
             catch (err) {
@@ -92,7 +92,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
-                // console.log("useffect1: ", user?.isComplete)
+                // console.log("[auth]useffect1: ", user?.isComplete)
                 const db = getFirestore();
                 const docRef = doc(db, "users", firebaseUser.uid);
                 const docSnap = await getDoc(docRef);
@@ -107,7 +107,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                     };
 
                 setUser(userData);
-                // console.log("useffect2: ", user?.isComplete)
+                // console.log("[auth]useffect2: ", user?.isComplete)
                 setComplete(userData.isComplete ?? false)
                 await AsyncStorage.setItem('@agendaiApp:user', JSON.stringify(userData));
             } else {
@@ -138,7 +138,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     //--------------------------------cadastro-------------------------//
     const register = async (name: string, email: string, password: string) => {
         setLoading(true)
-        console.log("Cadastro1: ", isComplete)
+        console.log("[auth]Cadastro1: ", isComplete)
         try {
             const cred = await createUserWithEmailAndPassword(auth, email, password);
             const db = getFirestore();
@@ -157,7 +157,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                 email: cred.user.email || email,
                 isComplete: isComplete
             })
-            console.log("Cadastro2: ", isComplete)
+            console.log("[auth]Cadastro2: ", isComplete)
             alert("Bem vindo, " + cred.user.displayName?.split(" ")[0] + "!");
             setLoading(false)
         }
@@ -211,4 +211,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
             {children}
         </AuthContext.Provider>
     );
+}
+export function useAuthContext(){
+    const context = useContext(AuthContext)
+    return context
 }

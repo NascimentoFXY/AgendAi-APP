@@ -30,7 +30,7 @@ const { width } = Dimensions.get("window")
 export default function MainModal({ navigation }: any) {
     const scrollRef = useRef<ScrollView>(null);
     const [currentPage, setCurrentPage] = useState(0)
-    const { salon, loading } = useContext(SalonContext)!
+    const { salon, loading, isOwner } = useContext(SalonContext)!
     const { user } = useContext(AuthContext)!
     const pages = [<SalaoServices />, <SalaoEspecialistas />, <Rating />]
     const { createChat, useChat } = useContext(ChatContext)!
@@ -102,7 +102,7 @@ export default function MainModal({ navigation }: any) {
 
                 <View style={styles.SalaoLocContainer}>
 
-                    {salon?.ownerID !== user?.id ?
+                    {!isOwner ?
                         (
                             <View style={[styles.SalaoLocText, { maxWidth: width }]}>
                                 <Icon.Ionicons name='person-sharp' size={20} color={colors.primary} />
@@ -242,7 +242,7 @@ export default function MainModal({ navigation }: any) {
                 </ScrollView>
 
             </View>
-            <ScrollView style={{ width: "100%", paddingBottom: 120 }}
+            <ScrollView style={{ width: "100%", paddingBottom: !isOwner ?120:0 }}
 
                 pagingEnabled
                 horizontal

@@ -16,6 +16,7 @@ import UserOptions from '../../../components/perfil/options/userProfile';
 import colors from '../../../configs/theme';
 import { styles } from './styles';
 import CustomButton from '../../../components/customButton';
+import Icon from 'configs/icons';
 export default function UserSettings({ navigation }: any) {
     const { user } = useContext(AuthContext)!
     return (
@@ -49,10 +50,11 @@ export default function UserSettings({ navigation }: any) {
             />
             {
 
-                <UserOptions icon={<Feather name='lock' size={40} color={colors.secondary} />} title='Seu estabelecimento'
+                <UserOptions icon={<Icon.MaterialIcons name='home-work' size={40} color={colors.secondary} />} title='Seu(s) estabelecimento(s)'
                 rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }}
+                onPress={()=>{navigation.navigate("UserEstablishment")}}
                 />
             }
             <UserOptions icon={<Ionicons name='notifications' size={40} color={colors.secondary} />} title='Notificação'
