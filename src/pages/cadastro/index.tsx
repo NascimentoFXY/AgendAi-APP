@@ -1,4 +1,4 @@
-import React,  { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 import { AuthContext } from "../../context/auth";
 import {
     SafeAreaView,
@@ -24,6 +24,21 @@ export default function Cadastro({ navigation }: any) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPass, setConfirmPass] = useState('');
+
+    console.log("[cadastro]", confirmPass)
+    const handlerRegister = async () => {
+        if (name && email && password) {
+            if (password.length >= 6 && confirmPass === password) {
+                await register(name, email, password);
+            }
+            else {
+                alert("Verifique sua senha. (Min. 6 caracteres.)")
+            }
+        } else {
+            alert("verifique todos os campos.")
+        }
+    }
     return (
         <SafeAreaView style={styles.mainContainer}>
 
@@ -61,14 +76,14 @@ export default function Cadastro({ navigation }: any) {
                         />
                         <Input
                             title="Senha"
-                            placeholder="Digite sua senha"
+                            placeholder="Digite sua senha (min: 6 caracteres)"
                             secureTextEntry={false}
                             onTextChange={setPassword}
                         />
                         <Input
                             title="Confirme sua senha"
                             placeholder="Confirme sua senha"
-                            
+                            onTextChange={setConfirmPass}
                         />
 
 
@@ -79,7 +94,7 @@ export default function Cadastro({ navigation }: any) {
                         <Text>Concordo com os <Text style={styles.link}>Termos e condicões</Text></Text>
                     </View>
 
-                    <TouchableOpacity style={styles.button} onPress={() => {register(name, email, password);}}>
+                    <TouchableOpacity style={styles.button} onPress={handlerRegister}>
                         <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Cadastrar</Text>
                     </TouchableOpacity>
                 </View>

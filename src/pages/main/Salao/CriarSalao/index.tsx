@@ -109,7 +109,7 @@ export default function CreateSalon({ navigation }: any) {
                 <Info />
             </ScrollView>
 
-            <TabBarButton title='Finalizar' style={{ backgroundColor: "black" }} onPress={() => { createSalon() }} />
+            <TabBarButton title='Finalizar' style={{ backgroundColor: "black" }} onPress={async () => {await createSalon() }} />
         </SafeAreaView>
     );
 }

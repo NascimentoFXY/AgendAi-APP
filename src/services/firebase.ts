@@ -60,7 +60,7 @@ export const uploadImageAndSaveToFirestore = async (imageUri: string, salonID?: 
 
     // Faz o upload da imagem
     const snapshot = await uploadBytes(storageRef, blob);
-    alert('Imagem carregada com sucesso!' + JSON.stringify(snapshot));
+    // alert('Imagem carregada com sucesso!' + JSON.stringify(snapshot));
 
     // Obtém o URL de download público
     const downloadURL = await getDownloadURL(snapshot.ref);

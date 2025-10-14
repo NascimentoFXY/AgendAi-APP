@@ -26,6 +26,7 @@ type InputProps = TextInputProps & {
     style?: StyleProp<ViewStyle>;
     onIconPress?: () => void;
     onTextChange?: (text: string) => void;
+    
 }
 
 export const Input = forwardRef((Props: InputProps, ref: Ref<TextInput> | null) => {
@@ -34,6 +35,7 @@ export const Input = forwardRef((Props: InputProps, ref: Ref<TextInput> | null) 
         <Fragment>
             {title && <Text>{title}</Text>}
             <TextInput
+           
                 value={value}
                 ref={ref}
                 style={[

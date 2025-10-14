@@ -23,7 +23,7 @@ interface AuthContextType {
     user: User | null;
     signIn: (email: string, password: string) => Promise<void>;
     signOut: () => void;
-    register: (name: string, email: string, password: string) => void;
+    register: (name: string, email: string, password: string) => Promise<void>;
     refreshUserData: () => Promise<void>;
     updateUser: (data: any) => void;
     setComplete: (value: boolean) => void;
@@ -139,6 +139,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     const register = async (name: string, email: string, password: string) => {
         setLoading(true)
         console.log("[auth]Cadastro1: ", isComplete)
+
+        const emailValido = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        if (!emailValido.test(email)) {
+            alert("Por favor, insira um e-mail válido.");
+            setLoading(false);
+            return; // Encerra o fluxo se o e-mail for inválido
+        }
         try {
             const cred = await createUserWithEmailAndPassword(auth, email, password);
             const db = getFirestore();
@@ -174,24 +181,24 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     };
 
     const updateUser = async (data: Partial<User>) => {
-        
-        try{
+
+        try {
 
             setUser(prev => {
                 if (!prev) return null;
                 const updatedUser = { ...prev, ...data };
-                
+
                 // Atualiza Firestore e AsyncStorage usando o objeto atualizado
                 const db = getFirestore();
                 setDoc(doc(db, "users", prev.id), updatedUser, { merge: true });
                 AsyncStorage.setItem('@agendaiApp:user', JSON.stringify(updatedUser));
-                
-           
+
+
                 return updatedUser;
             });
-        }catch(er){
+        } catch (er) {
             console.log(er)
-        
+
         }
     };
     //---------------------------------------------------------//
@@ -212,7 +219,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         </AuthContext.Provider>
     );
 }
-export function useAuthContext(){
+export function useAuthContext() {
     const context = useContext(AuthContext)
     return context
 }
