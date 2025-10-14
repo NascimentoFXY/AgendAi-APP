@@ -156,7 +156,7 @@ export default function Chat() {
 
 
             {/* botao de excluir todos os chats */}
-            <CustomButton
+            {/* <CustomButton
                 Icon={<Ionicons name="trash" size={24} color={"#fff"} />}
                 border='Circle'
                 type='absolute'
@@ -164,7 +164,7 @@ export default function Chat() {
                 height={80}
                 style={{ zIndex: 3, backgroundColor: colors.primary, borderWidth: 1, borderColor: "#c5c5c5", bottom: 120, right: 20 }}
                 onPress={deleteAllChats}
-            />
+            /> */}
         </View>
     )
 }

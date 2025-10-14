@@ -14,6 +14,7 @@ interface Salon {
     id?: string
     CNPJ: string,
     ownerID?: string,
+    ownerName?: string,
     name: string,
     opHour?: any,
     rating?: any,
@@ -186,11 +187,15 @@ export function Explore({ navigation }: any) {
                     <TouchableOpacity
                         activeOpacity={0.8}
                         onPress={() => {
-                            useSalon(salon.id!);
-                            handleMarkerPress(markers[index], index);
+                            try {
+                                handleMarkerPress(markers[index], index);
+                            } catch (er) {
+                                console.log(er)
+                            }
 
                         }}
                         onLongPress={() => {
+                            useSalon(salon.id!);
                             navigation.navigate("Home", { screen: "Salao" });
                         }}
 
@@ -213,8 +218,8 @@ export function Explore({ navigation }: any) {
                                     <Icon.Ionicons key={i} name="star" color={colors.primary} size={15} />
                                 ))}
                             </View>
-                            <View style={{flexDirection: "row", gap: 5, alignItems:"center",}}>
-                                <Icon.Ionicons name='information-circle' size={15} color={colors.lightGray}/>
+                            <View style={{ flexDirection: "row", gap: 5, alignItems: "center", }}>
+                                <Icon.Ionicons name='information-circle' size={15} color={colors.lightGray} />
                                 <Text style={{ fontSize: 12, fontFamily: font.poppins.bold, color: colors.lightGray }}>Toque e segure para mais informações.</Text>
                             </View>
                         </View>

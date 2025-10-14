@@ -23,14 +23,21 @@ export default function CompletePerfil({ navigation }: any) {
     const [image, setImage] = React.useState('');
     const updateUserData = async () => {
         try {
-            updateUser({
-                image: await uploadUserImage(image, user?.id!),
-                isComplete: true,
-            })
+            if (image) {
+                updateUser({
+                    image: await uploadUserImage(image, user?.id!),
+                    isComplete: true,
+                })
+            }
+            else {
+                updateUser({
+                    isComplete: true,
+                })
+            }
             console.log("tentando atualizar user")
         } catch (er) {
             setComplete(false);
-            console.log("erro",er)
+            console.log("erro", er)
         }
     }
     return (

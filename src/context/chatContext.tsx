@@ -58,7 +58,7 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
                 createdAt: new Date(),
                 public: false,
             });
-            alert("Chat criado com sucesso! " + chatRef.id);
+            // alert("Chat criado com sucesso! " + chatRef.id);
             return chatRef.id
         } catch (error) {
 
