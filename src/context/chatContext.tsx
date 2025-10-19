@@ -91,6 +91,7 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
             console.error("Erro ao apagar chats:", error);
         }
     };
+    // deleteAllChats();
     // ============carregar chats=================================//
     useEffect(() => {
         if (!user) return;

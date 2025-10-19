@@ -50,7 +50,7 @@ export default function ScheduleFinal({ navigation }: any) {
 
                     <View style={styles.labelContainer}>
                         <Text style={styles.label}>Data de Reserva: </Text>
-                        <Text style={styles.label2}>{scheduleData.date}</Text>
+                        <Text style={styles.label2}>{scheduleData.date.split("|")[1]}</Text>
                     </View>
                     <View style={styles.labelContainer}>
                         <Text style={styles.label}>Telefone: </Text>

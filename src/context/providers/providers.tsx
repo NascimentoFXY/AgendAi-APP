@@ -13,19 +13,21 @@ import * as Font from "expo-font"
 import { useEffect, useState } from 'react';
 import { font } from 'configs/theme';
 import { UserLocationProvider } from 'context/userLocation';
+import NotificationsProvider from 'context/notificationsContext';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     return (
         <AuthProvider>
             <UserLocationProvider>
-            
-                <SalonProvider>
-                    <ScheduleProvider>
-                        <ChatProvider>
-                            {children}
-                        </ChatProvider>
-                    </ScheduleProvider>
-                </SalonProvider>
+                <NotificationsProvider>
+                    <SalonProvider>
+                        <ScheduleProvider>
+                            <ChatProvider>
+                                {children}
+                            </ChatProvider>
+                        </ScheduleProvider>
+                    </SalonProvider>
+                </NotificationsProvider>
             </UserLocationProvider>
         </AuthProvider>
     )

@@ -16,6 +16,7 @@ export const styles = StyleSheet.create({
         width: "100%",
 
     },
+
     header: {
         marginTop: 50,
         width: "100%",
@@ -29,13 +30,17 @@ export const styles = StyleSheet.create({
 
     },
     input: {
-        borderWidth: 1,
-        borderColor: "#ccc",
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-        backgroundColor: "#fff",
-        width: "100%",
+        
+                        borderWidth: 1,
+                        borderColor: "#ccc",
+                        paddingHorizontal: 10,
+                        paddingVertical: 2,
+                        borderRadius: 5,
+                        marginBottom: 10,
+                        backgroundColor: "#fff",
+                        width: "100%",
+                        flexDirection: "row",
+                        alignItems: "center"
     },
     button: {
         backgroundColor: colors.primary,
@@ -100,7 +105,7 @@ export const styles = StyleSheet.create({
     termsContainer: {
         flexDirection: "row",
         marginBottom: 40,
-        alignItems: "center"
+        alignItems: "center",
     }
 
 });

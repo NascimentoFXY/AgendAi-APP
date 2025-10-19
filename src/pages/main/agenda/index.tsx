@@ -1,4 +1,4 @@
-import React, { use, useContext, useRef, useState } from 'react';
+import React, { use, useContext, useEffect, useRef, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -43,7 +43,11 @@ const InitialMockData = [
 const { width } = Dimensions.get("window");
 
 
-export default function Agenda({ showHeader = true, navigation  }: { showHeader?: boolean,navigation?: any}) {
+export default function Agenda({ showHeader = true, navigation }: { showHeader?: boolean, navigation?: any }) {
+    const { createSchedule, schedules, schedule, useSchedule, cancelSchedule, fetchSchedules, updateNotification } = useContext(ScheduleContext)!;
+    const { useSalon, salon } = useContext(SalonContext)!
+
+    const [refreshing, setRefreshing] = useState(false);
 
     const scrollRef = useRef<ScrollView>(null);
 
@@ -70,17 +74,17 @@ export default function Agenda({ showHeader = true, navigation  }: { showHeader?
             console.warn(`Página com índice ${pageIndex} não encontrada.`);
         }
     };
+    const [agendameto, setAgendamento] = useState(schedules); // Mock data para agendamentos
 
-    const handleSwitchChange = (index: number, newValue: boolean) => {
+    const handleSwitchChange = async (id: string, newValue: boolean) => {
+        if (!agendameto) return;
         const updatedAgendamento = [...agendameto]; //pega o array e 'clona'
-        updatedAgendamento[index].lembreteAtivo = newValue; //modifica o valor do lembrete ativo nesse array clonado
-        setAgendamento(updatedAgendamento); // passa o estado do array clonado para o original
-    }
-    const { createSchedule, schedules, schedule, useSchedule, cancelSchedule, fetchSchedules } = useContext(ScheduleContext)!;
-    const { useSalon, salon } = useContext(SalonContext)!
-    const [agendameto, setAgendamento] = useState(InitialMockData); // Mock data para agendamentos
+        updatedAgendamento
+        if(!updateNotification) return
+        await updateNotification(newValue, id)
+        setAgendamento(updatedAgendamento)
 
-    const [refreshing, setRefreshing] = useState(false);
+    }
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         fetchSchedules && fetchSchedules();
@@ -88,6 +92,11 @@ export default function Agenda({ showHeader = true, navigation  }: { showHeader?
             setRefreshing(false);
         }, 500);
     }, []);
+    useEffect(() => {
+
+        onRefresh();
+
+    }, [agendameto]);
     return (
         <View style={{ flex: 1 }}>
             {/* ========HEADER=================== */}
@@ -111,13 +120,14 @@ export default function Agenda({ showHeader = true, navigation  }: { showHeader?
                             <AgendamentoCard
                                 key={item.id}
                                 imagem={item.image}
-                                idServico={"#" + item.id}
+                                idServico={"#" + item.id + " I: "+ index}
                                 titulo={item.salonName}
                                 tipoAgendamento={item.status as 'active' | 'done' | 'canceled'}
                                 endereco={item.address}
                                 data={item.date.split("|")[1]}
                                 hora={item.time}
-                                onLembreteChange={(newValue) => handleSwitchChange(index, newValue)}
+                                lembreteAtivo={item.showNotification}
+                                onLembreteChange={(newValue) => handleSwitchChange(item.id!, newValue)}
                                 onPress={async () => {
 
                                     try {
@@ -145,14 +155,13 @@ export default function Agenda({ showHeader = true, navigation  }: { showHeader?
                         .map((item, index) => (
                             <AgendamentoCard
                                 key={item.id}
-                                idServico={"#" + item.id}
+                                idServico={"#" + item.id + " I:"+ index}
                                 titulo={item.salonName}
                                 imagem={item.image}
                                 tipoAgendamento={item.status as 'active' | 'done' | 'canceled'}
                                 endereco={item.address}
-                                data={item.date}
+                                data={item.date.split("|")[1]}
                                 hora={item.time}
-                                onLembreteChange={(newValue) => handleSwitchChange(index, newValue)}
                                 onPress={async () => {
 
                                     try {
@@ -179,14 +188,13 @@ export default function Agenda({ showHeader = true, navigation  }: { showHeader?
                         .map((item, index) => (
                             <AgendamentoCard
                                 key={item.id}
-                                idServico={"#" + item.id}
+                                idServico={"#" + item.id + " I:"+ index}
                                 titulo={item.salonName}
                                 imagem={item.image}
                                 tipoAgendamento={item.status as 'active' | 'done' | 'canceled'}
                                 endereco={item.address}
-                                data={item.date}
+                                data={item.date.split("|")[1]}
                                 hora={item.time}
-                                onLembreteChange={(newValue) => handleSwitchChange(index, newValue)}
                                 onPress={async () => {
                                     try {
 

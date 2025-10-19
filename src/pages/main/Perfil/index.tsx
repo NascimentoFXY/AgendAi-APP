@@ -38,36 +38,38 @@ export default function Perfil({navigation}: any) {
             </SafeAreaView>
             {/* =============================================== */}
             
-            <UserOptions image={user?.image!} title={user?.name} subTitle={user?.email} />
+            <UserOptions hasImage image={user?.image!} title={user?.name} subTitle={user?.email} />
             {/* Seu Perfil */}
             <UserOptions icon={<FontAwesome5 name='user' size={40} color={colors.secondary} />} title={"seu perfil"}
-                rightIcon={<AntDesign name='right' size={40} color={colors.primary} />}
+                rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }} />
 
             {/* Configurações */}
             <UserOptions icon={<Feather name='settings' size={40} color={colors.secondary} />} title={"Configurações"}
-                rightIcon={<AntDesign name='right' size={40} color={colors.primary} />}
+                rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }}
                 onPress={()=> navigation.navigate('Home', {screen: "Settings"})} />
             {/* Salão */}
-            <UserOptions icon={<Icon.MaterialIcons name='add-box' size={40} color={colors.secondary} />} title={"Cadastrar estabelecimento"}
-                rightIcon={<AntDesign name='right' size={40} color={colors.primary} />}
+              <UserOptions icon={<Icon.MaterialIcons name='home-work' size={40} color={colors.secondary} />} title='Seu(s) estabelecimento(s)'
+                rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }}
-                onPress={()=> navigation.navigate('Home', {screen: "CreateSalon"})} />
+                onPress={()=>{navigation.navigate("Home", {screen: "UserEstablishment"})}}
+                />
+            
 
             {/* Politica */}
             <UserOptions icon={<Feather name='lock' size={40} color={colors.secondary} />}
-                rightIcon={<AntDesign name='right' size={40} color={colors.primary} />}
+                rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 title={"Politica de privacidade"}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }} />
 
             {/* SAIR */}
             <UserOptions icon={<MaterialCommunityIcons name='logout' size={40} color={colors.secondary} />}
-                rightIcon={<AntDesign name='right' size={40} color={colors.primary} />}
+                rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 title={"Sair"}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }} 

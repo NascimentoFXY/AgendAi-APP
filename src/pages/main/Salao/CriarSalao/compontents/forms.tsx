@@ -17,6 +17,7 @@ import Input from './Input/input';
 import Horario from './horario';
 import { SalonContext } from '../../../../../context/salonContext';
 import { Picker } from '@react-native-picker/picker';
+import { formatCNPJ } from 'configs/utils';
 
 export interface DataProps {
     nome?: string;
@@ -106,7 +107,7 @@ export default function Forms() {
 
             <Input placeholder='ADICIONE UM NOME' onChangeText={setNome} style={{ fontFamily: font.abrilfatface }} />
             <Input placeholder='Especialidades (ex: Corte de cabelo, etc..)' onChangeText={setEspecialidades} style={{ fontSize: 15 }} />
-            <Input placeholder='CNPJ' onChangeText={setCnpj} style={{ fontSize: 15 }} />
+            <Input placeholder='CNPJ' value={formatCNPJ(cnpj)} onChangeText={setCnpj} style={{ fontSize: 15 }} maxChar={14} />
 
             <Input placeholder='CEP' style={{ fontSize: 15, }} onChangeText={buscarCep} maxChar={8} />
             <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>

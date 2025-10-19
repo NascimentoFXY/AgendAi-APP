@@ -15,6 +15,7 @@ export interface ScheduleParams {
     time: string;
     image?: string;
     userName?: string;
+    showNotification?: boolean;
     status: string;
 }
 type ScheduleContextType = {
@@ -26,6 +27,8 @@ type ScheduleContextType = {
     fetchSchedules?: () => void;
     useSchedule: (schedule: any) => Promise<ScheduleParams | undefined>;
     schedule: ScheduleParams;
+    showNotification?: boolean;
+    updateNotification?: (value: boolean, scheduleId: string ) => Promise<void>
 };
 export const ScheduleContext = createContext<ScheduleContextType | undefined>(undefined);
 
@@ -79,6 +82,7 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
             image: salon?.image || '',
             id: newScheduleId,
             status: 'active',
+            showNotification: true,
             createdAt: new Date(),
         }
 
@@ -124,9 +128,28 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
             console.error("Erro ao cancelar agendamento: ", error);
         }
     };
-
+    async function updateNotification(value: boolean, scheduleId: string){
+        const scheduleRef = doc(db, "users", user?.id!, "schedules", scheduleId)
+        try{
+            await updateDoc(scheduleRef,{
+                showNotification: value,
+            })
+        }catch(er){
+            alert(er)
+        }
+    }
     return (
-        <ScheduleContext.Provider value={{ schedules, createSchedule, cancelSchedule, confirmActions, scheduleData: scheduleData!, useSchedule, schedule: schedule!, fetchSchedules }}>
+        <ScheduleContext.Provider value={{
+            schedules,
+            createSchedule,
+            cancelSchedule,
+            confirmActions,
+            scheduleData: scheduleData!,
+            useSchedule,
+            schedule: schedule!,
+            fetchSchedules,
+            updateNotification,
+        }}>
             {children}
         </ScheduleContext.Provider>
     );

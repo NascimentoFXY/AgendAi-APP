@@ -28,6 +28,7 @@ import CompletePerfil from "pages/completePerfil";
 import Location from "pages/main/location";
 import UserEstablishment from "pages/main/UserEtablishment/establishmentList";
 import EstablishmentTools from "pages/main/UserEtablishment/establishmentTools";
+import NotificationScreen from "pages/main/notification/notification";
 export default function MainRoutes({ navigation }: any) {
     const Stack = createNativeStackNavigator();
 
@@ -49,6 +50,7 @@ export default function MainRoutes({ navigation }: any) {
             <Stack.Screen name="ScheduleCancelScreen" component={ScheduleCancelScreen} />
             <Stack.Screen name="UserEstablishment" component={UserEstablishment} />
             <Stack.Screen name="EstablishmentTools" component={EstablishmentTools} />
+            <Stack.Screen name="Notifications" component={NotificationScreen} />
 
             <Stack.Screen name="ScheduleCancelConclusion" component={ScheduleCancelConclusion} />
         </Stack.Navigator>

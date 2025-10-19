@@ -4,7 +4,7 @@ import Icon from 'configs/icons';
 import colors from 'configs/theme';
 import { useAuthContext } from 'context/auth';
 import { useSalonContext } from 'context/salonContext';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import {
     View,
     Text,
@@ -14,17 +14,20 @@ import {
     TouchableOpacity,
     StyleSheet,
     Image,
-    ActivityIndicator
+    ActivityIndicator,
+    NativeSyntheticEvent,
+    NativeScrollEvent,
+    Dimensions
 } from 'react-native';
-import { styles }  from '../home/style';
+import { styles } from '../home/style';
 import { LinearGradient } from 'expo-linear-gradient';
 export default function UserEstablishment({ navigation }: any) {
 
-    const { isOwner, salonList,useSalon } = useSalonContext()!;
+    const { isOwner, salonList, useSalon } = useSalonContext()!;
     const { user } = useAuthContext()!;
     const TopSaloesCardsData = ({ rating, name, salonId, image }: any) => {
         return (
-            <TouchableOpacity onPress={() => (navigation.navigate("EstablishmentTools"),useSalon(salonId))} >
+            <TouchableOpacity onPress={() => (navigation.navigate("EstablishmentTools"), useSalon(salonId))} >
                 <View
 
                     style={styles.SaloesCards}>
@@ -55,6 +58,8 @@ export default function UserEstablishment({ navigation }: any) {
         )
     }
 
+
+   
     return (
         <SafeAreaView style={stylesLocal.container}>
             {/* HEADER====================================== */}
@@ -73,13 +78,23 @@ export default function UserEstablishment({ navigation }: any) {
             </SafeAreaView>
             {/* =============================================== */}
 
-            <View style={{justifyContent: "center", alignItems: "center", gap: 20}}>
+
+            <UserOptions icon={<Icon.MaterialIcons name='add-box' size={40} color={colors.secondary} />} title={"Cadastrar estabelecimento"}
+                rightIcon={<Icon.AntDesign name='right' size={24} color={colors.primary} />}
+                style={{
+                    backgroundColor: colors.background,
+                    borderBottomWidth: 2,
+                    borderColor: colors.lightGray
+                }}
+                titleStyle={{ color: colors.secondary }}
+                onPress={() => navigation.navigate('Home', { screen: "CreateSalon" })} />
+            <View style={{ justifyContent: "center", alignItems: "center", gap: 20 }}>
                 {
                     salonList
                         ?.filter(salon => salon.ownerID === user?.id)
                         .map((salon, index) => {
                             return (
-                                <TopSaloesCardsData key={salon.id} name={salon.name} rating={5} salonId={salon.id} image={salon.image} />
+                                <TopSaloesCardsData key={salon.id} name={salon.name} rating={5.0} salonId={salon.id} image={salon.image} />
                             )
                         })
                 }

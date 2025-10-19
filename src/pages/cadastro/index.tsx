@@ -18,6 +18,7 @@ import { Ionicons, AntDesign } from '@expo/vector-icons'; // Ícone do check
 import Checkbox from "../../components/checkbox/checkbox";
 import { Input } from "../../components/input";
 import CustomButton from "../../components/customButton";
+import Icon from "configs/icons";
 
 export default function Cadastro({ navigation }: any) {
     const { register } = useContext(AuthContext)!;
@@ -25,7 +26,8 @@ export default function Cadastro({ navigation }: any) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPass, setConfirmPass] = useState('');
-
+    const [secureTextEntry1, setSecureTextEntry1] = useState(true)
+    const [secureTextEntry2, setSecureTextEntry2] = useState(true)
     console.log("[cadastro]", confirmPass)
     const handlerRegister = async () => {
         if (name && email && password) {
@@ -74,24 +76,30 @@ export default function Cadastro({ navigation }: any) {
                             placeholder="Digite seu Email"
                             onTextChange={setEmail}
                         />
-                        <Input
-                            title="Senha"
-                            placeholder="Digite sua senha (min: 6 caracteres)"
-                            secureTextEntry={false}
-                            onTextChange={setPassword}
-                        />
-                        <Input
-                            title="Confirme sua senha"
-                            placeholder="Confirme sua senha"
-                            onTextChange={setConfirmPass}
-                        />
+
+                        <Text>Senha</Text>
+                        <View style={styles.input}>
+                            
+                            <TextInput secureTextEntry={secureTextEntry1} onChangeText={setPassword} placeholder='Senha (Min. 6 caracteres)' style={{ fontSize: 12, flex: 1 }} />
+                            <TouchableOpacity onPress={() => { setSecureTextEntry1(!secureTextEntry1) }}>
+                                <Icon.AntDesign name='eye' size={20} color={colors.lightGray} />
+                            </TouchableOpacity>
+                        </View>
+                        <Text>Confirme sua senha</Text>
+                        <View style={styles.input}>
+                            
+                            <TextInput secureTextEntry={secureTextEntry2} onChangeText={setConfirmPass} placeholder='Confirme sua senha' style={{ fontSize: 12, flex: 1 }} />
+                            <TouchableOpacity onPress={() => { setSecureTextEntry2(!secureTextEntry2) }}>
+                                <Icon.AntDesign name='eye' size={20} color={colors.lightGray} />
+                            </TouchableOpacity>
+                        </View>
 
 
                     </View>
 
                     <View style={styles.termsContainer}>
                         <Checkbox />
-                        <Text>Concordo com os <Text style={styles.link}>Termos e condicões</Text></Text>
+                        <Text style={{justifyContent: "center"}}>Concordo com os <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}}><Text style={styles.link}>Termos e condicões</Text></TouchableOpacity></Text>
                     </View>
 
                     <TouchableOpacity style={styles.button} onPress={handlerRegister}>

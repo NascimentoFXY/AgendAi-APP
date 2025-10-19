@@ -50,12 +50,7 @@ export default function UserSettings({ navigation }: any) {
             />
             {
 
-                <UserOptions icon={<Icon.MaterialIcons name='home-work' size={40} color={colors.secondary} />} title='Seu(s) estabelecimento(s)'
-                rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
-                style={styles.secondaryOptions}
-                titleStyle={{ color: colors.secondary }}
-                onPress={()=>{navigation.navigate("UserEstablishment")}}
-                />
+              
             }
             <UserOptions icon={<Ionicons name='notifications' size={40} color={colors.secondary} />} title='Notificação'
                 rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}

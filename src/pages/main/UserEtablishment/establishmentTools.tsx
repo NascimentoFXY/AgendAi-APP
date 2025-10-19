@@ -4,7 +4,7 @@ import pickImage from 'configs/pickImage';
 import colors, { font } from 'configs/theme';
 import { useSalonContext } from 'context/salonContext';
 import Input from '../Salao/CriarSalao/compontents/Input/input';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -15,35 +15,64 @@ import {
   StyleSheet,
   Image,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
+  NativeSyntheticEvent,
+  NativeScrollEvent
 } from 'react-native';
 import TabBarButton from 'components/TabBar';
+import EstablishmentTool1 from './establishmentTool1';
 
 export default function EstablishmentTools() {
   const { salon } = useSalonContext()!
   const { width } = Dimensions.get("window")
-  if (!salon) return <ActivityIndicator size={70} />
 
   const [image, setImage] = useState<string | undefined>()
   const [salonName, setSalonName] = useState("")
+  const [salonDescription, setSalonDescription] = useState("")
+  const [salonCNPJ, setSalonCNPJ] = useState("")
+  const scrollRef = useRef<ScrollView>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const pages = [0, 1, 2]
 
   useEffect(() => {
-    let isMounted = true;
-    // console.log(salon?.image)
-    if (isMounted) {
-
-      setImage(salon?.image)
-      setSalonName(salon.name)
-      console.log("[EstablishmentTools]renderizou")
+    if (salon) {
+      setImage(salon.image);
+      setSalonName(salon.name);
+      setSalonDescription(salon.description!);
+      setSalonCNPJ(salon.CNPJ);
+      console.log("[EstablishmentTools] renderizou");
     }
-    isMounted = false;
-  }, []);
+  }, [salon]);
+
 
   async function pickImageasync() {
     const image = await pickImage()
     if (!image) return
     setImage(image)
   }
+  if (!salon) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size={70} />
+      </SafeAreaView>
+    );
+  }
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width)
+    console.log(pageIndex)
+    setCurrentPage(pageIndex);
+  }
+
+  const scrollToPage = (pageIndex: number) => {
+    if (pageIndex >= 0 && pageIndex < pages.length && scrollRef.current) {
+      scrollRef.current.scrollTo({ x: width * pageIndex, animated: true });
+    } else {
+
+      console.warn(`Página com índice ${pageIndex} não encontrada.`);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -62,23 +91,73 @@ export default function EstablishmentTools() {
         </View>
 
         <View style={styles.modal}>
-          <View>
-            <Text style={styles.inputLabel}>Nome do estabelecimento</Text>
-            <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonName} />
-          </View>
-          <View>
-            <Text style={styles.inputLabel}>Descrição</Text>
-            <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonName} />
-          </View>
-          <View>
-            <Text style={styles.inputLabel}>CNPJ</Text>
-            <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonName} />
+          <View style={{padding:20}}>
+            <View>
+              <Text style={styles.inputLabel}>Nome do estabelecimento</Text>
+              <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonName} />
+            </View>
+            <View>
+              <Text style={styles.inputLabel}>Descrição</Text>
+              <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonDescription} />
+            </View>
+            <View>
+              <Text style={styles.inputLabel}>CNPJ</Text>
+              <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonCNPJ} />
+            </View>
           </View>
 
+          <ScrollView
+            horizontal
+            contentContainerStyle={{ gap: 20, paddingHorizontal: 20, }}
+            showsHorizontalScrollIndicator={false}
+          >
+
+            <TouchableOpacity style={styles.options}
+              onPress={() => scrollToPage(0)}
+            >
+              <Text style={styles.optionsText}
+              >
+                Especialistas
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.options}
+              onPress={() => scrollToPage(1)}
+            >
+              <Text style={styles.optionsText}>
+                Serviços
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.options}
+              onPress={() => scrollToPage(2)}
+            >
+              <Text style={styles.optionsText}>
+                Ferramentas de marketing
+              </Text>
+            </TouchableOpacity>
+
+
+          </ScrollView>
+
+          <ScrollView
+            ref={scrollRef}
+            onScroll={handleScroll}
+            scrollEventThrottle={12}
+            pagingEnabled
+            horizontal
+
+          >
+            <EstablishmentTool1 />
+            <EstablishmentTool1 />
+            <EstablishmentTool1 />
+            <EstablishmentTool1 />
+
+
+          </ScrollView>
+
         </View>
-      </ScrollView>
+      </ScrollView >
       <TabBarButton title='Salvar' />
-    </SafeAreaView>
+    </SafeAreaView >
   );
 }
 
@@ -87,14 +166,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background
   },
+  options: {
+    paddingVertical: 20,
+  },
+  optionsText: {
+    fontSize: 20,
+    fontFamily: font.poppins.bold,
+    borderBottomWidth: 3,
+    borderRadius: 15
+
+  },
+
   content: {
-    width: "100%",
     alignItems: 'center'
   },
   modal: {
     flex: 1,
     width: "100%",
-    padding: 20,
     borderRadius: 20,
     marginTop: -20,
     backgroundColor: colors.background

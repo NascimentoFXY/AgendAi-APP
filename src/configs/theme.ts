@@ -9,6 +9,7 @@ const colors = {
   subTitle: "#a5a5a5",
   lightGray: "#a5a5a5",
   transparentLightGray: "#a5a5a5bb",
+  debug: "#00ff00"
 } as const;
 
 export const font = {

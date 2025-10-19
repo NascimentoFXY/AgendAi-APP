@@ -1,8 +1,11 @@
 import React from 'react';
 import { StyleSheet, TextStyle, View, ViewStyle, Text, TouchableOpacity, Image } from 'react-native';
-import colors from '../../../../configs/theme';
+import colors, { font } from '../../../../configs/theme';
+import { getInitials } from 'configs/utils';
+import { useAuthContext } from 'context/auth';
 
 interface UserOptionsProps {
+    hasImage?: boolean,
     image?: string,
     icon?: React.ReactNode,
     rightIcon?: React.ReactNode,
@@ -16,7 +19,8 @@ interface UserOptionsProps {
 }
 
 const UserOptions: React.FC<UserOptionsProps> = ({
-    image = "",
+    image,
+    hasImage = false,
     icon,
     rightIcon,
     title,
@@ -26,6 +30,11 @@ const UserOptions: React.FC<UserOptionsProps> = ({
     subtitleStyle,
     onPress,
 }) => {
+    const { user } = useAuthContext()!
+    function getUserInitials() {
+        const initials = getInitials(user?.name!)
+        return initials
+    }
     return (
         <TouchableOpacity
             activeOpacity={0.8}
@@ -33,10 +42,16 @@ const UserOptions: React.FC<UserOptionsProps> = ({
             style={[styles.container, style]}>
 
 
-            {image && (<Image source={{uri: image}} style={styles.image} />)}
+            {hasImage && (image ? (<Image source={{ uri: image }} style={styles.image} />) :
+                (<View style={[styles.image,{alignItems:"center", justifyContent: "center"}]}><Text style={{
+                    fontSize: 24,
+                    fontFamily: font.poppins.bold,
+                    color: colors.white
+                }}>{getUserInitials()}</Text></View>))
+            }
             {icon && (icon)}
 
-            <View style={{flexDirection: "column"}}>
+            <View style={{ flexDirection: "column" }}>
 
                 <Text style={[styles.title, titleStyle]}>{title}</Text>
                 {subTitle && <Text style={[styles.subTitle, subtitleStyle]}>{subTitle}</Text>}
@@ -60,7 +75,7 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 100,
-        backgroundColor: colors.primary
+        backgroundColor: colors.primary,
     },
     title: {
         color: colors.white,

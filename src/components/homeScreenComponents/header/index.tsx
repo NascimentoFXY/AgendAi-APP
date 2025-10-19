@@ -63,7 +63,10 @@ export default function MainHeader({ navigation }: any) {
 
                     <CustomButton
                         Icon={<Ionicons name="notifications" size={26} color="#6b6b6b" />}
-                        style={styles.notificationButton} />
+                        style={styles.notificationButton}
+                        onPress={()=>{navigation.navigate("Notifications")}}
+                        />
+                        
                 </View>
 
                 {/* Linha de baixo: campo de busca + botão */}
