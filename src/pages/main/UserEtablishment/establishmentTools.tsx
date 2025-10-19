@@ -20,7 +20,8 @@ import {
   NativeScrollEvent
 } from 'react-native';
 import TabBarButton from 'components/TabBar';
-import EstablishmentTool1 from './establishmentTool1';
+import EstablishmentEspecialist from './establishmentEspecialist';
+import EstablishmentServices from './establishmentServices';
 
 export default function EstablishmentTools() {
   const { salon } = useSalonContext()!
@@ -61,7 +62,7 @@ export default function EstablishmentTools() {
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width)
-    console.log(pageIndex)
+    // console.log(pageIndex)
     setCurrentPage(pageIndex);
   }
 
@@ -146,10 +147,8 @@ export default function EstablishmentTools() {
             horizontal
 
           >
-            <EstablishmentTool1 />
-            <EstablishmentTool1 />
-            <EstablishmentTool1 />
-            <EstablishmentTool1 />
+            <EstablishmentEspecialist />
+            <EstablishmentServices />
 
 
           </ScrollView>

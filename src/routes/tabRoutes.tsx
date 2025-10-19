@@ -22,7 +22,19 @@ import { useSalonContext } from "context/salonContext";
 
 const Tab = createBottomTabNavigator()
 export default function TabRoutes() {
-    const {isOwner} = useSalonContext()!;
+
+    const hiddenTabRoutes = [
+        "ScheduleFinal",
+        "ScheduleConclusion",
+        "Filter",
+        "ScheduleCancelScreen",
+        "ScheduleCancelConclusion",
+        "Scheduling",
+        "ChatScreen",
+        "CreateSalon",
+        "EstablishmentTools",
+    ];
+    const { isOwner } = useSalonContext()!;
     const CustomTabBarButton = (props: any) => (
         <TouchableOpacity
             {...props}
@@ -49,7 +61,7 @@ export default function TabRoutes() {
 
         }}>
 
-            <Tab.Screen name="Home" component={MainRoutes}
+            {/* <Tab.Screen name="Home" component={MainRoutes}
                 options={({ route }) => ({
                     tabBarIcon: ({ color, size }) => <Entypo name="home" size={size} color={color} />,
                     tabBarButton: (props: any) => <CustomTabBarButton {...props} />,
@@ -59,13 +71,14 @@ export default function TabRoutes() {
                         if (
                             routeName === 'Salao' && !isOwner ||
                             routeName === 'ScheduleFinal' ||
-                            routeName === 'ScheduleConclusion'||
-                            routeName === 'Filter'||
-                            routeName === 'ScheduleCancelScreen'||
-                            routeName === 'ScheduleCancelConclusion'||
-                            routeName === 'Scheduling'||
-                            routeName === 'ChatScreen'||
-                            routeName === 'CreateSalon'
+                            routeName === 'ScheduleConclusion' ||
+                            routeName === 'Filter' ||
+                            routeName === 'ScheduleCancelScreen' ||
+                            routeName === 'ScheduleCancelConclusion' ||
+                            routeName === 'Scheduling' ||
+                            routeName === 'ChatScreen' ||
+                            routeName === 'CreateSalon' ||
+                            routeName === 'EstablishmentTools'
                         ) {
                             return { display: 'none' };
                         }
@@ -73,7 +86,27 @@ export default function TabRoutes() {
                     })(route),
 
                 })
-                } />
+                } /> */}
+
+            <Tab.Screen
+                name="Home"
+                component={MainRoutes}
+                options={({ route }) => {
+                    const routeName = getFocusedRouteNameFromRoute(route) ?? "Home";
+
+                    const hideTab =
+                        hiddenTabRoutes.includes(routeName) ||
+                        (routeName === "Salao" && !isOwner);
+
+                    return {
+                        tabBarIcon: ({ color, size }) => (
+                            <Entypo name="home" size={size} color={color} />
+                        ),
+                        tabBarButton: (props: any) => <CustomTabBarButton {...props} />,
+                        tabBarStyle: hideTab ? { display: "none" } : undefined,
+                    };
+                }}
+            />
 
 
             <Tab.Screen name="Explore" component={Explore}
@@ -110,7 +143,7 @@ export default function TabRoutes() {
 
 export const styles = StyleSheet.create({
     tabBarButton: {
-        
+
     }
 })
 

@@ -95,7 +95,7 @@ export function Home({ navigation }: any) {
                     </View>
 
                     <LinearGradient
-                        colors={['rgba(255, 255, 255, 0)', '#000000ff']} // degrade roxo > rosa > laranja
+                        colors={['rgba(255, 255, 255, 0)', '#000000ff']} 
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
                         style={styles.linearGradient}

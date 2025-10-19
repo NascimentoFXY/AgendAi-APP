@@ -1,4 +1,4 @@
-import { doc, getDoc } from "@firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, where } from "@firebase/firestore";
 import { db } from "services/firebase";
 
 export async function findUserImage(userId: string) {
@@ -20,6 +20,7 @@ export async function findUserImage(userId: string) {
 }
 
 import { Timestamp } from "firebase/firestore";
+import { Modal } from "react-native";
 
 interface FormattedDate {
     display: string; // ex: "Hoje 14:35", "Ontem 13:20" ou "12/10/2025 15:00"
@@ -73,51 +74,51 @@ export const formatFirestoreTimestamp = (timestamp: Timestamp | string | number)
 };
 
 export function isCNPJValid(cnpj: string): boolean {
-  cnpj = cnpj.replace(/[^\d]+/g, '');
+    cnpj = cnpj.replace(/[^\d]+/g, '');
 
-  if (cnpj.length !== 14) return false;
+    if (cnpj.length !== 14) return false;
 
-  // Elimina CNPJs inválidos conhecidos
-  if (/^(\d)\1+$/.test(cnpj)) return false;
+    // Elimina CNPJs inválidos conhecidos
+    if (/^(\d)\1+$/.test(cnpj)) return false;
 
-  let tamanho = cnpj.length - 2;
-  let numeros = cnpj.substring(0, tamanho);
-  let digitos = cnpj.substring(tamanho);
-  let soma = 0;
-  let pos = tamanho - 7;
+    let tamanho = cnpj.length - 2;
+    let numeros = cnpj.substring(0, tamanho);
+    let digitos = cnpj.substring(tamanho);
+    let soma = 0;
+    let pos = tamanho - 7;
 
-  for (let i = tamanho; i >= 1; i--) {
-    soma += parseInt(numeros.charAt(tamanho - i)) * pos--;
-    if (pos < 2) pos = 9;
-  }
+    for (let i = tamanho; i >= 1; i--) {
+        soma += parseInt(numeros.charAt(tamanho - i)) * pos--;
+        if (pos < 2) pos = 9;
+    }
 
-  let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-  if (resultado != parseInt(digitos.charAt(0))) return false;
+    let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+    if (resultado != parseInt(digitos.charAt(0))) return false;
 
-  tamanho = tamanho + 1;
-  numeros = cnpj.substring(0, tamanho);
-  soma = 0;
-  pos = tamanho - 7;
+    tamanho = tamanho + 1;
+    numeros = cnpj.substring(0, tamanho);
+    soma = 0;
+    pos = tamanho - 7;
 
-  for (let i = tamanho; i >= 1; i--) {
-    soma += parseInt(numeros.charAt(tamanho - i)) * pos--;
-    if (pos < 2) pos = 9;
-  }
+    for (let i = tamanho; i >= 1; i--) {
+        soma += parseInt(numeros.charAt(tamanho - i)) * pos--;
+        if (pos < 2) pos = 9;
+    }
 
-  resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
-  if (resultado != parseInt(digitos.charAt(1))) return false;
+    resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+    if (resultado != parseInt(digitos.charAt(1))) return false;
 
-  return true;
+    return true;
 }
 
 export function formatCNPJ(cnpj: string) {
-  return cnpj
-    .replace(/\D/g, '')
-    .replace(/^(\d{2})(\d)/, '$1.$2')
-    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
-    .replace(/\.(\d{3})(\d)/, '.$1/$2')
-    .replace(/(\d{4})(\d)/, '$1-$2')
-    .slice(0, 18);
+    return cnpj
+        .replace(/\D/g, '')
+        .replace(/^(\d{2})(\d)/, '$1.$2')
+        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+        .replace(/\.(\d{3})(\d)/, '.$1/$2')
+        .replace(/(\d{4})(\d)/, '$1-$2')
+        .slice(0, 18);
 }
 
 export const getInitials = (fullName: string): string => {
@@ -143,3 +144,39 @@ export const getInitials = (fullName: string): string => {
     // Ex: "JS"
     return initials.toUpperCase();
 };
+
+export async function getUserByEmail(email: string) {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+        alert("Usuário não encontrado! Verifique todos os campos");
+        return null;
+    }
+
+    // como o email é único, podemos pegar o primeiro documento
+    const userDoc = querySnapshot.docs[0];
+    return { id: userDoc.id, ...userDoc.data() };
+}
+export async function getUserByName(name: string) {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("name", "==", name));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+        alert("Usuário não encontrado! Verifique todos os campos");
+        return null;
+    }
+
+    const userDoc = querySnapshot.docs[0];
+    return { id: userDoc.id, ...userDoc.data() };
+}
+
+
+export function openModal({ children }: { children?: React.ReactNode }) {
+    return (
+
+        <Modal></Modal>
+)
+}

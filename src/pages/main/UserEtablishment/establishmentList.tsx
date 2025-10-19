@@ -87,7 +87,7 @@ export default function UserEstablishment({ navigation }: any) {
                     borderColor: colors.lightGray
                 }}
                 titleStyle={{ color: colors.secondary }}
-                onPress={() => navigation.navigate('Home', { screen: "CreateSalon" })} />
+                onPress={() => navigation.navigate("CreateSalon")} />
             <View style={{ justifyContent: "center", alignItems: "center", gap: 20 }}>
                 {
                     salonList

@@ -105,7 +105,7 @@ export default function Forms() {
     return (
         <SafeAreaView style={styles.container}>
 
-            <Input placeholder='ADICIONE UM NOME' onChangeText={setNome} style={{ fontFamily: font.abrilfatface }} />
+            <Input placeholder='ADICIONE UM NOME' onChangeText={setNome} style={{ fontFamily: font.poppins.semibold, fontSize: 15,}} />
             <Input placeholder='Especialidades (ex: Corte de cabelo, etc..)' onChangeText={setEspecialidades} style={{ fontSize: 15 }} />
             <Input placeholder='CNPJ' value={formatCNPJ(cnpj)} onChangeText={setCnpj} style={{ fontSize: 15 }} maxChar={14} />
 

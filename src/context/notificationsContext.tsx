@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
 import { useAuthContext } from "./auth";
+import { collection, getDocs, query, where } from "@firebase/firestore";
+import { db } from "services/firebase";
+import { getUserByEmail } from "configs/utils";
 interface Notifications {
     id?: string,
     title: string,
@@ -9,6 +12,7 @@ interface Notifications {
 }
 interface NotificationContextType {
     notificationList: Notifications[] | null,
+    notifyUser: (userEmail: string, userName: string) => Promise<void>,
 }
 const NotificationContext = createContext<NotificationContextType | null>(null)
 export default function NotificationsProvider({ children }: { children: React.ReactNode }) {
@@ -23,16 +27,26 @@ export default function NotificationsProvider({ children }: { children: React.Re
         },
         {
             id: "2",
-            title: "oi",
+            title: "José esta te chamando para ser um especialista de La Mar!",
             type: "buttons",
-            subtitle: "subtitulo",
-            targetID: "all"
+            subtitle: "Deseja aceitar?",
+            targetID: "nenhum"
         },
     ])
-
+    const notifyUser = async (userEmail: string, senderName: string) => {
+        const user = await getUserByEmail(userEmail);
+        const newNotification: Notifications = {
+            id: Date.now().toString(),
+            title: `${senderName} está te chamando para ser um especialista!`,
+            subtitle: "Deseja aceitar?",
+            type: "buttons",
+            targetID: user?.id!,
+        }
+        setNotificationList(prev => prev ? [...prev, newNotification] : [newNotification])
+    }
     return (
 
-        <NotificationContext.Provider value={{ notificationList: notificationList }}>
+        <NotificationContext.Provider value={{ notificationList: notificationList, notifyUser }}>
             {children}
         </NotificationContext.Provider>
     )
