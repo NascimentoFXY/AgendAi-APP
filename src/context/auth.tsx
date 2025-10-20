@@ -124,15 +124,17 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     //---------------------login-----------------------------------//
     const signIn = async (email: string, password: string) => {
-        setLoading(true)
+        // setLoading(true)
         try {
             await signInWithEmailAndPassword(auth, email, password)
             setLoading(false)
+   
             // alert("Bem vindo, " + cred.user.displayName + "!");
         } catch (error) {
-            console.error("Erro ao fazer login:", error);
+            console.log("Erro ao fazer login:", error);
             alert("Falha ao fazer login. Verifique suas credenciais.");
-            setLoading(false)
+            // setLoading(false)
+
         }
     }
     //--------------------------------cadastro-------------------------//

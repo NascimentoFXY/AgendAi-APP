@@ -1,5 +1,8 @@
+import { Button, Dimensions, PixelRatio, StyleSheet, View } from 'react-native';
+
 import { collection, doc, getDoc, getDocs, query, where } from "@firebase/firestore";
 import { db } from "services/firebase";
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export async function findUserImage(userId: string) {
     try {
@@ -21,6 +24,7 @@ export async function findUserImage(userId: string) {
 
 import { Timestamp } from "firebase/firestore";
 import { Modal } from "react-native";
+import { useState } from 'react';
 
 interface FormattedDate {
     display: string; // ex: "Hoje 14:35", "Ontem 13:20" ou "12/10/2025 15:00"
@@ -174,9 +178,44 @@ export async function getUserByName(name: string) {
 }
 
 
-export function openModal({ children }: { children?: React.ReactNode }) {
-    return (
+export function CustomModal({ children }: { children?: React.ReactNode }) {
+  const [visible, setVisible] = useState(false);
 
-        <Modal></Modal>
-)
+  return (
+    <>
+      <Button title="Abrir Modal" onPress={() => setVisible(true)} />
+
+      <Modal
+        visible={visible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setVisible(false)}
+      >
+        <View style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(0,0,0,0.5)'
+        }}>
+          <View style={{
+            width: Dimensions.get("window").width * 0.8,
+            padding: 20,
+            backgroundColor: '#fff',
+            borderRadius: 20
+          }}>
+            {children}
+            <Button title="Fechar" onPress={() => setVisible(false)} />
+          </View>
+        </View>
+      </Modal>
+    </>
+  );
+}
+
+// Baseado em um layout padrão (ex: iPhone 11 = 375px de largura)
+const scale = SCREEN_WIDTH / 375;
+
+export function normalizeFont(size:number) {
+    const newSize = size * scale;
+    return Math.round(PixelRatio.roundToNearestPixel(newSize));
 }

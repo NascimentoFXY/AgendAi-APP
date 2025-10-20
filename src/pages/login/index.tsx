@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../../context/auth';
 import {
+    Modal,
     SafeAreaView,
     Text,
     TextInput,
@@ -20,6 +21,16 @@ export default function Login({ navigation }: any) {
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [secureTextEntry, setSecureTextEntry] = useState(true)
+
+    const handleSignIn = async () => {
+        if (!email && !password) {
+            alert("verifique todos os campos.")
+            return
+        }
+        await signIn(email, password)
+
+    }
+
     return (
         <SafeAreaView style={styles.mainContainer}>
 
@@ -60,19 +71,19 @@ export default function Login({ navigation }: any) {
                         alignItems: "center"
                     }}>
                         <TextInput secureTextEntry={secureTextEntry} onChangeText={setPassword} placeholder='Senha' style={{ fontSize: 12, flex: 1 }} />
-                        <TouchableOpacity onPress={()=>{setSecureTextEntry(!secureTextEntry)}}>
+                        <TouchableOpacity onPress={() => { setSecureTextEntry(!secureTextEntry) }}>
                             <Icon.AntDesign name='eye' size={20} color={colors.lightGray} />
                         </TouchableOpacity>
                     </View>
 
                     <TouchableOpacity
                         style={{ flexDirection: "row-reverse" }}
-                        onPress={() => (alert("Função de recuperação de senha ainda não implementada. Deslogando..."), signOut())}
+                        onPress={() => (alert("Função de recuperação de senha ainda não implementada."), signOut())}
                     >
                         <Text style={{ color: colors.primary }}>Esqueceu sua senha?</Text></TouchableOpacity>
                 </View>
 
-                <TouchableOpacity style={styles.button} onPress={() => { signIn(email, password) }}>
+                <TouchableOpacity style={styles.button} onPress={handleSignIn}>
                     <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Entrar</Text>
                 </TouchableOpacity>
 

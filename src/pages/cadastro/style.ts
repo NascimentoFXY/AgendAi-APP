@@ -1,5 +1,6 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import colors from "../../configs/theme";
+import colors, { font } from "../../configs/theme";
+import { normalizeFont } from "configs/utils";
 export const styles = StyleSheet.create({
 
     mainContainer: {
@@ -9,12 +10,12 @@ export const styles = StyleSheet.create({
         alignItems: "center",
         width: "100%",
         height: "100%",
-        padding: 50,
+
     },
     contentContainer: {
 
         width: "100%",
-
+        padding: 50,
     },
 
     header: {
@@ -27,20 +28,22 @@ export const styles = StyleSheet.create({
         width: "100%",
         height: "auto",
         marginBottom: 20,
-
+        
     },
     input: {
+
+        borderWidth: 1,
+        borderColor: "#ccc",
+        paddingHorizontal: 10,
+        paddingVertical: 2,
+        borderRadius: 5,
+        marginBottom: 10,
+        backgroundColor: "#fff",
+        width: "100%",
+        flexDirection: "row",
+        alignItems: "center",
         
-                        borderWidth: 1,
-                        borderColor: "#ccc",
-                        paddingHorizontal: 10,
-                        paddingVertical: 2,
-                        borderRadius: 5,
-                        marginBottom: 10,
-                        backgroundColor: "#fff",
-                        width: "100%",
-                        flexDirection: "row",
-                        alignItems: "center"
+        
     },
     button: {
         backgroundColor: colors.primary,
@@ -78,7 +81,7 @@ export const styles = StyleSheet.create({
         position: "absolute",
         bottom: -50,
         width: "150%",
-        height: 150,
+        height: "15%",
         backgroundColor: "#D97171",
         borderTopLeftRadius: "100%",
         borderTopRightRadius: "100%",
@@ -87,6 +90,7 @@ export const styles = StyleSheet.create({
         color: "#7F3F3F",
         textDecorationLine: "underline",
         fontWeight: "500",
+        // textAlign:"center"
     },
     backButtonContainer: {
         position: "absolute",
@@ -103,9 +107,17 @@ export const styles = StyleSheet.create({
         zIndex: 2,
     },
     termsContainer: {
+        // backgroundColor: colors.debug
         flexDirection: "row",
         marginBottom: 40,
         alignItems: "center",
+        justifyContent: "center",
+    },
+    text: {
+
+        fontSize: normalizeFont(12),
+        fontFamily: font.poppins.medium,
+
     }
 
 });

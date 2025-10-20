@@ -52,7 +52,7 @@ export default function Cadastro({ navigation }: any) {
             />
 
             <ScrollView style={styles.contentContainer}
-                showsVerticalScrollIndicator={false}>
+                showsVerticalScrollIndicator={true}>
                 <View style={styles.header}>
 
                     <Text style={styles.bold}>Crie sua conta</Text>
@@ -61,7 +61,7 @@ export default function Cadastro({ navigation }: any) {
                 </View>
 
 
-                <View style={{ width: "100%", height: "auto", marginBottom: 20 }}>
+                <View style={{ width: "100%", height: "auto", marginBottom: 20,  }}>
 
                     <View style={styles.inputContainer}>
 
@@ -79,7 +79,7 @@ export default function Cadastro({ navigation }: any) {
 
                         <Text>Senha</Text>
                         <View style={styles.input}>
-                            
+
                             <TextInput secureTextEntry={secureTextEntry1} onChangeText={setPassword} placeholder='Senha (Min. 6 caracteres)' style={{ fontSize: 12, flex: 1 }} />
                             <TouchableOpacity onPress={() => { setSecureTextEntry1(!secureTextEntry1) }}>
                                 <Icon.AntDesign name='eye' size={20} color={colors.lightGray} />
@@ -87,7 +87,7 @@ export default function Cadastro({ navigation }: any) {
                         </View>
                         <Text>Confirme sua senha</Text>
                         <View style={styles.input}>
-                            
+
                             <TextInput secureTextEntry={secureTextEntry2} onChangeText={setConfirmPass} placeholder='Confirme sua senha' style={{ fontSize: 12, flex: 1 }} />
                             <TouchableOpacity onPress={() => { setSecureTextEntry2(!secureTextEntry2) }}>
                                 <Icon.AntDesign name='eye' size={20} color={colors.lightGray} />
@@ -99,7 +99,8 @@ export default function Cadastro({ navigation }: any) {
 
                     <View style={styles.termsContainer}>
                         <Checkbox />
-                        <Text style={{justifyContent: "center"}}>Concordo com os <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}}><Text style={styles.link}>Termos e condicões</Text></TouchableOpacity></Text>
+                        <Text style={[styles.text,]}>Concordo com os </Text>
+                        <TouchableOpacity ><Text style={[styles.text, styles.link]}>Termos e condições</Text></TouchableOpacity>
                     </View>
 
                     <TouchableOpacity style={styles.button} onPress={handlerRegister}>
