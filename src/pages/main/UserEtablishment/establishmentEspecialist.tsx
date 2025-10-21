@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import colors, { font } from "configs/theme";
 import ProfessionalCard from "components/Salao/EspecialistaScreen";
+import { getUserByEmail, sendNotification } from "configs/utils";
 
 const { width } = Dimensions.get("window");
 
@@ -24,12 +25,24 @@ export default function EstablishmentEspecialist() {
   const width = Dimensions.get("window").width;
   const calcCardsWidth = (width / 2) - 40;
 
-  const handleConfirm = () => {
+  const getUserHandler=async (email: string)=>{
+    const user = await getUserByEmail(email)
+    console.log(user)
+    return user
+  }
+
+  const handleConfirm = async() => {
     if (!especialistaEmail || !servico) {
       alert("Preencha todos os campos!");
       return;
     }
-
+    const response = await getUserHandler(especialistaEmail)
+    if(response.sucess == false) return
+    const notificacao= {
+      texto: "aaaaaaa",
+      acton: "aaaaaaaaaaaa",
+    }
+    sendNotification(response.id,notificacao )
     alert("O convite foi enviado para:" + especialistaEmail + ". \nAguarde a solicitação.");
 
     setModalVisible(false);

@@ -1,6 +1,6 @@
 import { Button, Dimensions, PixelRatio, StyleSheet, View } from 'react-native';
 
-import { collection, doc, getDoc, getDocs, query, where } from "@firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "@firebase/firestore";
 import { db } from "services/firebase";
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -156,12 +156,13 @@ export async function getUserByEmail(email: string) {
 
     if (querySnapshot.empty) {
         alert("Usuário não encontrado! Verifique todos os campos");
-        return null;
+        return { sucess: false };
     }
 
     // como o email é único, podemos pegar o primeiro documento
     const userDoc = querySnapshot.docs[0];
-    return { id: userDoc.id, ...userDoc.data() };
+    const user = { id: userDoc.id, ...userDoc.data(), sucess:true }
+    return user;
 }
 export async function getUserByName(name: string) {
     const usersRef = collection(db, "users");
@@ -178,44 +179,35 @@ export async function getUserByName(name: string) {
 }
 
 
-export function CustomModal({ children }: { children?: React.ReactNode }) {
-  const [visible, setVisible] = useState(false);
-
-  return (
-    <>
-      <Button title="Abrir Modal" onPress={() => setVisible(true)} />
-
-      <Modal
-        visible={visible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setVisible(false)}
-      >
-        <View style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'rgba(0,0,0,0.5)'
-        }}>
-          <View style={{
-            width: Dimensions.get("window").width * 0.8,
-            padding: 20,
-            backgroundColor: '#fff',
-            borderRadius: 20
-          }}>
-            {children}
-            <Button title="Fechar" onPress={() => setVisible(false)} />
-          </View>
-        </View>
-      </Modal>
-    </>
-  );
-}
 
 // Baseado em um layout padrão (ex: iPhone 11 = 375px de largura)
 const scale = SCREEN_WIDTH / 375;
 
-export function normalizeFont(size:number) {
+export function normalizeFont(size: number) {
     const newSize = size * scale;
     return Math.round(PixelRatio.roundToNearestPixel(newSize));
 }
+
+export async function sendNotification(
+    userID: string,
+    data: { texto: string; action: string }
+  ) {
+    try {
+
+      const notificationsRef = collection(db, "users", userID, "notifications");
+  
+
+      await addDoc(notificationsRef, {
+        texto: data.texto,
+        action: data.action,
+        createdAt: new Date(),
+        read: false, 
+      });
+  
+      console.log("✅ Notificação enviada com sucesso!");
+      return { success: true };
+    } catch (error) {
+      console.error("Erro ao enviar notificação:", error);
+      return { success: false, error };
+    }
+  }
