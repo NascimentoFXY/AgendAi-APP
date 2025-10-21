@@ -11,6 +11,7 @@ import {
   Dimensions,
 } from "react-native";
 import colors, { font } from "configs/theme";
+import ProfessionalCard from "components/Salao/EspecialistaScreen";
 
 const { width } = Dimensions.get("window");
 
@@ -18,8 +19,10 @@ export default function EstablishmentEspecialist() {
   const [especialistaEmail, setEspecialistaEmail] = useState("");
   const [servico, setServico] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [especialistaList, setEspecialistaList] = useState([]);
+  const [especialistaList, setEspecialistaList] = useState<{id: any, email: string, servico: string}[]>();
 
+  const width = Dimensions.get("window").width;
+  const calcCardsWidth = (width / 2) - 40;
 
   const handleConfirm = () => {
     if (!especialistaEmail || !servico) {
@@ -27,15 +30,12 @@ export default function EstablishmentEspecialist() {
       return;
     }
 
-    const Especialista={
-
-    }
-
-    alert("O convite foi enviado para:"+ especialistaEmail + ". \nAguardando solicitação." );
+    alert("O convite foi enviado para:" + especialistaEmail + ". \nAguarde a solicitação.");
 
     setModalVisible(false);
     setEspecialistaEmail("");
     setServico("");
+    setEspecialistaList(prev=>[...(prev || []),{id: String(Date.now()+Math.random()),email: especialistaEmail, servico: servico }])
   };
 
   return (
@@ -43,7 +43,7 @@ export default function EstablishmentEspecialist() {
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Especialistas</Text>
 
-        <Text style={{fontFamily: font.poppins.medium}}>
+        <Text style={{ fontFamily: font.poppins.medium }}>
           Você não possui nenhum especialista
         </Text>
         <TouchableOpacity
@@ -53,6 +53,15 @@ export default function EstablishmentEspecialist() {
 
           <Text style={styles.addButtonText}>Adicionar especialista</Text>
         </TouchableOpacity>
+
+        <SafeAreaView style={styles.professionalContainer}>
+          {especialistaList?.map((item, index)=>
+
+            <ProfessionalCard key={item.id} name={item.email} profession={item.servico} cardWidth={calcCardsWidth}/>
+            
+          )
+          }
+        </SafeAreaView>
 
         {/* Modal */}
         <Modal
@@ -108,6 +117,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     margin: 2,
     flex: 1,
+  },
+  professionalContainer:{
+    flex: 1,
+    flexDirection: "row",
+    paddingBottom: 120,
+    gap: 20,
   },
   content: {
     justifyContent: "center",
