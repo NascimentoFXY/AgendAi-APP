@@ -2,7 +2,7 @@ import React, { useState, createContext, use, useEffect, useContext } from "reac
 import { AuthContext } from "./auth";
 import { db, uploadImageAndSaveToFirestore } from "../services/firebase";
 import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc, deleteDoc, serverTimestamp, Timestamp, updateDoc } from "@firebase/firestore";
-import { User } from "@firebase/auth";
+import { User } from 'context/auth'
 import { DataProps } from "../pages/main/Salao/CriarSalao/compontents/forms";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 
@@ -65,6 +65,7 @@ interface SalonContextType {
     addRatingToSalon: (data: Rating) => void,
     setRatingFilter?: (value: string) => void,
     getAverageRating?: (salon: Salon) => Promise<number>,
+    addSpecialistToSalon?: (salonID: string, user: User) => Promise<any>
     ratingFilter?: string,
     loading: boolean,
     isValid: boolean,
@@ -137,8 +138,8 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                     createdAt: new Date(),
                     rating: 5.0,
                 })
-                
-                await updateDoc((userRef),{
+
+                await updateDoc((userRef), {
                     ownerOf: salonRef.id
                 })
                 useSalon(salonRef.id)
@@ -204,6 +205,29 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         }
 
     }
+    async function addSpecialistToSalon(salonID: string, user: User) {
+        try {
+            // Referência direta ao documento do especialista
+            const specialistRef = doc(db, "salon", salonID, "specialists", user.id);
+
+            // Dados a serem salvos
+            const specialistData: User = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                // image: user.image,
+            };
+
+            // Cria (ou substitui) o documento
+            await setDoc(specialistRef, specialistData);
+
+            console.log(`✅ ${user.name} foi adicionado como especialista no salão ${salonID}`);
+            return { success: true };
+        } catch (error) {
+            console.error("❌ Erro ao adicionar especialista:", error);
+            return { success: false, error };
+        }
+    }
     // --------------------Busca avaliações---------------------------------------------//
     const [ratings, setRatings] = useState<Rating[]>([]);
     const [ratingFilter, setRatingFilter] = useState<string>("desc");
@@ -256,7 +280,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                 return Number(data.value) || 0;
             });
             if (ratings.length === 0) return 0;
-            
+
             const total = ratings.reduce((sum, value) => sum + value, 0);
 
             return total / ratings.length;
@@ -268,26 +292,26 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
 
     // -----------------------atualizar----------------------------------//
     useEffect(() => {
-    const fetchSalons = async () => {
-        try {
-            const q = query(collection(db, "salon"));
-            const snapshot = await getDocs(q);
+        const fetchSalons = async () => {
+            try {
+                const q = query(collection(db, "salon"));
+                const snapshot = await getDocs(q);
 
-            const list = snapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data()
-            })) as Salon[];
+                const list = snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data()
+                })) as Salon[];
 
-            setSalonList(list);
-        } catch (error) {
-            console.error("Erro ao buscar salões:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+                setSalonList(list);
+            } catch (error) {
+                console.error("Erro ao buscar salões:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    fetchSalons();
-}, []);
+        fetchSalons();
+    }, []);
 
     //-----------------------------apagar todos saloes---------------//
 
@@ -322,13 +346,15 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             setRatingFilter: setRatingFilter,
             ratingFilter: ratingFilter,
             getAverageRating,
+            addSpecialistToSalon,
+
             isOwner: salon?.ownerID === user?.id
         }}>
             {children}
         </SalonContext.Provider>
     )
 }
-export function useSalonContext(){
+export function useSalonContext() {
     const context = useContext(SalonContext);
-    if(context) return context;
+    if (context) return context;
 }

@@ -3,6 +3,7 @@ import { useAuthContext } from "./auth";
 import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, serverTimestamp, setDoc, where } from "@firebase/firestore";
 import { db } from "services/firebase";
 import { getUserByEmail } from "configs/utils";
+import { useSalonContext } from "./salonContext";
 export interface Notifications {
     id?: string,
     title: string,
@@ -10,16 +11,18 @@ export interface Notifications {
     targetID: string,
     createdAt: any,
     type?: "buttons" | "readonly",
-    status?: "pending" | "denied" | "accepted"
+    status?: "pending" | "denied" | "accepted",
+    salonID?: any
 }
 interface NotificationContextType {
     notificationList: Notifications[] | null,
-    notifyUserByEmail: (userEmail: string, senderName: string) => Promise<any>,
+    notifyUserByEmail: (userEmail: string, senderName: string, salonID: string) => Promise<any>,
     fetchNotifications: () => () => void;
 }
 const NotificationContext = createContext<NotificationContextType | null>(null)
 export default function NotificationsProvider({ children }: { children: React.ReactNode }) {
     const { user } = useAuthContext()!
+
     const [notificationList, setNotificationList] = useState<Notifications[] | null>([])
     const [notification, setNotification] = useState<Notifications>()
 
@@ -61,7 +64,7 @@ export default function NotificationsProvider({ children }: { children: React.Re
 }
 
 
-    const notifyUserByEmail = async (userEmail: string, senderName: string) => {
+    const notifyUserByEmail = async (userEmail: string, senderName: string, salonID: string) => {
         const userRes = await getUserByEmail(userEmail);
         if (!userRes) return
         try {
@@ -73,7 +76,8 @@ export default function NotificationsProvider({ children }: { children: React.Re
                 type: "buttons",
                 targetID: userRes?.id!,
                 createdAt: serverTimestamp(),
-                status: "pending"
+                status: "pending",
+                salonID: salonID
             }
             await setDoc(notificationsRef, newNotification);
 

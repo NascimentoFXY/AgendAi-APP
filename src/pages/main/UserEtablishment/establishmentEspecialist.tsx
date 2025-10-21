@@ -16,11 +16,13 @@ import { getUserByEmail, sendNotification } from "configs/utils";
 import { useAuthContext } from "context/auth";
 import { useNotificationContext } from "context/notificationsContext";
 import {User} from 'context/auth'
+import { useSalonContext } from "context/salonContext";
 const { width } = Dimensions.get("window");
 
 export default function EstablishmentEspecialist() {
   const { notificationList, notifyUserByEmail } = useNotificationContext()!
   const {user}= useAuthContext()!
+  const {salon} = useSalonContext()!
   const [especialistaEmail, setEspecialistaEmail] = useState("");
   const [servico, setServico] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -28,7 +30,7 @@ export default function EstablishmentEspecialist() {
 
   const width = Dimensions.get("window").width;
   const calcCardsWidth = (width / 2) - 40;
-
+// console.log(salon?.id)
   const getUserHandler=async (email: string)=>{
     const user = await getUserByEmail(email)
     console.log(user)
@@ -43,9 +45,9 @@ export default function EstablishmentEspecialist() {
     const userRes = await getUserHandler(especialistaEmail)
     if(!userRes) return
 
-    notifyUserByEmail(userRes.email, user?.name!)
+    notifyUserByEmail(userRes.email, user?.name!, salon?.id!)
 
-    alert("O convite foi enviado para:" + especialistaEmail + ". \nAguarde a solicitação.");
+    alert("O convite foi enviado para: " + userRes.name + ". \nAguarde a solicitação.");
 
     setModalVisible(false);
     setEspecialistaEmail("");
