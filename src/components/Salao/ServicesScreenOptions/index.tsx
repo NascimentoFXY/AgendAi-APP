@@ -5,7 +5,7 @@ import { AntDesign } from '@expo/vector-icons'; // Certifique-se de ter o @expo/
 // 1. Definição das Props
 interface ServiceItemProps {
     text?: string; // Opcional, com valor padrão
-    amount?: number; // Opcional, com valor padrão (ex: "30 Tipos")
+    amount?: any; // Opcional, com valor padrão (ex: "30 Tipos")
     iconName?: keyof typeof AntDesign.glyphMap; // Nome do ícone do AntDesign
     onPress?: () => void; // Função a ser executada ao pressionar
     style?: ViewStyle; // Para customizar o estilo do TouchableOpacity
