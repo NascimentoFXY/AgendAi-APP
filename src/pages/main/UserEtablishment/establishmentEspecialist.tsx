@@ -13,10 +13,14 @@ import {
 import colors, { font } from "configs/theme";
 import ProfessionalCard from "components/Salao/EspecialistaScreen";
 import { getUserByEmail, sendNotification } from "configs/utils";
-
+import { useAuthContext } from "context/auth";
+import { useNotificationContext } from "context/notificationsContext";
+import {User} from 'context/auth'
 const { width } = Dimensions.get("window");
 
 export default function EstablishmentEspecialist() {
+  const { notificationList, notifyUserByEmail } = useNotificationContext()!
+  const {user}= useAuthContext()!
   const [especialistaEmail, setEspecialistaEmail] = useState("");
   const [servico, setServico] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -36,13 +40,11 @@ export default function EstablishmentEspecialist() {
       alert("Preencha todos os campos!");
       return;
     }
-    const response = await getUserHandler(especialistaEmail)
-    if(response.sucess == false) return
-    const notificacao= {
-      texto: "aaaaaaa",
-      acton: "aaaaaaaaaaaa",
-    }
-    sendNotification(response.id,notificacao )
+    const userRes = await getUserHandler(especialistaEmail)
+    if(!userRes) return
+
+    notifyUserByEmail(userRes.email, user?.name!)
+
     alert("O convite foi enviado para:" + especialistaEmail + ". \nAguarde a solicitação.");
 
     setModalVisible(false);

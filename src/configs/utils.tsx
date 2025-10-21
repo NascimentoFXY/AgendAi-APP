@@ -25,6 +25,7 @@ export async function findUserImage(userId: string) {
 import { Timestamp } from "firebase/firestore";
 import { Modal } from "react-native";
 import { useState } from 'react';
+import { User } from 'context/auth';
 
 interface FormattedDate {
     display: string; // ex: "Hoje 14:35", "Ontem 13:20" ou "12/10/2025 15:00"
@@ -156,12 +157,12 @@ export async function getUserByEmail(email: string) {
 
     if (querySnapshot.empty) {
         alert("Usuário não encontrado! Verifique todos os campos");
-        return { sucess: false };
+        return;
     }
 
     // como o email é único, podemos pegar o primeiro documento
     const userDoc = querySnapshot.docs[0];
-    const user = { id: userDoc.id, ...userDoc.data(), sucess:true }
+    const user = { id: userDoc.id, ...userDoc.data()} as User
     return user;
 }
 export async function getUserByName(name: string) {
@@ -190,7 +191,7 @@ export function normalizeFont(size: number) {
 
 export async function sendNotification(
     userID: string,
-    data: { texto: string; action: string }
+    data: {sender?: string, texto: string; action: string }
   ) {
     try {
 

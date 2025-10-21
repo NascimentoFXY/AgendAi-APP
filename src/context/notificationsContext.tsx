@@ -1,52 +1,76 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuthContext } from "./auth";
-import { collection, getDocs, query, where } from "@firebase/firestore";
+import { addDoc, collection, doc, getDocs, onSnapshot, orderBy, query, setDoc, where } from "@firebase/firestore";
 import { db } from "services/firebase";
 import { getUserByEmail } from "configs/utils";
-interface Notifications {
+export interface Notifications {
     id?: string,
     title: string,
     subtitle?: string,
     targetID: string,
-    type?: "buttons" | "readonly"
+    createdAt: any,
+    type?: "buttons" | "readonly",
+    status?: "pending" | "denied" | "accepted"
 }
 interface NotificationContextType {
     notificationList: Notifications[] | null,
-    notifyUser: (userEmail: string, userName: string) => Promise<void>,
+    notifyUserByEmail: (userEmail: string, senderName: string) => Promise<any>,
+    fetchNotifications: () => () => void;
 }
 const NotificationContext = createContext<NotificationContextType | null>(null)
 export default function NotificationsProvider({ children }: { children: React.ReactNode }) {
     const { user } = useAuthContext()!
-    const [notificationList, setNotificationList] = useState<Notifications[] | null>([
-        {
-            id: "1",
-            title: "José esta te chamando para ser um especialista de La Mar!",
-            type: "buttons",
-            subtitle: "Deseja aceitar?",
-            targetID: "YrVyEbDRwlgiLLjo2jDsQKmeJ272"
-        },
-        {
-            id: "2",
-            title: "José esta te chamando para ser um especialista de La Mar!",
-            type: "buttons",
-            subtitle: "Deseja aceitar?",
-            targetID: "nenhum"
-        },
-    ])
-    const notifyUser = async (userEmail: string, senderName: string) => {
-        const user = await getUserByEmail(userEmail);
-        const newNotification: Notifications = {
-            id: Date.now().toString(),
-            title: `${senderName} está te chamando para ser um especialista!`,
-            subtitle: "Deseja aceitar?",
-            type: "buttons",
-            targetID: user?.id!,
+    const [notificationList, setNotificationList] = useState<Notifications[] | null>([])
+    const [notification, setNotification] = useState<Notifications>()
+
+    function fetchNotifications() {
+        if(!user){
+            return () => {};
         }
-        setNotificationList(prev => prev ? [...prev, newNotification] : [newNotification])
+        const userRef = collection(db, "users", user?.id!, "notifications")
+        const q = query(userRef, orderBy("createdAt", "asc"))
+        
+  
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const notifications: Notifications[] = querySnapshot.docs
+                .map(doc => ({ id: doc.id, ...doc.data() as Notifications }))
+                // filtra apenas notificações que têm campo "status"
+                .filter(n => n.status !== undefined);
+
+            setNotificationList(notifications);
+        });
+
+        return unsubscribe; // você pode chamar isso para parar de escuta
+    }
+
+
+    const notifyUserByEmail = async (userEmail: string, senderName: string) => {
+        const userRes = await getUserByEmail(userEmail);
+        if (!userRes) return
+        try {
+            const notificationsRef = doc(collection(db, "users", userRes?.id!, "notifications"));
+            const newNotification: Notifications = {
+                id: notificationsRef.id,
+                title: `${senderName} está te convidando para ser um especialista!`,
+                subtitle: "Deseja aceitar?",
+                type: "buttons",
+                targetID: userRes?.id!,
+                createdAt: new Date(),
+                status: "pending"
+            }
+            await setDoc(notificationsRef, newNotification);
+
+            console.log("Notificação enviada");
+            setNotificationList(prev => prev ? [...prev, newNotification] : [newNotification])
+            return { success: true };
+        } catch (error) {
+            console.error("Erro ao enviar notificação:", error);
+            return { success: false, error };
+        }
     }
     return (
 
-        <NotificationContext.Provider value={{ notificationList: notificationList, notifyUser }}>
+        <NotificationContext.Provider value={{ notificationList: notificationList, notifyUserByEmail, fetchNotifications }}>
             {children}
         </NotificationContext.Provider>
     )

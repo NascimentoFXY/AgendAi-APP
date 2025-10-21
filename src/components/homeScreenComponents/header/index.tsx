@@ -14,19 +14,23 @@ import { styles } from '../../../pages/main/home/style';
 import CustomButton from '../../../components/customButton';
 import InputWithIcons from '../../../components/InputIcons';
 import { useUserLocation } from 'context/userLocation';
+import { useNotificationContext } from 'context/notificationsContext';
+import colors from 'configs/theme';
 
 
 const cardsWidth = 400;
 
 
 export default function MainHeader({ navigation }: any) {
+
+    const {notificationList} = useNotificationContext()!
     const { searchAddresses, location } = useUserLocation();
-    const [cidade, setCidade] = useState(<ActivityIndicator/>)
+    const [cidade, setCidade] = useState(<ActivityIndicator />)
     const [bairro, setBairro] = useState()
     useEffect(() => {
         const loadAddress = async () => {
             if (location?.latitude && location?.longitude) {
-                try{
+                try {
 
                     const res = await searchAddresses(`${location.latitude}, ${location.longitude}`);
                     const first = res[0];
@@ -34,11 +38,11 @@ export default function MainHeader({ navigation }: any) {
                         setCidade(first.cidade);
                         setBairro(first.bairro);
                     }
-                }catch(er){
-                    console.log("erro localização header",er)
+                } catch (er) {
+                    console.log("erro localização header", er)
                 }
-                }
-            };
+            }
+        };
 
         loadAddress();
 
@@ -60,13 +64,15 @@ export default function MainHeader({ navigation }: any) {
                         </TouchableOpacity>
 
                     </View>
-
-                    <CustomButton
-                        Icon={<Ionicons name="notifications" size={26} color="#6b6b6b" />}
-                        style={styles.notificationButton}
-                        onPress={()=>{navigation.navigate("Notifications")}}
+                    <View>
+                        <CustomButton
+                            Icon={<Ionicons name="notifications" size={26} color="#6b6b6b" />}
+                            style={styles.notificationButton}
+                            onPress={() => { navigation.navigate("Notifications") }}
                         />
-                        
+                        {notificationList!.length >=0 &&<View style={{width:7, height: 7, borderRadius: 10,backgroundColor: "#ff0000", position: "absolute", right: 6, top: 6}}/>}
+                    </View>
+
                 </View>
 
                 {/* Linha de baixo: campo de busca + botão */}

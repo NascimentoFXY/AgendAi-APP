@@ -11,7 +11,7 @@ type UserLocationContextType = {
     location: Coordinates | null;
     getCurrentLocation: () => Promise<any | null>
     setLocation: (location: Coordinates | { useCurrent: true }) => Promise<void>;
-    searchAddresses: (addres: string) => Promise<Address[] | void>
+    searchAddresses: (addres: string) => Promise<Address[] | any>
     loading?: boolean
 
 };

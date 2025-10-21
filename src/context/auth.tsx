@@ -10,7 +10,7 @@ import { auth } from "../services/firebase";
 import { getFirestore, setDoc, doc, getDoc, } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-interface User {
+export interface User {
     id: string
     name: string,
     email: string,
