@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuthContext } from "./auth";
-import { addDoc, collection, doc, getDocs, onSnapshot, orderBy, query, setDoc, where } from "@firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, serverTimestamp, setDoc, where } from "@firebase/firestore";
 import { db } from "services/firebase";
 import { getUserByEmail } from "configs/utils";
 export interface Notifications {
@@ -24,24 +24,41 @@ export default function NotificationsProvider({ children }: { children: React.Re
     const [notification, setNotification] = useState<Notifications>()
 
     function fetchNotifications() {
-        if(!user){
-            return () => {};
-        }
-        const userRef = collection(db, "users", user?.id!, "notifications")
-        const q = query(userRef, orderBy("createdAt", "asc"))
-        
-  
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const notifications: Notifications[] = querySnapshot.docs
-                .map(doc => ({ id: doc.id, ...doc.data() as Notifications }))
-                // filtra apenas notificações que têm campo "status"
-                .filter(n => n.status !== undefined);
+  if (!user) return () => {};
 
-            setNotificationList(notifications);
-        });
+  const userRef = collection(db, "users", user.id, "notifications");
+  const q = query(userRef, orderBy("createdAt", "asc"));
 
-        return unsubscribe; // você pode chamar isso para parar de escuta
+  const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+    // Mapeia todos os documentos
+    const allNotifications: Notifications[] = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data() as Notifications,
+    }));
+
+    // Filtra "pending" e "denied"
+    const pending = allNotifications.filter(n => n.status === "pending");
+    const denied = allNotifications.filter(n => n.status === "denied");
+
+    // Exclui todas as "denied" em paralelo
+    if (denied.length > 0) {
+      const deletePromises = denied.map(n => {
+        const ref = doc(db, "users", user.id, "notifications", n.id!);
+        return deleteDoc(ref)
+          .then(() => console.log(`🗑️ Notificação ${n.id} excluída`))
+          .catch(err => console.error("Erro ao excluir:", err));
+      });
+
+      // Espera todas as exclusões terminarem antes de atualizar a lista
+      await Promise.allSettled(deletePromises);
     }
+
+    // Atualiza o estado somente com as notificações "pending"
+    setNotificationList(pending);
+  });
+
+  return unsubscribe; // importante pra limpar o listener
+}
 
 
     const notifyUserByEmail = async (userEmail: string, senderName: string) => {
@@ -55,7 +72,7 @@ export default function NotificationsProvider({ children }: { children: React.Re
                 subtitle: "Deseja aceitar?",
                 type: "buttons",
                 targetID: userRes?.id!,
-                createdAt: new Date(),
+                createdAt: serverTimestamp(),
                 status: "pending"
             }
             await setDoc(notificationsRef, newNotification);

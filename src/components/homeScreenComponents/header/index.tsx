@@ -70,7 +70,7 @@ export default function MainHeader({ navigation }: any) {
                             style={styles.notificationButton}
                             onPress={() => { navigation.navigate("Notifications") }}
                         />
-                        {notificationList!.length >=0 &&<View style={{width:7, height: 7, borderRadius: 10,backgroundColor: "#ff0000", position: "absolute", right: 6, top: 6}}/>}
+                        {notificationList!.length > 0 &&<View style={{width:7, height: 7, borderRadius: 10,backgroundColor: "#ff0000", position: "absolute", right: 6, top: 6}}/>}
                     </View>
 
                 </View>

@@ -38,6 +38,7 @@ export default function TabRoutes() {
     const CustomTabBarButton = (props: any) => (
         <TouchableOpacity
             {...props}
+            activeOpacity={0.7}
             style={[
                 styles.tabBarButton,
                 props.style,
@@ -61,32 +62,7 @@ export default function TabRoutes() {
 
         }}>
 
-            {/* <Tab.Screen name="Home" component={MainRoutes}
-                options={({ route }) => ({
-                    tabBarIcon: ({ color, size }) => <Entypo name="home" size={size} color={color} />,
-                    tabBarButton: (props: any) => <CustomTabBarButton {...props} />,
-                    tabBarStyle: ((route) => {
-
-                        const routeName = getFocusedRouteNameFromRoute(route) ?? 'Home';
-                        if (
-                            routeName === 'Salao' && !isOwner ||
-                            routeName === 'ScheduleFinal' ||
-                            routeName === 'ScheduleConclusion' ||
-                            routeName === 'Filter' ||
-                            routeName === 'ScheduleCancelScreen' ||
-                            routeName === 'ScheduleCancelConclusion' ||
-                            routeName === 'Scheduling' ||
-                            routeName === 'ChatScreen' ||
-                            routeName === 'CreateSalon' ||
-                            routeName === 'EstablishmentTools'
-                        ) {
-                            return { display: 'none' };
-                        }
-                        return;
-                    })(route),
-
-                })
-                } /> */}
+            
 
             <Tab.Screen
                 name="Home"

@@ -21,15 +21,15 @@ export default function NotificationScreen({ navigation }: any) {
     }
     useEffect(() => {
         const unsub = fetchNotifications();
-        return () => unsub(); // limpa o listener ao desmontar a tela
+        console.log("montou")
+        return () => (unsub(),console.log("desmontou")); // limpa o listener ao desmontar a tela
     }, [user?.id]);
     return (
         <View>
 
             {
                 notificationList
-                    ?.filter((item) => item.status == "pending")
-                    .map((item, index) => (
+                    ?.map((item, index) => (
 
                         <Notification.Root key={item.id}>
                             <Notification.Title title={item.title} subtitle={item.subtitle} />
