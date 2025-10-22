@@ -12,11 +12,12 @@ export interface Notifications {
     createdAt: any,
     type?: "buttons" | "readonly",
     status?: "pending" | "denied" | "accepted",
-    salonID?: any
+    salonID?: any,
+    service?: string,
 }
 interface NotificationContextType {
     notificationList: Notifications[] | null,
-    notifyUserByEmail: (userEmail: string, senderName: string, salonID: string) => Promise<any>,
+    notifyUserByEmail: (userEmail: string, senderName: string, salonID: string,service: string) => Promise<any>,
     fetchNotifications: () => () => void;
 }
 const NotificationContext = createContext<NotificationContextType | null>(null)
@@ -64,7 +65,7 @@ export default function NotificationsProvider({ children }: { children: React.Re
 }
 
 
-    const notifyUserByEmail = async (userEmail: string, senderName: string, salonID: string) => {
+    const notifyUserByEmail = async (userEmail: string, senderName: string, salonID: string, service: string) => {
         const userRes = await getUserByEmail(userEmail);
         if (!userRes) return
         try {
@@ -77,7 +78,8 @@ export default function NotificationsProvider({ children }: { children: React.Re
                 targetID: userRes?.id!,
                 createdAt: serverTimestamp(),
                 status: "pending",
-                salonID: salonID
+                salonID: salonID,
+                service: service,
             }
             await setDoc(notificationsRef, newNotification);
 

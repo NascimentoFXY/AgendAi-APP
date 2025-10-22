@@ -5,6 +5,7 @@ import {
     View,
     StyleSheet,
     ViewStyle,
+    Image,
     TextStyle,
     TouchableOpacityProps, // Para herdar todas as props de TouchableOpacity
 } from 'react-native';
@@ -21,6 +22,7 @@ interface ProfessionalCardProps extends TouchableOpacityProps { // Estende para 
     // Props para estilização
     cardWidth?: number; // Largura do card principal (equivalente a calcCardsWidth)
     imageBackgroundColor?: string; // Cor de fundo da área da imagem (equivalente a colors.primary)
+    userPhoto?: any;
     nameTextStyle?: TextStyle; // Estilo para o texto do nome
     professionTextStyle?: TextStyle; // Estilo para o texto da profissão
     ratingContainerStyle?: ViewStyle; // Estilo para o container da avaliação
@@ -39,6 +41,7 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
     name = 'Nome Padrão',
     profession = 'Profissão Padrão',
     rating = 0.0,
+    userPhoto,
     cardWidth = DEFAULT_CARD_WIDTH, // Usando o padrão
     imageBackgroundColor = DEFAULT_IMAGE_BACKGROUND_COLOR, // Usando o padrão
     nameTextStyle,
@@ -52,14 +55,13 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
 }) => {
     return (
         <TouchableOpacity {...touchableOpacityProps} activeOpacity={0.9}>
-            <View style={[styles.cardOuterContainer, containerStyle]}>
+            <View style={[styles.cardOuterContainer, { maxWidth: cardWidth + 20 }, containerStyle]}>
                 {/* Área da Imagem/Capa */}
-                <View
-                    style={[
+                <View>
+                    <Image source={{ uri: userPhoto }} style={[
                         styles.imagePlaceholder,
                         { width: cardWidth, backgroundColor: imageBackgroundColor },
-                    ]}
-                >
+                    ]} />
                     {/* Container da Avaliação */}
                     <View style={[styles.ratingContainer, ratingContainerStyle]}>
                         <MaterialIcons
@@ -67,13 +69,13 @@ const ProfessionalCard: React.FC<ProfessionalCardProps> = ({
                             size={starIconSize}
                             color={starIconColor}
                         />
-                        <Text style={[styles.ratingText, ratingTextStyle]}>{rating.toFixed(1)}</Text>
+                        <Text style={[styles.ratingText, ratingTextStyle]} >{rating.toFixed(1)}</Text>
                     </View>
                 </View>
 
                 {/* Informações do Profissional */}
                 <View>
-                    <Text style={[styles.nameText, nameTextStyle]}>{name}</Text>
+                    <Text style={[styles.nameText, nameTextStyle]} numberOfLines={2}>{name}</Text>
                     <Text style={[styles.professionText, professionTextStyle]}>{profession}</Text>
                 </View>
             </View>
@@ -109,17 +111,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         position: 'absolute', // Permite posicionar sobre a imagem
-        bottom: 10,
+        bottom: 20,
         right: 10,
     },
     ratingText: {
         fontSize: 12,
         marginLeft: 2, // Espaçamento entre a estrela e o texto
+
     },
     nameText: {
         fontWeight: 'bold',
         fontSize: 16,
         color: '#333',
+        alignSelf: "flex-start"
     },
     professionText: {
         fontSize: 14,

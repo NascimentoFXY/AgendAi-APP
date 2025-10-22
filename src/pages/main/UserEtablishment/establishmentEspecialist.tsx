@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,49 +12,81 @@ import {
 } from "react-native";
 import colors, { font } from "configs/theme";
 import ProfessionalCard from "components/Salao/EspecialistaScreen";
-import { getUserByEmail, sendNotification } from "configs/utils";
+import { capitalizeFirstLetter, getUserByEmail, sendNotification } from "configs/utils";
 import { useAuthContext } from "context/auth";
 import { useNotificationContext } from "context/notificationsContext";
-import {User} from 'context/auth'
+import { User } from 'context/auth'
 import { useSalonContext } from "context/salonContext";
+import { collection, doc, getDoc, getDocs, orderBy, query } from "@firebase/firestore";
+import { db } from "services/firebase";
 const { width } = Dimensions.get("window");
 
+
+export interface Specialist {
+  id: string,
+  name: string,
+  email: string,
+  rating?: string,
+  service: string,
+  image?: string,
+}
 export default function EstablishmentEspecialist() {
   const { notificationList, notifyUserByEmail } = useNotificationContext()!
-  const {user}= useAuthContext()!
-  const {salon} = useSalonContext()!
+  const { user } = useAuthContext()!
+  const { salon } = useSalonContext()!
   const [especialistaEmail, setEspecialistaEmail] = useState("");
   const [servico, setServico] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [especialistaList, setEspecialistaList] = useState<{id: any, email: string, servico: string}[]>();
+  const [especialistaList, setEspecialistaList] = useState<Specialist[]>();
 
   const width = Dimensions.get("window").width;
   const calcCardsWidth = (width / 2) - 40;
-// console.log(salon?.id)
-  const getUserHandler=async (email: string)=>{
+  // console.log(salon?.id)
+  const getUserHandler = async (email: string) => {
     const user = await getUserByEmail(email)
     console.log(user)
     return user
   }
 
-  const handleConfirm = async() => {
+  const handleConfirm = async () => {
     if (!especialistaEmail || !servico) {
       alert("Preencha todos os campos!");
       return;
     }
     const userRes = await getUserHandler(especialistaEmail)
-    if(!userRes) return
+    if (!userRes) return
 
-    notifyUserByEmail(userRes.email, user?.name!, salon?.id!)
+    notifyUserByEmail(userRes.email, user?.name!, salon?.id!, servico)
 
     alert("O convite foi enviado para: " + userRes.name + ". \nAguarde a solicitação.");
 
     setModalVisible(false);
     setEspecialistaEmail("");
     setServico("");
-    setEspecialistaList(prev=>[...(prev || []),{id: String(Date.now()+Math.random()),email: especialistaEmail, servico: servico }])
   };
+  useEffect(() => {
+    const fetchSpecialists = async () => {
 
+      if (!salon?.id) return
+      console.log(salon.id)
+      try {
+        const specialistRef = collection(db, "salon", salon?.id!, "specialists")
+        const q = query(specialistRef, orderBy("name", "desc"));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) return;
+        const specialists = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data() as { name: string, email: string, service: string }
+        }))
+        setEspecialistaList(specialists)
+      } catch (er) {
+        console.error("[establishmentEspecialist] ", er)
+      }
+    }
+
+    fetchSpecialists()
+  }, [])
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -71,11 +103,21 @@ export default function EstablishmentEspecialist() {
           <Text style={styles.addButtonText}>Adicionar especialista</Text>
         </TouchableOpacity>
 
-        <SafeAreaView style={styles.professionalContainer}>
-          {especialistaList?.map((item, index)=>
 
-            <ProfessionalCard key={item.id} name={item.email} profession={item.servico} cardWidth={calcCardsWidth}/>
-            
+        {/* Cards de especialistas */}
+        <SafeAreaView style={styles.professionalContainer}>
+
+          {especialistaList?.map((item, index) =>
+            <>
+
+
+              <ProfessionalCard
+                key={item.id}
+                userPhoto={item.image} // imagem do usuario
+                name={capitalizeFirstLetter(item.name)} // nome
+                profession={item.service} // serviço ex: Corte de Cabelo
+                cardWidth={calcCardsWidth-20} />
+            </>
           )
           }
         </SafeAreaView>
@@ -135,11 +177,14 @@ const styles = StyleSheet.create({
     margin: 2,
     flex: 1,
   },
-  professionalContainer:{
+  professionalContainer: {
     flex: 1,
     flexDirection: "row",
     paddingBottom: 120,
     gap: 20,
+    justifyContent: "center",
+    paddingTop: 20,
+    flexWrap: "wrap"
   },
   content: {
     justifyContent: "center",

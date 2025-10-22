@@ -21,25 +21,32 @@ import {
 } from 'react-native';
 import { styles } from '../home/style';
 import { LinearGradient } from 'expo-linear-gradient';
-export default function UserEstablishment({ navigation }: any) {
+import { LoadingModal } from 'configs/utils';
 
+export default function UserEstablishment({ navigation }: any) {
+    const [loading, setLoading] = useState(false)
+    const loadData = async (salonID: string) => {
+        setLoading(true)
+        await useSalon(salonID)
+        setLoading(false)
+    }
     const { isOwner, salonList, useSalon } = useSalonContext()!;
     const { user } = useAuthContext()!;
     const TopSaloesCardsData = ({ rating, name, salonId, image }: any) => {
         return (
-            <TouchableOpacity onPress={() => (navigation.navigate("EstablishmentTools"), useSalon(salonId))} >
+            <TouchableOpacity onPress={async () => (await loadData(salonId), navigation.navigate("EstablishmentTools"))} >
                 <View
 
                     style={styles.SaloesCards}>
                     <Image source={{ uri: image }} style={{ resizeMode: "cover", position: "absolute", width: "100%", height: "100%" }} />
 
-
+                    <LoadingModal loading={loading} />
                     <View style={styles.saloesHeart}>
                         <Icon.FontAwesome5 name='heart' size={30} />
                     </View>
 
                     <LinearGradient
-                        colors={['rgba(255, 255, 255, 0)', '#000000ff']} // degrade roxo > rosa > laranja
+                        colors={['rgba(255, 255, 255, 0)', '#000000ff']} 
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
                         style={styles.linearGradient}
@@ -59,9 +66,10 @@ export default function UserEstablishment({ navigation }: any) {
     }
 
 
-   
+
     return (
         <SafeAreaView style={stylesLocal.container}>
+
             {/* HEADER====================================== */}
             <SafeAreaView style={stylesLocal.headerContainer}>
                 <CustomButton
@@ -88,6 +96,7 @@ export default function UserEstablishment({ navigation }: any) {
                 }}
                 titleStyle={{ color: colors.secondary }}
                 onPress={() => navigation.navigate("CreateSalon")} />
+
             <View style={{ justifyContent: "center", alignItems: "center", gap: 20 }}>
                 {
                     salonList

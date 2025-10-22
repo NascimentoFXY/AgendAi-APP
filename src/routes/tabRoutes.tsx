@@ -49,7 +49,7 @@ export default function TabRoutes() {
     return (
         <Tab.Navigator screenOptions={{
             headerShown: false,
-
+            
             tabBarStyle: {
                 justifyContent: "center",
                 alignItems: 'center',
@@ -80,6 +80,7 @@ export default function TabRoutes() {
                         ),
                         tabBarButton: (props: any) => <CustomTabBarButton {...props} />,
                         tabBarStyle: hideTab ? { display: "none" } : undefined,
+                        unmountOnBlur: true,
                     };
                 }}
             />

@@ -59,13 +59,13 @@ interface SalonContextType {
     salonList: Salon[] | null,
     ratings: Rating[],
     createSalon: () => void,
-    useSalon: (salonID: string) => void,
+    useSalon: (salonID: string) => Promise<Salon | null | undefined>,
     setData: (data: DataProps) => void,
     setIsValid: (value: boolean) => void,
     addRatingToSalon: (data: Rating) => void,
     setRatingFilter?: (value: string) => void,
     getAverageRating?: (salon: Salon) => Promise<number>,
-    addSpecialistToSalon?: (salonID: string, user: User) => Promise<any>
+    addSpecialistToSalon?: (salonID: string, user: User, service: string) => Promise<any>
     ratingFilter?: string,
     loading: boolean,
     isValid: boolean,
@@ -182,7 +182,9 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     }
     //-------------------------------usarSalao----------------------------------//
     const useSalon = async (salonId: string) => {
+        console.log("salao usado.")
         setLoading(true)
+        if(!salonId) return
         try {
             const salonSnap = await getDoc(doc(db, "salon", salonId))
             if (salonSnap.exists()) {
@@ -205,17 +207,19 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         }
 
     }
-    async function addSpecialistToSalon(salonID: string, user: User) {
+    async function addSpecialistToSalon(salonID: string, user: User, service: string) {
         try {
             // Referência direta ao documento do especialista
             const specialistRef = doc(db, "salon", salonID, "specialists", user.id);
 
             // Dados a serem salvos
-            const specialistData: User = {
+            const specialistData: User | {service: string} = {
                 id: user.id,
                 name: user.name,
                 email: user.email,
-                // image: user.image,
+                service: service,
+            
+                image: user.image,
             };
 
             // Cria (ou substitui) o documento

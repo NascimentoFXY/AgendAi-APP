@@ -1,4 +1,4 @@
-import { Button, Dimensions, PixelRatio, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Button, Dimensions, PixelRatio, StyleSheet, View } from 'react-native';
 
 import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "@firebase/firestore";
 import { db } from "services/firebase";
@@ -24,7 +24,7 @@ export async function findUserImage(userId: string) {
 
 import { Timestamp } from "firebase/firestore";
 import { Modal } from "react-native";
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { User } from 'context/auth';
 
 interface FormattedDate {
@@ -162,7 +162,7 @@ export async function getUserByEmail(email: string) {
 
     // como o email é único, podemos pegar o primeiro documento
     const userDoc = querySnapshot.docs[0];
-    const user = { id: userDoc.id, ...userDoc.data()} as User
+    const user = { id: userDoc.id, ...userDoc.data() } as User
     return user;
 }
 export async function getUserByName(name: string) {
@@ -191,24 +191,39 @@ export function normalizeFont(size: number) {
 
 export async function sendNotification(
     userID: string,
-    data: {sender?: string, texto: string; action: string }
-  ) {
+    data: { sender?: string, texto: string; action: string }
+) {
     try {
 
-      const notificationsRef = collection(db, "users", userID, "notifications");
-  
+        const notificationsRef = collection(db, "users", userID, "notifications");
 
-      await addDoc(notificationsRef, {
-        texto: data.texto,
-        action: data.action,
-        createdAt: new Date(),
-        read: false, 
-      });
-  
-      console.log("✅ Notificação enviada com sucesso!");
-      return { success: true };
+
+        await addDoc(notificationsRef, {
+            texto: data.texto,
+            action: data.action,
+            createdAt: new Date(),
+            read: false,
+        });
+
+        console.log("✅ Notificação enviada com sucesso!");
+        return { success: true };
     } catch (error) {
-      console.error("Erro ao enviar notificação:", error);
-      return { success: false, error };
+        console.error("Erro ao enviar notificação:", error);
+        return { success: false, error };
     }
-  }
+}
+
+export function capitalizeFirstLetter(string: string) {
+    if (!string) return "";
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export const LoadingModal: React.FC<{ loading: boolean }> = ({ loading }) => {
+    return (
+        <>
+            <Modal visible={loading} transparent animationType='fade'>
+                <ActivityIndicator size={60} style={{ flex: 1, backgroundColor: "#00000055" }} />
+            </Modal>
+        </>
+    )
+}

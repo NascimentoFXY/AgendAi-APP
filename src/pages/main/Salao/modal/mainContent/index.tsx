@@ -1,5 +1,5 @@
 
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -24,17 +24,25 @@ import Icon from 'configs/icons';
 import { AuthContext } from 'context/auth';
 import { ChatContext } from 'context/chatContext';
 import Agenda from 'pages/main/agenda';
-
+import { useFocusEffect } from "@react-navigation/native";
 const { width } = Dimensions.get("window")
 //tela principal ao apertar em um salão
 export default function MainModal({ navigation }: any) {
     const scrollRef = useRef<ScrollView>(null);
     const [currentPage, setCurrentPage] = useState(0)
-    const { salon, loading, isOwner } = useContext(SalonContext)!
+    const { salon, loading, isOwner, useSalon, } = useContext(SalonContext)!
     const { user } = useContext(AuthContext)!
     const pages = [<SalaoServices />, <SalaoEspecialistas />, <Rating />]
     const { createChat, useChat } = useContext(ChatContext)!
-
+    useFocusEffect(
+        React.useCallback(() => {
+            console.log("Salão montada");
+            return () => {
+                console.log("Salão desmontado desmontada");
+                // Aqui você pode limpar estados, listeners, etc.
+            };
+        }, [])
+    );
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         // função chamada quando o usuário arrasta o dedo na tela (scroll)
         const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -89,7 +97,7 @@ export default function MainModal({ navigation }: any) {
 
     }
 
-    
+
     return (
 
         <View style={styles.container}>
@@ -242,7 +250,7 @@ export default function MainModal({ navigation }: any) {
                 </ScrollView>
 
             </View>
-            <ScrollView style={{ width: "100%", paddingBottom: !isOwner ?120:0 }}
+            <ScrollView style={{ width: "100%", paddingBottom: !isOwner ? 120 : 0 }}
 
                 pagingEnabled
                 horizontal

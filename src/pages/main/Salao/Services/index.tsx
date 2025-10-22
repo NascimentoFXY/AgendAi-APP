@@ -17,13 +17,14 @@ import CustomButton from '../../../../components/customButton';
 import { SalonContext } from '../../../../context/salonContext';
 import { AuthContext } from '../../../../context/auth';
 import Icon from 'configs/icons';
-
+import {useNavigation} from '@react-navigation/native'
 
 
 
 export default function SalaoServices() {
     const { salon, loading, isOwner } = useContext(SalonContext)!
     const { user } = useContext(AuthContext)!
+    const navigation = useNavigation() as any
     return (
 
         <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -33,7 +34,7 @@ export default function SalaoServices() {
             <View style={styles.titleContainer}>
                 <Text style={styles.serviceTitle}>Serviços</Text><Text style={styles.amount}>(18)</Text>
                 {isOwner && (
-                    <TouchableOpacity style={styles.tools}>
+                    <TouchableOpacity style={styles.tools} onPress={()=> navigation.navigate("EstablishmentTools")}>
 
 
                         <Icon.Entypo name='tools' size={24} color={colors.primary} />
@@ -55,7 +56,7 @@ export default function SalaoServices() {
                 </Text>}
                 {!isOwner && <Text style={{ width: "90%", fontSize: 15, fontFamily: font.poppins.bold, textAlign: "center", color: colors.lightGray, padding: 20, }}>
                     <Icon.Ionicons name="information-circle" size={20} color={colors.lightGray} />
-                    Este estabelecimento não possuí serviços ativos. Contate o dono ou vá ao estabelecimento para mais informações.
+                    Este estabelecimento não possui serviços ativos. Contate o dono ou vá ao estabelecimento para mais informações.
                 </Text>}
                 <ServiceItem />
 

@@ -83,7 +83,7 @@ export function Home({ navigation }: any) {
 
     const TopSaloesCardsData = ({ rating, name, salonId, image }: any) => {
         return (
-            <TouchableOpacity onPress={() => (navigation.navigate("Salao"), useSalon(salonId))} >
+            <TouchableOpacity onPress={async () => (navigation.navigate("Salao"), await useSalon(salonId))} >
                 <View
 
                     style={styles.SaloesCards}>
