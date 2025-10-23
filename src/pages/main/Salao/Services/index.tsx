@@ -48,7 +48,7 @@ export default function SalaoServices() {
 
 
 
-            <View style={{ justifyContent: "center", alignItems: "center", gap: 10, paddingBottom: 10 }}>
+            <ScrollView nestedScrollEnabled contentContainerStyle={{ justifyContent: "center", alignItems: "center", gap: 10, paddingBottom: 10 }}>
 
                 {isOwner && <Text style={{ width: "90%", fontSize: 15, fontFamily: font.poppins.bold, textAlign: "center", color: colors.lightGray, padding: 20, }}>
                     <Icon.Ionicons name="information-circle" size={20} color={colors.lightGray} />
@@ -58,9 +58,55 @@ export default function SalaoServices() {
                     <Icon.Ionicons name="information-circle" size={20} color={colors.lightGray} />
                     Este estabelecimento não possui serviços ativos. Contate o dono ou vá ao estabelecimento para mais informações.
                 </Text>}
-                <ServiceItem />
-
-            </View>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+                <ServiceItem/>
+            </ScrollView>
         </ScrollView>
 
     )

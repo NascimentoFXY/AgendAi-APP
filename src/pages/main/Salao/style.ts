@@ -1,12 +1,14 @@
 import React from "react";
 import { Dimensions, StyleSheet } from "react-native";
 import colors, { font } from "../../../configs/theme";
+import { normalizeFont } from "configs/utils";
 const { width } = Dimensions.get("window");
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.background,
-        width: width
+        width: width,
+
     },
     SalaoImagem: {
         width: "100%",
@@ -26,10 +28,10 @@ export const styles = StyleSheet.create({
         borderBottomEndRadius: 20,
         borderBottomStartRadius: 20,
         paddingBottom: 0,
-        zIndex: 2,
+
 
     },
-    tools:{ 
+    tools: {
         flexDirection: "row",
         gap: 10,
         marginLeft: "auto"
@@ -38,7 +40,7 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 20,
         fontSize: 24,
         fontFamily: font.poppins.bold,
-     
+
     },
     SalaoSubTitle: {
         paddingHorizontal: 20,
@@ -74,6 +76,8 @@ export const styles = StyleSheet.create({
         flexDirection: "row",
         gap: 30,
         overflow: "visible",
+        paddingHorizontal:20,
+        backgroundColor: colors.background
     },
     salaoNavigationOptions: {
         flexDirection: "row",
@@ -103,7 +107,7 @@ export const styles = StyleSheet.create({
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
     },
-    none:{
+    none: {
         display: "none"
     },
 
@@ -112,29 +116,33 @@ export const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 210
+        borderRadius: 210,
+
+
+
     },
     Tab: {
         position: "absolute",
         width: "100%",
         padding: 30,
         backgroundColor: colors.background,
-        height: 120,
+        height: normalizeFont(110),
         bottom: 0,
         borderTopColor: "#a5a5a555",
-        borderTopWidth: 1
+        borderTopWidth: 1,
+        zIndex: 99
     },
-     amount: {
+    amount: {
         fontSize: 18, fontWeight: "bold", color: colors.primary
     },
     serviceTitle: {
         fontSize: 18, fontWeight: "bold"
     },
     titleContainer: {
-        flexDirection: "row", 
-        alignItems: "center", 
-        paddingHorizontal: 20, 
-        paddingVertical: 10, 
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 20,
+        paddingVertical: 10,
         gap: 10
     },
     //---------------------------------------- modal de agendamento
@@ -160,7 +168,7 @@ export const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    cardsText:{
+    cardsText: {
         color: colors.textSecondary
 
     }

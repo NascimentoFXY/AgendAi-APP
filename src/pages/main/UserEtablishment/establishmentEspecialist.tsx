@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback,useMemo } from "react";
 import {
   View,
   Text,
@@ -33,22 +33,22 @@ export interface Specialist {
 export default function EstablishmentEspecialist() {
   const { notificationList, notifyUserByEmail } = useNotificationContext()!
   const { user } = useAuthContext()!
-  const { salon } = useSalonContext()!
+  const { salon,fetchSpecialists, specialistList } = useSalonContext()!
   const [especialistaEmail, setEspecialistaEmail] = useState("");
   const [servico, setServico] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  const [especialistaList, setEspecialistaList] = useState<Specialist[]>();
+
 
   const width = Dimensions.get("window").width;
   const calcCardsWidth = (width / 2) - 40;
   // console.log(salon?.id)
-  const getUserHandler = async (email: string) => {
+  const getUserHandler = useCallback(async (email: string) => {
     const user = await getUserByEmail(email)
     console.log(user)
     return user
-  }
+  },[])
 
-  const handleConfirm = async () => {
+  const handleConfirm = useCallback(async () => {
     if (!especialistaEmail || !servico) {
       alert("Preencha todos os campos!");
       return;
@@ -63,29 +63,9 @@ export default function EstablishmentEspecialist() {
     setModalVisible(false);
     setEspecialistaEmail("");
     setServico("");
-  };
+  },[especialistaEmail, servico]);
   useEffect(() => {
-    const fetchSpecialists = async () => {
-
-      if (!salon?.id) return
-      console.log(salon.id)
-      try {
-        const specialistRef = collection(db, "salon", salon?.id!, "specialists")
-        const q = query(specialistRef, orderBy("name", "desc"));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) return;
-        const specialists = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data() as { name: string, email: string, service: string }
-        }))
-        setEspecialistaList(specialists)
-      } catch (er) {
-        console.error("[establishmentEspecialist] ", er)
-      }
-    }
-
-    fetchSpecialists()
+    fetchSpecialists();
   }, [])
   return (
     <SafeAreaView style={styles.container}>
@@ -107,16 +87,16 @@ export default function EstablishmentEspecialist() {
         {/* Cards de especialistas */}
         <SafeAreaView style={styles.professionalContainer}>
 
-          {especialistaList?.map((item, index) =>
+          {specialistList?.map((item, index) =>
             <>
-
+              {console.log("[ITEM ID]",item.id)}
 
               <ProfessionalCard
                 key={item.id}
                 userPhoto={item.image} // imagem do usuario
                 name={capitalizeFirstLetter(item.name)} // nome
                 profession={item.service} // serviço ex: Corte de Cabelo
-                cardWidth={calcCardsWidth-20} />
+                cardWidth={calcCardsWidth-10} />
             </>
           )
           }

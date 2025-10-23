@@ -48,7 +48,7 @@ export default function EstablishmentServices() {
     const [isEditing, setIsEditing] = useState(false);
 
 
-    console.log("[userEstablishment/establishmentServices] renderiou")
+    console.log("[establishmentServices] renderiou")
     const handleConfirm = () => {
         if (!serviceType) return;
 

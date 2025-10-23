@@ -1,4 +1,4 @@
-import React, { useState, createContext, use, useEffect, useContext } from "react";
+import React, { useState, createContext, use, useEffect, useContext, useCallback, useMemo } from "react";
 import { AuthContext } from "./auth";
 import { db, uploadImageAndSaveToFirestore } from "../services/firebase";
 import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc, deleteDoc, serverTimestamp, Timestamp, updateDoc } from "@firebase/firestore";
@@ -15,7 +15,7 @@ interface Salon {
     opHour?: any,
     rating?: any,
     addres?: string,
-    specialists?: Specialists[],
+    specialists?: Specialist[],
     services?: Services,
     description?: string,
     createdAt?: any,
@@ -32,10 +32,13 @@ export interface Rating {
     createdAt?: any,
 
 }
-interface Specialists {
+interface Specialist {
     id: string,
     name: string,
-    rating: any
+    email: string,
+    rating?: string,
+    service: string,
+    image?: string,
 }
 interface Services {
     id?: string,
@@ -60,12 +63,15 @@ interface SalonContextType {
     ratings: Rating[],
     createSalon: () => void,
     useSalon: (salonID: string) => Promise<Salon | null | undefined>,
+    fetchSalons: () => Promise<void>,
     setData: (data: DataProps) => void,
     setIsValid: (value: boolean) => void,
     addRatingToSalon: (data: Rating) => void,
     setRatingFilter?: (value: string) => void,
     getAverageRating?: (salon: Salon) => Promise<number>,
     addSpecialistToSalon?: (salonID: string, user: User, service: string) => Promise<any>
+    fetchSpecialists: () => Promise<void>,
+    specialistList: Specialist[],
     ratingFilter?: string,
     loading: boolean,
     isValid: boolean,
@@ -104,7 +110,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     // console.log("[salon]lista de saloes", salonList, "\n")
 
     //----------------recebe os dados-----------------------------------//
-    const setData = (data: DataProps) => {
+    const setData = useCallback((data: DataProps) => {
         setInfo((prev) => ({
             ...prev,   // mantém os valores antigos
             ...data,   // sobrescreve só os que vierem no argumento
@@ -112,12 +118,12 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                 ? { horario: `${data.abertura}-${data.fechamento}` }
                 : {}),
         }));
-    }
+    }, [])
     const setIsValid = (value: boolean) => {
         setInputValid(value)
     }
     // ----------------------CRIAR SALAO---------------------------------//
-    const createSalon = async () => {
+    const createSalon = useCallback(async () => {
 
         if (isInputValid) {
             try {
@@ -153,7 +159,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         else {
             alert("preencha todos os campos")
         }
-    }
+    }, [])
 
     //---------------------------------atualizar Serviços---------------------------//
     /*async function addServicesToSalon(data: Services) {
@@ -164,7 +170,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         })
     }*/
     //--------------------------------adicionar avaliação--------------------------//
-    async function addRatingToSalon(data: Rating) {
+    const addRatingToSalon = useCallback(async (data: Rating) => {
         const RatingseRef = doc(collection(db, "salon", salon?.id!, "ratings"))
         try {
             await setDoc((RatingseRef), {
@@ -179,12 +185,12 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         } catch (err) {
             console.log("[salon]erro ao adicionar avaliação: ", err)
         }
-    }
+    }, [])
     //-------------------------------usarSalao----------------------------------//
-    const useSalon = async (salonId: string) => {
+    const useSalon = useCallback(async (salonId: string) => {
         console.log("salao usado.")
         setLoading(true)
-        if(!salonId) return
+        if (!salonId) return
         try {
             const salonSnap = await getDoc(doc(db, "salon", salonId))
             if (salonSnap.exists()) {
@@ -206,19 +212,23 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             console.log(err)
         }
 
-    }
-    async function addSpecialistToSalon(salonID: string, user: User, service: string) {
+    }, [])
+
+    //=============================SESSÃO DOS ESPECIALISTAS===================================//
+    const [especialistaList, setEspecialistaList] = useState<Specialist[]>();
+    //----------------------------adicionar especialista------------------//
+    const addSpecialistToSalon = useCallback(async (salonID: string, user: User, service: string) => {
         try {
             // Referência direta ao documento do especialista
             const specialistRef = doc(db, "salon", salonID, "specialists", user.id);
 
             // Dados a serem salvos
-            const specialistData: User | {service: string} = {
+            const specialistData: User | { service: string } = {
                 id: user.id,
                 name: user.name,
                 email: user.email,
                 service: service,
-            
+
                 image: user.image,
             };
 
@@ -231,7 +241,26 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             console.error("❌ Erro ao adicionar especialista:", error);
             return { success: false, error };
         }
-    }
+    }, [])
+
+    const fetchSpecialists = useCallback(async () => {
+        if (!salon?.id) return
+        try {
+            const specialistRef = collection(db, "salon", salon?.id!, "specialists")
+            const q = query(specialistRef, orderBy("name", "desc"));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) return;
+            const specialists = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data() as { name: string, email: string, service: string }
+            }))
+            setEspecialistaList(specialists)
+        } catch (er) {
+            console.error("[establishmentEspecialist] ", er)
+        }
+    }, [salon?.id])
+    //=============================FIM-SESSÃO DOS ESPECIALISTAS===================================//
     // --------------------Busca avaliações---------------------------------------------//
     const [ratings, setRatings] = useState<Rating[]>([]);
     const [ratingFilter, setRatingFilter] = useState<string>("desc");
@@ -239,7 +268,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         fetchSalonRatings(salon?.id!);
     }, [ratingFilter])
 
-    const fetchSalonRatings = async (salonId: string) => {
+    const fetchSalonRatings = useCallback(async (salonId: string) => {
         if (!salonId) return;
 
         try {
@@ -267,15 +296,14 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         } catch (err) {
             console.error("Erro ao buscar avaliações:", err);
         }
-    };
+    }, []);
     //-----------------------media de avaliações------------------------------//
-    const getAverageRating = async (salon: Salon): Promise<number> => {
+    const getAverageRating = useCallback(async (salon: Salon): Promise<number> => {
         try {
             if (!salon.id) return 0;
             const ratingsRef = collection(db, "salon", salon.id, "ratings");
             const snapshot = await getDocs(ratingsRef);
 
-            // Se a subcoleção estiver vazia ou não tiver documentos, retorna 0
             if (!snapshot || snapshot.empty) return 0;
 
             // Pega apenas o campo value de cada rating e garante que seja número
@@ -292,32 +320,32 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             console.error("Erro ao calcular média de avaliações:", err);
             return 0;
         }
-    };
+    }, []);
 
     // -----------------------atualizar----------------------------------//
     useEffect(() => {
-        const fetchSalons = async () => {
-            try {
-                const q = query(collection(db, "salon"));
-                const snapshot = await getDocs(q);
-
-                const list = snapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data()
-                })) as Salon[];
-
-                setSalonList(list);
-            } catch (error) {
-                console.error("Erro ao buscar salões:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchSalons();
     }, []);
+    const fetchSalons = useCallback(async () => {
+        try {
+            const q = query(collection(db, "salon"));
+            const snapshot = await getDocs(q);
 
-    //-----------------------------apagar todos saloes---------------//
+            const list: Salon[] = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data()
+            })) as Salon[];
+
+            setSalonList(list);
+        } catch (error) {
+            console.error("Erro ao buscar salões:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+
+    //-----------------------------apagar todos saloes (Modo de teste apenas)---------------//
 
     const deleteAllSalon = async (): Promise<void> => {
         try {
@@ -329,31 +357,53 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
 
             await Promise.all(deletePromises);
 
-            console.log("[salon]✅ Todos os documentos da coleção 'salon' foram deletados com sucesso!");
+            console.log("[salon]Todos os documentos da coleção 'salon' foram deletados com sucesso!");
         } catch (error) {
-            console.error("❌ Erro ao deletar documentos:", error);
+            console.error("Erro ao deletar documentos:", error);
         }
     };
     // deleteAllSalon()
-    return (
-        <SalonContext.Provider value={{
-            salon: salon,
-            ratings: ratings,
-            createSalon,
-            useSalon,
-            setData,
-            salonList,
-            loading,
-            isValid: isInputValid,
-            setIsValid,
-            addRatingToSalon,
-            setRatingFilter: setRatingFilter,
-            ratingFilter: ratingFilter,
-            getAverageRating,
-            addSpecialistToSalon,
+    const values = {
+        salon: salon,
+        ratings: ratings,
+        salonList,
+        loading,
+        isValid: isInputValid,
+        ratingFilter: ratingFilter,
+        specialistList: especialistaList || [],
+        isOwner: salon?.ownerID === user?.id,
+    }
+    const dependences = {
+        salon,
+        ratings,
+        salonList,
+        loading,
+        isInputValid,
+        ratingFilter,
+        especialistaList,
+        user: user?.id,
+    };
+    const functions = {
+        createSalon,
+        useSalon,
+        setData,
+        setIsValid,
+        addRatingToSalon,
+        setRatingFilter: setRatingFilter,
+        getAverageRating,
+        addSpecialistToSalon,
+        fetchSpecialists,
+        fetchSalons,
+    }
 
-            isOwner: salon?.ownerID === user?.id
-        }}>
+    return (
+        <SalonContext.Provider value={React.useMemo(
+            () => ({
+                ...values,
+                ...functions
+            }),
+            Object.values(dependences)
+        )}>
             {children}
         </SalonContext.Provider>
     )

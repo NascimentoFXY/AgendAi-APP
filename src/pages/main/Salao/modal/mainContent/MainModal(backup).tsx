@@ -1,5 +1,5 @@
 
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -10,7 +10,8 @@ import {
     ScrollView,
     NativeSyntheticEvent,
     NativeScrollEvent,
-    ActivityIndicator
+    ActivityIndicator,
+    Animated
 } from 'react-native';
 import { SalonContext } from '../../../../../context/salonContext';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -27,6 +28,8 @@ import Agenda from 'pages/main/agenda';
 import { useFocusEffect } from "@react-navigation/native";
 const { width } = Dimensions.get("window")
 //tela principal ao apertar em um salão
+
+
 export default function MainModal({ navigation }: any) {
     const scrollRef = useRef<ScrollView>(null);
     const [currentPage, setCurrentPage] = useState(0)
@@ -97,16 +100,15 @@ export default function MainModal({ navigation }: any) {
 
     }
 
+    const Header: React.FC<any> = () => {
+        return (
 
-    return (
-
-        <View style={styles.container}>
-            <View style={styles.modalContainer}>
-
+            <>
                 <View style={styles.SalaoInfoText}>
                     <Text style={styles.SalaoNome}>{salon?.name}</Text>
                     <Text style={styles.SalaoSubTitle}>{salon?.description}</Text>
                 </View>
+
 
                 <View style={styles.SalaoLocContainer}>
 
@@ -187,86 +189,80 @@ export default function MainModal({ navigation }: any) {
 
                 </View>
 
+            </>
+        )
+    }
+
+    return (
+
+        <View style={styles.container}>
+            <ScrollView style={{ zIndex: 2 }}>
+                <View style={styles.modalContainer}>
+
+                    <Header />
+
+                    <ScrollView
+                        style={styles.salaoNavigationScroll}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        overScrollMode='never'
+                        contentContainerStyle={styles.salaoNavigationOptions}
+
+                    >
+
+                        <TouchableOpacity
+                            style={styles.NavigationOptions}
+                            onPress={() => scrollToPage(0)}>
+
+                            <Text style={[styles.NavigationOptionsText, currentPage === 0 ? { color: colors.primary } : styles.NavigationOptionsText]}>Serviços</Text>
+                            <View style={currentPage === 0 ? styles.underline : styles.none} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.NavigationOptions}
+                            onPress={() => scrollToPage(1)}>
+
+                            <Text style={[styles.NavigationOptionsText, currentPage === 1 ? { color: colors.primary } : styles.NavigationOptionsText]}>Especialistas</Text>
+                            <View style={currentPage === 1 ? styles.underline : styles.none} />
+                        </TouchableOpacity>
 
 
-                <ScrollView
-                    style={styles.salaoNavigationScroll}
+                        <TouchableOpacity
+                            style={styles.NavigationOptions}
+                            onPress={() => scrollToPage(2)}>
+
+                            <Text style={[styles.NavigationOptionsText, currentPage === 2 ? { color: colors.primary } : styles.NavigationOptionsText]}>Avalições</Text>
+                            <View style={currentPage === 2 ? styles.underline : styles.none} />
+                        </TouchableOpacity>
+
+
+                        <TouchableOpacity
+                            style={styles.NavigationOptions}>
+
+                            <Text style={styles.NavigationOptionsText}>Galeria</Text>
+                            <View style={styles.none} />
+                        </TouchableOpacity>
+                    </ScrollView>
+
+                </View>
+                <ScrollView style={{ width: "100%", paddingBottom: !isOwner ? 120 : 0 }}
+                    nestedScrollEnabled
+                    pagingEnabled
                     horizontal
-                    showsHorizontalScrollIndicator={false}
                     overScrollMode='never'
-                    contentContainerStyle={styles.salaoNavigationOptions}
-
+                    scrollEventThrottle={24}
+                    ref={scrollRef}
+                    onScroll={handleScroll}
                 >
-
-                    <TouchableOpacity
-                        style={styles.NavigationOptions}
-                        onPress={() => scrollToPage(0)}>
-
-                        <Text style={[styles.NavigationOptionsText, currentPage === 0 ? { color: colors.primary } : styles.NavigationOptionsText]}>Serviços</Text>
-                        <View style={currentPage === 0 ? styles.underline : styles.none} />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.NavigationOptions}
-                        onPress={() => scrollToPage(1)}>
-
-                        <Text style={[styles.NavigationOptionsText, currentPage === 1 ? { color: colors.primary } : styles.NavigationOptionsText]}>Especialistas</Text>
-                        <View style={currentPage === 1 ? styles.underline : styles.none} />
-                    </TouchableOpacity>
-
-
-                    <TouchableOpacity
-                        style={styles.NavigationOptions}
-                        onPress={() => scrollToPage(2)}>
-
-                        <Text style={[styles.NavigationOptionsText, currentPage === 2 ? { color: colors.primary } : styles.NavigationOptionsText]}>Avalições</Text>
-                        <View style={currentPage === 2 ? styles.underline : styles.none} />
-                    </TouchableOpacity>
-
-                    {/* <TouchableOpacity
-                        style={styles.NavigationOptions}
-                        onPress={() => scrollToPage(3)}
-                        >
-
-                        <Text style={styles.NavigationOptionsText}>Agendamentos Futuros</Text>
-                        <View style={currentPage === 3 ? styles.underline : styles.none} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.NavigationOptions}
-                        onPress={() => scrollToPage(4)}
-                        >
-
-                        <Text style={styles.NavigationOptionsText}>Agendamentos Cancelados</Text>
-                        <View style={currentPage === 4 ? styles.underline : styles.none} />
-                    </TouchableOpacity> */}
-
-                    <TouchableOpacity
-                        style={styles.NavigationOptions}>
-
-                        <Text style={styles.NavigationOptionsText}>Galeria</Text>
-                        <View style={styles.none} />
-                    </TouchableOpacity>
+                    {pages.map((PageComponent, index) => (
+                        <View key={index}>
+                            {PageComponent}
+                        </View>
+                    ))}
 
                 </ScrollView>
-
-            </View>
-            <ScrollView style={{ width: "100%", paddingBottom: !isOwner ? 120 : 0 }}
-
-                pagingEnabled
-                horizontal
-                overScrollMode='never'
-                scrollEventThrottle={24}
-                ref={scrollRef}
-                onScroll={handleScroll}
-            >
-                {pages.map((PageComponent, index) => (
-                    <View key={index}>
-                        {PageComponent}
-                    </View>
-                ))}
-
             </ScrollView>
-        </View>
+        </View >
 
 
 

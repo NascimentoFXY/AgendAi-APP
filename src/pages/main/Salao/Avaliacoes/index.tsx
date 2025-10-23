@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native'
 import colors, { font } from '../../../../configs/theme';
 import { RatingComments } from '../../../../components/Salao/RatingScreenComps';
 import { SalonContext } from 'context/salonContext';
+import { normalizeFont } from 'configs/utils';
 
 const colorSet = {
     color: {
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
         width: width
     },
     title: {
-        fontSize: 24,
+        fontSize: normalizeFont(20),
         color: '#000',
         fontFamily: font.poppins.bold
     },

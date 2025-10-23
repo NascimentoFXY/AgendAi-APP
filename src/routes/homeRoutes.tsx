@@ -12,7 +12,7 @@ import Initial from "../pages/initials/initial";
 import FinalScreen from "../pages/initials/finalScreen";
 import Home from "../pages/main/home";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SalaoScreen from "../pages/main/Salao";
+import SalaoScreen from "../pages/main/Salao/modal";
 import ScheduleFinal from "../pages/main/Salao/AgendamentoFinal";
 import ScheduleConclusion from "../pages/main/Salao/AgendamentoFinal/agendamentoConcluido";
 import ScheduleCancelScreen from "../pages/main/agenda/cancelScreen";

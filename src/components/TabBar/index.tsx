@@ -15,10 +15,11 @@ type TabBarButtonProps = {
     onAction?: ()=> void
     style?: ViewStyle;
     bgColor?: any;
+    containerStyle?: ViewStyle
 
 };
 
-export default function TabBarButton({onAction, title, onPress, onChangeText,type = "button", textInputValue,style, bgColor = colors.background}: TabBarButtonProps) {
+export default function TabBarButton({containerStyle,onAction, title, onPress, onChangeText,type = "button", textInputValue,style, bgColor = colors.background}: TabBarButtonProps) {
 
 
     return (
@@ -26,7 +27,7 @@ export default function TabBarButton({onAction, title, onPress, onChangeText,typ
 
             {/* Button */}
             {type === "button" && (
-                <View style={[styles.Tab, {backgroundColor: bgColor}]}>
+                <View style={[styles.Tab, containerStyle,{backgroundColor: bgColor}]}>
                     <TouchableOpacity onPress={onPress} style={[styles.TabBarButton, style]}>
                         <Text style={{ color: "#fff" }}>{title}</Text>
                     </TouchableOpacity>
@@ -44,7 +45,7 @@ export default function TabBarButton({onAction, title, onPress, onChangeText,typ
                         </TouchableOpacity>
 
 
-                        {/* esse aqui */}
+                   
                         <TextInput placeholder="Digite sua mensagem"  value={textInputValue} onChangeText={onChangeText} style={styles.input} />
 
 
