@@ -22,7 +22,7 @@ import colors, { font } from '../../../configs/theme';
 import ServicesCards from '../../../components/homeScreenComponents/ServicesCarroussel';
 import MainHeader from '../../../components/homeScreenComponents/header';
 import { ServiceCardsData, EspecialCardsData } from './components';
-import { SalonContext } from '../../../context/salonContext';
+import { SalonContext, useSalonContext } from '../../../context/salonContext';
 import { ScheduleContext } from 'context/scheduleContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUserLocation } from 'context/userLocation';
@@ -47,9 +47,11 @@ interface Salon {
 export default function HomeWrapper({ navigation }: any) {
     const [refreshing, setRefreshing] = useState(false);
     const [refreshingState, setRefreshingState] = useState(0)
+    const {fetchSalons}=useSalonContext()!
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setRefreshingState(0)
+        fetchSalons(),
         setTimeout(() => {
             setRefreshing(false);
             setRefreshingState(refreshingState + 1)

@@ -32,6 +32,8 @@ export default function UserEstablishment({ navigation }: any) {
     }
     const { isOwner, salonList, useSalon } = useSalonContext()!;
     const { user } = useAuthContext()!;
+
+    if(!salonList) return
     const TopSaloesCardsData = ({ rating, name, salonId, image }: any) => {
         return (
             <TouchableOpacity onPress={async () => (await loadData(salonId), navigation.navigate("EstablishmentTools"))} >
@@ -102,6 +104,8 @@ export default function UserEstablishment({ navigation }: any) {
                     salonList
                         ?.filter(salon => salon.ownerID === user?.id)
                         .map((salon, index) => {
+                           
+                            console.log(salon.id)
                             return (
                                 <TopSaloesCardsData key={salon.id} name={salon.name} rating={5.0} salonId={salon.id} image={salon.image} />
                             )

@@ -1,7 +1,7 @@
 import React, { useState, createContext, use, useEffect } from "react";
 import { AuthContext } from "./auth";
 import { db } from "../services/firebase";
-import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc, deleteDoc, serverTimestamp, Timestamp, } from "@firebase/firestore";
+import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc, deleteDoc, serverTimestamp, Timestamp, where, } from "@firebase/firestore";
 interface message {
     chatID?: string;
     id?: string,
@@ -48,8 +48,25 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
 
     const createChat = async (senderID: string, targetID: string, senderName: string, targetName: string) => {
         try {
+            const chatsRef = collection(db, "chats");
+            const querySnapshot = await getDocs(chatsRef);
+
+
+
+            // Verifica se já existe um chat entre os dois usuários
+            const existingChat = querySnapshot.docs.find(doc => {
+                const data = doc.data();
+                return !data.public && (
+                    (data.senderID === senderID && data.targetID === targetID) ||
+                    (data.senderID === targetID && data.targetID === senderID)
+                );
+            });
+
+            if (existingChat) {
+                return existingChat.id
+            }
             const chatRef = doc(collection(db, "chats"));
-            const docRef = await setDoc((chatRef), {
+            await setDoc((chatRef), {
                 id: chatRef.id,
                 senderID: senderID,
                 targetID: targetID,
@@ -143,8 +160,8 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
 
         const messagesRef = collection(db, "chats", chatID, "messages");
         let newMessage: message = {}
-        if(image){
-            newMessage= {
+        if (image) {
+            newMessage = {
                 chatID: chatID,
                 message: message,
                 sender: user?.name as string,
@@ -153,8 +170,8 @@ export default function ChatProvider({ children }: { children: React.ReactNode }
                 messageImage: image,
                 time: serverTimestamp(),
             };
-        }else{
-            newMessage= {
+        } else {
+            newMessage = {
                 chatID: chatID,
                 message: message,
                 sender: user?.name as string,

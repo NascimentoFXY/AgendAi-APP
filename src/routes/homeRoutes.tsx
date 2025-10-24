@@ -10,7 +10,7 @@ import Login from "../pages/login";
 import Loading from "../pages/splash";
 import Initial from "../pages/initials/initial";
 import FinalScreen from "../pages/initials/finalScreen";
-import Home from "../pages/main/home";
+import Home from "../pages/main/home/home";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SalaoScreen from "../pages/main/Salao/modal";
 import ScheduleFinal from "../pages/main/Salao/AgendamentoFinal";
@@ -23,12 +23,13 @@ import UserSettings from "../pages/main/settings";
 import CreateSalon from "../pages/main/Salao/CriarSalao";
 import AddRating from "../pages/main/Salao/modal/AddRating";
 import ScheduleCancelConclusion from "pages/main/agenda/AgendaCanceledScreen";
-import Scheduling from "pages/main/Salao/modal/Agendamento";
+import Scheduling from "pages/main/Salao/modal/Agendamento/agendamento";
 import CompletePerfil from "pages/completePerfil";
 import Location from "pages/main/location";
 import UserEstablishment from "pages/main/UserEtablishment/establishmentList";
 import EstablishmentTools from "pages/main/UserEtablishment/establishmentTools";
 import NotificationScreen from "pages/main/notification/notification";
+import MarketingTools from "pages/main/UserEtablishment/marketingTools";
 export default function MainRoutes({ navigation }: any) {
     const Stack = createNativeStackNavigator();
 
@@ -51,6 +52,7 @@ export default function MainRoutes({ navigation }: any) {
             <Stack.Screen name="UserEstablishment" component={UserEstablishment} />
             <Stack.Screen name="EstablishmentTools" component={EstablishmentTools} />
             <Stack.Screen  name="Notifications" component={NotificationScreen} />
+            <Stack.Screen  name="MarketingTools" component={MarketingTools} />
 
             <Stack.Screen name="ScheduleCancelConclusion" component={ScheduleCancelConclusion}/>
         </Stack.Navigator>

@@ -4,7 +4,7 @@ import pickImage from 'configs/pickImage';
 import colors, { font } from 'configs/theme';
 import { useSalonContext } from 'context/salonContext';
 import Input from '../Salao/CriarSalao/compontents/Input/input';
-import React, { useEffect, useRef, useState, useCallback,useMemo } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -22,9 +22,10 @@ import {
 import TabBarButton from 'components/TabBar';
 import EstablishmentEspecialist from './establishmentEspecialist';
 import EstablishmentServices from './establishmentServices';
+import MarketingTools from './marketingTools';
 
 export default function EstablishmentTools() {
-  const { salon } = useSalonContext()!
+  const { salon, salonList } = useSalonContext()!
   const { width } = Dimensions.get("window")
 
   const [image, setImage] = useState<string | undefined>()
@@ -34,18 +35,17 @@ export default function EstablishmentTools() {
   const scrollRef = useRef<ScrollView>(null);
   const [currentPage, setCurrentPage] = useState(0);
 
-  const pages = useMemo(()=>[0, 1],[])
-
-  console.log("[EstablishmentTools] renderizou1");
   useEffect(() => {
     if (salon) {
       setImage(salon.image);
       setSalonName(salon.name);
       setSalonDescription(salon.description!);
       setSalonCNPJ(salon.CNPJ);
-      console.log("[EstablishmentTools] renderizou2");
+
     }
   }, [salon]);
+  const pages = useMemo(() => [0, 1, 2], [])
+
 
 
   async function pickImageasync() {
@@ -65,7 +65,7 @@ export default function EstablishmentTools() {
     const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width)
     // console.log(pageIndex)
     setCurrentPage(pageIndex);
-  },[width])
+  }, [width])
 
   const scrollToPage = useCallback((pageIndex: number) => {
     if (pageIndex >= 0 && pageIndex < pages.length && scrollRef.current) {
@@ -74,27 +74,27 @@ export default function EstablishmentTools() {
 
       console.warn(`Página com índice ${pageIndex} não encontrada.`);
     }
-  },[width, pages]);
+  }, [width, pages]);
 
   const navigationOptions = useMemo(() => (
-  <ScrollView
-    horizontal
-    contentContainerStyle={{ gap: 20, paddingHorizontal: 20 }}
-    showsHorizontalScrollIndicator={false}
-  >
-    {["Especialistas", "Serviços", "Ferramentas de marketing"].map((label, index) => (
-      <TouchableOpacity key={index} style={styles.options} onPress={() => scrollToPage(index)}>
-        <Text style={styles.optionsText}>{label}</Text>
-      </TouchableOpacity>
-    ))}
-  </ScrollView>
-), [scrollToPage]);
+    <ScrollView
+      horizontal
+      contentContainerStyle={{ gap: 20, paddingHorizontal: 20 }}
+      showsHorizontalScrollIndicator={false}
+    >
+      {["Especialistas", "Serviços", "Ferramentas de marketing"].map((label, index) => (
+        <TouchableOpacity key={index} style={styles.options} onPress={() => scrollToPage(index)}>
+          <Text style={styles.optionsText}>{label}</Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  ), [scrollToPage]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
+     
 
-        <View style={{}}>
+        <View>
           <Image source={{ uri: image }} style={{ position: "absolute", width: width, aspectRatio: 16 / 9 }} />
 
           <TouchableOpacity style={{ width: width, aspectRatio: 16 / 9, justifyContent: "center", alignItems: "center" }}
@@ -106,32 +106,34 @@ export default function EstablishmentTools() {
 
         </View>
 
-        <View style={styles.modal}>
-          <View style={{padding:20}}>
-            <View>
-              <Text style={styles.inputLabel}>Nome do estabelecimento</Text>
-              <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonName} />
+        <ScrollView style={styles.modal} stickyHeaderIndices={[1]}>
+     
+
+            <View style={{ padding: 20 }}>
+              <View>
+                <Text style={styles.inputLabel}>Nome do estabelecimento</Text>
+                <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonName} />
+              </View>
+              <View>
+                <Text style={styles.inputLabel}>Descrição</Text>
+                <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonDescription} />
+              </View>
+              <View>
+                <Text style={styles.inputLabel}>CNPJ</Text>
+                <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonCNPJ} />
+              </View>
             </View>
-            <View>
-              <Text style={styles.inputLabel}>Descrição</Text>
-              <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonDescription} />
-            </View>
-            <View>
-              <Text style={styles.inputLabel}>CNPJ</Text>
-              <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonCNPJ} />
-            </View>
-          </View>
 
-          <ScrollView
-            horizontal
-            contentContainerStyle={{ gap: 20, paddingHorizontal: 20, }}
-            showsHorizontalScrollIndicator={false}
-          >
+            <ScrollView
+              horizontal
+              contentContainerStyle={{ gap: 20, paddingHorizontal: 20, zIndex:10, backgroundColor: colors.background }}
+              showsHorizontalScrollIndicator={false}
+            >
 
-            {navigationOptions}
+              {navigationOptions}
 
 
-          </ScrollView>
+            </ScrollView>
 
           <ScrollView
             ref={scrollRef}
@@ -139,15 +141,17 @@ export default function EstablishmentTools() {
             scrollEventThrottle={12}
             pagingEnabled
             horizontal
+            style={{maxWidth: width}}
 
           >
             <EstablishmentEspecialist />
             <EstablishmentServices />
+            <MarketingTools />
 
 
           </ScrollView>
 
-        </View>
+   
       </ScrollView >
       <TabBarButton title='Salvar' />
     </SafeAreaView >
@@ -160,7 +164,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background
   },
   options: {
-    paddingVertical: 20,
+    paddingTop: 10,
   },
   optionsText: {
     fontSize: 20,
@@ -171,14 +175,18 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: colors.debug
+  
   },
+
   modal: {
     flex: 1,
     width: "100%",
     borderRadius: 20,
     marginTop: -20,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
+    marginBottom: 120,
   },
   inputLabel: {
     fontSize: 18,

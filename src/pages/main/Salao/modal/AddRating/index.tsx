@@ -19,7 +19,7 @@ import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, Materi
 import { styles } from '../../style';
 import colors, { font } from '../../../../../configs/theme'
 import ServicesCards from '../../../../../components/homeScreenComponents/ServicesCarroussel';
-import SalaoServices from '../../Services';
+import SalaoServices from '../../Services/services';
 import SalaoEspecialistas from '../../Especialistas';
 import CustomButton from '../../../../../components/customButton';
 import Icon from '../../../../../configs/icons';

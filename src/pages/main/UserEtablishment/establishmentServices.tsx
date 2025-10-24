@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -12,132 +12,172 @@ import {
 } from "react-native";
 import colors, { font } from "configs/theme";
 import ServiceItem from "components/Salao/ServicesScreenOptions";
-import { Picker } from '@react-native-picker/picker';
+import { Picker } from "@react-native-picker/picker";
 import Icon from "configs/icons";
+import { useSalonContext } from "context/salonContext";
+import { normalizeFont } from "configs/utils";
+
 const { width } = Dimensions.get("window");
 
-interface TypeItem {
-    itemId: string;
-    itemDescription: string;
+interface ServiceTypeProps {
+    id?: any;
+    serviceType?: "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado";
+    price?: string;
+    quantity?: any;
+    types: {
+        itemId?: string;
+        itemDescription: string;
+        itemPrice: string;
+    }[];
 }
 
-interface ServiceTypeItem {
-    id: string;
-    type: "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado";
-    quantity: number; // quantidade de tipos adicionados
-    types: TypeItem[];
-}
-type serviceTypeProps = {
-    id?: any,
-    serviceType?: "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado",
-    quantity?: any,
-    types: {
-        itemId?: string,
-        itemDescription: string
-    }[]
-}
 export default function EstablishmentServices() {
-    const [selectedService, setSelectedService] = useState<serviceTypeProps | null>(null);
-    const [serviceType, setServiceType] = useState<"Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado">();
-    const [serviceDescription, setServiceDescription] = useState("");
-    const [services, setServices] = useState([{ id: Date.now(), itemDescription: '', serviceType: serviceType }]);
-    const [servicesList, setServicesList] = useState<serviceTypeProps[]>([]);
+    const { addServicesToSalon, updateServices, serviceList, fetchServices, deleteService } =
+        useSalonContext()!;
+
+    const [selectedService, setSelectedService] = useState<ServiceTypeProps | null>(null);
+    const [serviceType, setServiceType] = useState<
+        "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado"
+    >();
+    const [services, setServices] = useState([
+        { id: Date.now(), itemDescription: "", itemPrice: "", serviceType: serviceType },
+    ]);
+    const [servicesList, setServicesList] = useState<ServiceTypeProps[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
-    const [infoDisplayVisible, setInfoDisplayVisible] = useState(false)
-    const [editingService, setEditingService] = useState<serviceTypeProps | null>(null);
+    const [infoDisplayVisible, setInfoDisplayVisible] = useState(false);
+    const [editingService, setEditingService] = useState<ServiceTypeProps | null>(null);
     const [isEditing, setIsEditing] = useState(false);
 
+    useEffect(() => {
+        fetchServices();
+    }, []);
 
-    console.log("[establishmentServices] renderiou")
-    const handleConfirm = () => {
-        if (!serviceType) return;
+    const handleConfirm = async () => {
+    if (!serviceType) return;
 
-        const typesArray = services.map(s => ({
-            itemId: String(s.id),
-            itemDescription: s.itemDescription,
-        }));
+    const typesArray = services.map((s) => ({
+        itemId: String(s.id),
+        itemDescription: s.itemDescription,
+        itemPrice: s.itemPrice,
+    }));
 
-        if (isEditing && editingService) {
-            // Atualiza serviço existente
-            setServicesList(prev =>
-                prev.map(service =>
-                    service.id === editingService.id
-                        ? { ...service, serviceType, types: typesArray, quantity: typesArray.length }
-                        : service
-                )
-            );
-            setIsEditing(false);
-            setEditingService(null);
-        } else {
-            // Cria novo serviço
-            const newService = {
-                id: String(Date.now() + Math.random()),
-                serviceType,
-                quantity: typesArray.length,
-                types: typesArray,
-            };
-            setServicesList(prev => [...prev, newService]);
-        }
+    // Verifica se já existe um serviço do mesmo tipo
+    const existingService = serviceList.find(
+        (s) => s.serviceType === serviceType
+    );
 
-        // Limpa inputs e fecha modal
-        setServices([{ id: Date.now(), itemDescription: '', serviceType }]);
-        setServiceType(undefined);
-        setModalVisible(false);
-    };
+    if (existingService) {
+        // 🔄 Atualiza o serviço existente em vez de criar um novo
+        const updatedData = {
+            ...existingService,
+            serviceType,
+            types: [...existingService.types, ...typesArray], // adiciona os novos tipos
+            quantity: existingService.types.length + typesArray.length,
+        };
+
+        await updateServices(updatedData);
+        alert(`O serviço "${serviceType}" foi atualizado com sucesso!`);
+
+        setIsEditing(false);
+        setEditingService(null);
+    } else {
+        // ➕ Cria um novo serviço normalmente
+        const newService = {
+            serviceType,
+            quantity: typesArray.length,
+            types: typesArray,
+        };
+
+        await addServicesToSalon(newService);
+        alert(`O serviço "${serviceType}" foi adicionado com sucesso!`);
+    }
+
+    // 🔁 Reseta o formulário
+    setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceType }]);
+    setServiceType(undefined);
+    setModalVisible(false);
+
+    // Atualiza a lista do contexto
+    fetchServices();
+};
 
 
-    const handleChangeValue = (id: number, newValue: string) => {
-        setServices(prev =>
-            prev.map(item => (item.id === id ? { ...item, itemDescription: newValue } : item))
+    const handleChangeDescription = (id: number, newValue: string) => {
+        setServices((prev) =>
+            prev.map((item) => (item.id === id ? { ...item, itemDescription: newValue } : item))
         );
     };
 
-    const handleInfoDisplay = (item: serviceTypeProps) => {
+    const handleChangePrice = (id: number, newValue: string) => {
+        const numericValue = newValue.replace(/[^\d,]/g, '').replace(',', '.');
+
+        setServices((prev) =>
+            prev.map((item) => (item.id === id ? { ...item, itemPrice: numericValue } : item))
+        );
+    };
+
+    const handleInfoDisplay = (item: ServiceTypeProps) => {
         setSelectedService(item);
         setInfoDisplayVisible(true);
     };
 
-    const handleCampos = (acao: 'add' | 'removeOne' | 'removeAll', id?: number) => {
-        if (acao === 'add') {
-            setServices(prev => [...prev, { id: Date.now() + Math.random(), itemDescription: '', serviceType: serviceType }]);
+    const handleCampos = (acao: "add" | "removeOne" | "removeAll", id?: number) => {
+        if (acao === "add") {
+            setServices((prev) => [
+                ...prev,
+                { id: Date.now() + Math.random(), itemDescription: "", itemPrice: "", serviceType },
+            ]);
             return;
         }
 
-        if (acao === 'removeOne' && id !== undefined) {
-            setServices(prev => prev.filter(item => item.id !== id));
+        if (acao === "removeOne" && id !== undefined) {
+            setServices((prev) => prev.filter((item) => item.id !== id));
             return;
         }
 
-        if (acao === 'removeAll') {
-            setServices([{ id: Date.now(), itemDescription: '', serviceType: serviceType }]);
+        if (acao === "removeAll") {
+            setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceType }]);
             return;
         }
     };
+
+    const handleDeleteService = async () => {
+        if (!editingService) return;
+        await deleteService(editingService).then(() => {
+            alert("Serviço excluído com sucesso");
+        });
+        setModalVisible(false);
+        setIsEditing(false);
+        fetchServices();
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
                 <Text style={styles.title}>Serviços</Text>
 
-                {
-                    servicesList.length === 0 &&
+                {serviceList.length === 0 && (
                     <Text style={{ fontFamily: font.poppins.medium }}>
                         Você não possui nenhum serviço.
                     </Text>
-                }
-                <ScrollView contentContainerStyle={{ paddingVertical: 10, flex: 1, width: "100%", gap: 15 }}>
+                )}
 
-                    {servicesList.map((item, index) => (
-                        <ServiceItem key={item.id} text={item.serviceType} amount={item.quantity} onPress={() => { setInfoDisplayVisible(true); handleInfoDisplay(item) }} />
+                <ScrollView
+                    contentContainerStyle={{ paddingVertical: 10, flex: 1, width: "100%", gap: 15 }}
+                >
+                    {serviceList.map((item) => (
+                        <ServiceItem
+                            key={item.id}
+                            text={item.serviceType}
+                            amount={item.quantity}
+                            onPress={() => handleInfoDisplay(item)}
+                        />
                     ))}
                 </ScrollView>
-                <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={() => setModalVisible(true)}
-                >
 
+                <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
                     <Text style={styles.addButtonText}>Adicionar Serviços</Text>
                 </TouchableOpacity>
-
 
                 {/* Modal de informações */}
                 <Modal
@@ -151,13 +191,20 @@ export default function EstablishmentServices() {
                             <Text style={styles.modalTitle}>{selectedService?.serviceType}</Text>
 
                             {selectedService?.types.map((type) => (
-                                <Text key={type.itemId}>{type.itemDescription}</Text>
+                                <View key={type.itemId} style={{ padding: 5, flexDirection: "row", justifyContent: "space-between", borderBottomWidth: 1, borderRadius: 20, borderColor: colors.lightGray }}>
+                                    <Text>{type.itemDescription}</Text>
+
+                                    <Text>R$ {type.itemPrice}</Text>
+                                </View>
                             ))}
 
                             <View style={styles.modalActions}>
                                 <TouchableOpacity
                                     style={[styles.addButton, { marginHorizontal: "auto" }]}
-                                    onPress={() => { setInfoDisplayVisible(false); setServices([{ id: Date.now(), itemDescription: '', serviceType }]); }}
+                                    onPress={() => {
+                                        setInfoDisplayVisible(false);
+                                        setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceType }]);
+                                    }}
                                 >
                                     <Text style={styles.buttonText}>Fechar</Text>
                                 </TouchableOpacity>
@@ -172,10 +219,11 @@ export default function EstablishmentServices() {
                                         if (selectedService) {
                                             setServiceType(selectedService.serviceType);
                                             setServices(
-                                                selectedService.types.map(type => ({
+                                                selectedService.types.map((type) => ({
                                                     id: Number(type.itemId),
                                                     itemDescription: type.itemDescription,
-                                                    serviceType: selectedService.serviceType
+                                                    itemPrice: type.itemPrice,
+                                                    serviceType: selectedService.serviceType,
                                                 }))
                                             );
                                         }
@@ -190,7 +238,7 @@ export default function EstablishmentServices() {
                     </View>
                 </Modal>
 
-                {/* Modal */}
+                {/* Modal principal */}
                 <Modal
                     visible={modalVisible}
                     transparent
@@ -199,79 +247,119 @@ export default function EstablishmentServices() {
                 >
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer}>
+                            {isEditing && (
+                                <TouchableOpacity
+                                    onPress={handleDeleteService}
+                                    activeOpacity={0.7}
+                                    style={{
+                                        backgroundColor: colors.primary,
+                                        width: 40,
+                                        height: 40,
+                                        position: "absolute",
+                                        borderRadius: 200,
+                                        zIndex: 20,
+                                        right: 10,
+                                        top: 10,
+                                    }}
+                                >
+                                    <Icon.MaterialCommunityIcons
+                                        name="delete"
+                                        size={20}
+                                        color={colors.background}
+                                        style={{ margin: "auto" }}
+                                    />
+                                </TouchableOpacity>
+                            )}
+
                             <Text style={styles.modalTitle}>
                                 {isEditing ? "Editar serviço" : "Adicionar serviço"}
                             </Text>
-                            <Text>Tipo de serviço:</Text>
-                            <Picker style={{ borderWidth: 12, height: 'auto' }} selectedValue={serviceType} onValueChange={(itemValue, itemIndex) => setServiceType(itemValue)}>
 
+                            <Text>Tipo de serviço:</Text>
+                            <Picker
+                                style={{ borderWidth: 12, height: "auto" }}
+                                selectedValue={serviceType}
+                                onValueChange={(itemValue) => setServiceType(itemValue)}
+                            >
                                 <Picker.Item label="Corte de cabelo" value="Corte de cabelo" />
                                 <Picker.Item label="Maquiagem" value="Maquiagem" />
                                 <Picker.Item label="Massagem" value="Massagem" />
+                                <Picker.Item label="Manicure" value="Massagem" />
+                                <Picker.Item label="Personalizado" value="Personalizado" />
                             </Picker>
 
-                            {serviceType === "Corte de cabelo" && <>
-                                {
-                                    services.map((item, index) => (
-                                        <View key={item.id} style={{ flexDirection: 'row', alignItems: "center" }}>
+                            {/* Campos dinâmicos */}
+                            {services.map((item) => (
+                                <View
+                                    key={item.id}
+                                    style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}
+                                >
+                                    <View
+                                        style={[
+                                            styles.form,
+                                        ]}
+                                    >
+                                        <TextInput
+                                            value={item.itemDescription}
+                                            style={[styles.input, { flexGrow: 1, marginRight: 5 }]}
+                                            placeholder="Descrição do tipo"
+                                            onChangeText={(text) => handleChangeDescription(item.id, text)}
+                                        />
+                                        <TextInput
+                                            keyboardType="numeric"
+                                            value={item.itemPrice}
+                                            placeholder="Preço R$"
+                                            style={[styles.input, { width: normalizeFont(90) }]}
+                                            onChangeText={(text) => handleChangePrice(item.id, text)}
+                                        />
+                                    </View>
 
-                                            <TextInput
-                                                value={services[index].itemDescription}
-                                                style={styles.input}
-                                                placeholder="Tipo (ex: corte americano, mullet...)"
-                                                onChangeText={(text) => handleChangeValue(item.id, text)}
-                                            />
-                                            <TouchableOpacity
-                                                onPress={() => handleCampos('removeOne', item.id)}
-                                                style={{ width: 22, height: 22, backgroundColor: colors.primary, justifyContent: "center", alignItems: "center", borderRadius: 2 }}>
-                                                <Icon.Ionicons name="remove" color={colors.white} />
-                                            </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() => handleCampos("removeOne", item.id)}
+                                        style={{
+                                            width: 26,
+                                            height: 26,
+                                            backgroundColor: colors.primary,
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            borderRadius: 4,
+                                        }}
+                                    >
+                                        <Icon.Ionicons name="remove" color={colors.white} />
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
 
-                                        </View>
-                                    ))}
-                                <TouchableOpacity
-                                    onPress={() => handleCampos('add')}
-                                    style={{ margin: 2, width: 22, height: 22, backgroundColor: colors.primary, justifyContent: "center", alignItems: "center", borderRadius: 2 }}>
-                                    <Icon.Ionicons name="add" color={colors.white} />
-                                </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => handleCampos("add")}
+                                style={{
+                                    marginTop: 5,
+                                    width: 28,
+                                    height: 28,
+                                    backgroundColor: colors.primary,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: 4,
+                                }}
+                            >
+                                <Icon.Ionicons name="add" color={colors.white} />
+                            </TouchableOpacity>
 
-                            </>
-
-                            }
-                            {serviceType === "Maquiagem" && <>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Tipo (ex: Noiva, casual...)"
-                                    onChangeText={setServiceDescription}
-                                />
-                                <TouchableOpacity style={{ width: 22, height: 22, backgroundColor: colors.primary, justifyContent: "center", alignItems: "center", borderRadius: 2 }}>
-                                    <Icon.Ionicons name="add" color={colors.white} />
-                                </TouchableOpacity>
-                            </>
-
-                            }
-                            {serviceType === "Massagem" && <>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Tipo (ex: corte de cabelo, maquiagem...)"
-                                    onChangeText={setServiceDescription}
-                                />
-                                <TouchableOpacity style={{ width: 22, height: 22, backgroundColor: colors.primary, justifyContent: "center", alignItems: "center", borderRadius: 2 }}>
-                                    <Icon.Ionicons name="add" color={colors.white} />
-                                </TouchableOpacity>
-                            </>
-
-                            }
+                            {/* Ações */}
                             <View style={styles.modalActions}>
                                 <TouchableOpacity
                                     style={[styles.button, { backgroundColor: "#ccc" }]}
-                                    onPress={() => { setModalVisible(false); setIsEditing(false); setServices([{ id: Date.now(), itemDescription: '', serviceType }]); }}
+                                    onPress={() => {
+                                        setModalVisible(false);
+                                        setIsEditing(false);
+                                        setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceType }]);
+                                    }}
                                 >
                                     <Text style={styles.buttonText}>Cancelar</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
-                                    style={[styles.button, { backgroundColor: colors.primary || "#007AFF" }]}
+                                    style={[styles.button, { backgroundColor: colors.primary }]}
                                     onPress={handleConfirm}
                                 >
                                     <Text style={styles.buttonText}>Confirmar</Text>
@@ -289,15 +377,22 @@ const styles = StyleSheet.create({
     container: {
         width: width,
         backgroundColor: colors.background,
-        margin: 2,
+        marginVertical: 2,
         flex: 1,
+    },
+    form: {
+        marginRight: "auto",
+        flexGrow: 1,
+        borderBottomWidth: 1,
+        borderColor: colors.transparentLightGray,
+        borderRadius: 20,
+        paddingVertical: 8,
     },
     content: {
         justifyContent: "center",
         alignItems: "center",
         padding: 20,
         paddingBottom: 120,
-        // backgroundColor: colors.debug
     },
     title: {
         fontSize: 22,
@@ -305,7 +400,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     addButton: {
-        backgroundColor: colors.primary || "#007AFF",
+        backgroundColor: colors.primary,
         paddingHorizontal: 20,
         paddingVertical: 10,
         borderRadius: 10,
@@ -339,13 +434,12 @@ const styles = StyleSheet.create({
         borderColor: "#ccc",
         borderRadius: 8,
         padding: 10,
-        marginBottom: 10,
-        flex: 1,
+        flexGrow: 1,
     },
     modalActions: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginTop: 10,
+        marginTop: 15,
     },
     button: {
         flex: 1,

@@ -17,7 +17,7 @@ import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, Materi
 import { styles } from '../../style';
 import colors from '../../../../../configs/theme'
 import ServicesCards from '../../../../../components/homeScreenComponents/ServicesCarroussel';
-import SalaoServices from '../../Services';
+import SalaoServices from '../../Services/services';
 import SalaoEspecialistas from '../../Especialistas';
 import Rating from '../../Avaliacoes';
 import ProfessionalCard from '../../../../../components/Salao/EspecialistaScreen';
@@ -26,6 +26,7 @@ import { ScheduleContext, ScheduleParams } from 'context/scheduleContext';
 import TabBarButton from 'components/TabBar';
 import CustomButton from 'components/customButton';
 import { AuthContext } from 'context/auth';
+import { Specialist } from 'pages/main/UserEtablishment/establishmentEspecialist';
 
 const scrollProps = {
     showsHorizontalScrollIndicator: false,
@@ -33,17 +34,10 @@ const scrollProps = {
     snapToInterval: 110,
 }
 
-const especialistas: any = []
-for (let i = 6; i < 20; i++) {
-    especialistas.push({
-        id: i + 1,
-        content:
-            <ProfessionalCard cardWidth={(Dimensions.get("window").width / 2) - 40} /> // Calcula a largura dos cards com base na largura da tela}/>
-    })
-}
+
 
 export default function Scheduling({ navigation }: any) {
-    const { salon, loading } = useContext(SalonContext)!
+    const { salon, loading, specialistList } = useContext(SalonContext)!
     const { user } = useContext(AuthContext)!
     const { cancelSchedule, confirmActions } = useContext(ScheduleContext)!
     const start = (salon?.opHour).split("-")[0] || "08:00";
@@ -65,6 +59,7 @@ export default function Scheduling({ navigation }: any) {
 
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [selectedDay, setSelectedDay] = useState<number | null>(null);
+    const [selectedSpecialist, setSelectedSpecialist] = useState<Specialist | null>(null);
     const [selectedSchedule, setSelectedSchedule] = useState<ScheduleParams>({
         salonName: salon?.name || "undefined",
         salonId: salon?.id || "undefined",
@@ -74,6 +69,7 @@ export default function Scheduling({ navigation }: any) {
         time: selectedTime || "undefined",
         address: salon?.addres || "undefined",
         status: "active",
+        specialist: selectedSpecialist?.name || null,
 
     });
     useEffect(() => {
@@ -201,6 +197,18 @@ export default function Scheduling({ navigation }: any) {
         });
     }
 
+    const selectSpecialist = (specialist: Specialist) => {
+        const specialistObject = {
+            ...specialist
+        }
+        console.log(specialistObject)
+        setSelectedSpecialist(specialistObject);
+        setSelectedSchedule((prev) => ({
+            ...prev,
+            specialist: specialistObject as any
+        }))
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             {/* Imagem principal */}
@@ -281,8 +289,14 @@ export default function Scheduling({ navigation }: any) {
                         flexWrap: "wrap",
                         paddingBottom: 150
                     }}>
-                        {especialistas.map((item: any) => (
-                            <View key={item.id}>{item.content}</View>
+                        {specialistList.map((item, index) => (
+                            <ProfessionalCard key={item.id}
+                                containerStyle={{
+                                    outlineWidth: selectedSpecialist?.id === specialistList[index].id ? 2 : 0,
+                                    outlineColor: colors.primary,
+                                }}
+                                cardWidth={(Dimensions.get("window").width / 2) - 40} name={item.name} profession={item.service} userPhoto={item.image}
+                                onPress={() => {selectSpecialist(specialistList[index])}} />
                         ))}
                     </View>
 

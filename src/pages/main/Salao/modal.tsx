@@ -16,7 +16,7 @@ import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, Materi
 import { styles } from './style'
 import CustomButton from '../../../components/customButton';
 import MainModal2 from './modal/mainContent/MainModal';
-import ScheduleModal from './modal/Agendamento';
+import ScheduleModal from './modal/Agendamento/agendamento';
 import { SalonContext } from '../../../context/salonContext';
 
 
@@ -25,6 +25,7 @@ const width = Dimensions.get("window").width;
 export default function SalaoScreen({ navigation }: any) {
     const [isScheduling, setScheduling] = useState(false);
     const { salon, isOwner } = useContext(SalonContext)!
+    console.warn("[Modal do Salão] ID: ",salon?.id )
     return (
         <SafeAreaView style={styles.container}>
             {/* Imagem principal */}

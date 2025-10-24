@@ -3,6 +3,7 @@ import { auth, db } from 'services/firebase';
 import { AuthContext } from './auth';
 import { SalonContext } from './salonContext';
 import { collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where, writeBatch } from '@firebase/firestore';
+import { Specialist } from 'pages/main/UserEtablishment/establishmentEspecialist';
 
 export interface ScheduleParams {
     id?: string;
@@ -17,6 +18,7 @@ export interface ScheduleParams {
     userName?: string;
     showNotification?: boolean;
     status: string;
+    specialist: Specialist
 }
 type ScheduleContextType = {
     schedules: ScheduleParams[];

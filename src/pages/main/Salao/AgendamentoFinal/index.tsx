@@ -16,6 +16,7 @@ import { styles } from './style';
 import colors from '../../../../configs/theme';
 import CustomButton from '../../../../components/customButton';
 import { ScheduleContext } from 'context/scheduleContext';
+import { capitalizeFirstLetter } from 'configs/utils';
 
 export default function ScheduleFinal({ navigation }: any) {
     const {createSchedule, scheduleData} = useContext(ScheduleContext)!
@@ -64,7 +65,7 @@ export default function ScheduleFinal({ navigation }: any) {
 
                     <View style={styles.labelContainer}>
                         <Text style={styles.label}>Especialista: </Text>
-                        <Text style={styles.label2}> Cabeleireira - Lavínia </Text>
+                        <Text style={styles.label2}> {capitalizeFirstLetter(scheduleData.specialist.name)} </Text>
                     </View>
                 </View>
 

@@ -33,7 +33,6 @@ export default function SalaoEspecialistas() {
         const fetchSpecialists = async () => {
 
             if (!salon?.id) return
-            console.log(salon.id)
             try {
                 const specialistRef = collection(db, "salon", salon?.id!, "specialists")
                 const q = query(specialistRef, orderBy("name", "desc"));
@@ -82,28 +81,25 @@ export default function SalaoEspecialistas() {
 
 
 
-                    {isOwner && especialistaList?.length == 0 && <Text style={{ width: "90%", fontSize: 15, fontFamily: font.poppins.bold, textAlign: "center", color: colors.lightGray, padding: 20, }}>
-                        <Icon.Ionicons name="information-circle" size={20} color={colors.lightGray} />
-                        Nenhum especialista encontrado. Por favor, acesse as opções de ferramentas e envie um convite!.
-                    </Text>}
-                    {!isOwner && especialistaList?.length == 0 || undefined || null && <Text style={{ width: "90%", fontSize: 15, fontFamily: font.poppins.bold, textAlign: "center", color: colors.lightGray, padding: 20, }}>
-                        <Icon.Ionicons name="information-circle" size={20} color={colors.lightGray} />
-                        Este estabelecimento não convidou nenhum especialista! Contate o dono ou vá ao estabelecimento para mais informações.
-                    </Text>}
+                {isOwner && especialistaList?.length == 0 && <Text style={{ width: "90%", fontSize: 15, fontFamily: font.poppins.bold, textAlign: "center", color: colors.lightGray, padding: 20, }}>
+                    <Icon.Ionicons name="information-circle" size={20} color={colors.lightGray} />
+                    Nenhum especialista encontrado. Por favor, acesse as opções de ferramentas e envie um convite!.
+                </Text>}
+                {!isOwner && especialistaList?.length == undefined && <Text style={{ width: "90%", fontSize: 15, fontFamily: font.poppins.bold, textAlign: "center", color: colors.lightGray, padding: 20, }}>
+                    <Icon.Ionicons name="information-circle" size={20} color={colors.lightGray} />
+                    Este estabelecimento não convidou nenhum especialista! Contate o dono ou vá ao estabelecimento para mais informações.
+                </Text>}
 
 
-                
-                {especialistaList?.map((item, index) =>
-                    <>
 
-
-                        <ProfessionalCard
-                            key={item.id}
-                            userPhoto={item.image} // imagem do usuario
-                            name={capitalizeFirstLetter(item.name)} // nome
-                            profession={item.service} // serviço ex: Corte de Cabelo
-                            cardWidth={calcCardsWidth} />
-                    </>
+                {especialistaList?.map((item, index) => (
+                    <ProfessionalCard
+                        key={item.id}
+                        userPhoto={item.image} // imagem do usuario
+                        name={capitalizeFirstLetter(item.name)} // nome
+                        profession={item.service} // serviço ex: Corte de Cabelo
+                        cardWidth={calcCardsWidth} />
+                    )
                 )
                 }
 

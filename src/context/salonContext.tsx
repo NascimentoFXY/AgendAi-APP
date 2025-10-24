@@ -40,9 +40,17 @@ interface Specialist {
     service: string,
     image?: string,
 }
-interface Services {
-    id?: string,
-    type: any
+
+
+export interface Services {
+    id?: any,
+    serviceType?: "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado",
+    quantity?: any,
+    types: {
+        itemId?: string,
+        itemDescription: string
+        itemPrice: string;
+    }[]
 }
 interface Info {
     nome: string,
@@ -62,7 +70,7 @@ interface SalonContextType {
     salonList: Salon[] | null,
     ratings: Rating[],
     createSalon: () => void,
-    useSalon: (salonID: string) => Promise<Salon | null | undefined>,
+    useSalon: (salonID: string) => Promise<void>,
     fetchSalons: () => Promise<void>,
     setData: (data: DataProps) => void,
     setIsValid: (value: boolean) => void,
@@ -71,8 +79,13 @@ interface SalonContextType {
     getAverageRating?: (salon: Salon) => Promise<number>,
     addSpecialistToSalon?: (salonID: string, user: User, service: string) => Promise<any>
     fetchSpecialists: () => Promise<void>,
+    addServicesToSalon: (data: Services) => Promise<void>,
+    updateServices: (data: Services) => Promise<void>,
+    deleteService: (data: Services) => Promise<void>,
+    fetchServices: () => Promise<void>,
     specialistList: Specialist[],
     ratingFilter?: string,
+    serviceList: Services[]
     loading: boolean,
     isValid: boolean,
     isOwner: boolean,
@@ -159,16 +172,78 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         else {
             alert("preencha todos os campos")
         }
-    }, [])
+    }, [isInputValid, info])
 
     //---------------------------------atualizar Serviços---------------------------//
-    /*async function addServicesToSalon(data: Services) {
+    const addServicesToSalon = useCallback(async (data: Services) => {
         const serviceRef = doc(collection(db, "salon", salon?.id!, "services"))
-        await setDoc((serviceRef), {
-            id: serviceRef.id,
-            type: data.services?.type
-        })
-    }*/
+        console.log(data)
+        try {
+            const newService = {
+                id: serviceRef.id,
+                serviceType: data.serviceType,
+                quantity: data.quantity,
+                types: data.types,
+            };
+            await setDoc(serviceRef, newService)
+            setServiceList(prev => [...prev, newService])
+        } catch (er) {
+            console.error(er)
+        }
+    }, [salon?.id])
+
+    const updateServices = useCallback(async (data: Services) => {
+        if (!salon?.id || !data.id) {
+            console.error("❌ Faltando ID do salão ou do serviço");
+            return;
+        }
+
+        const serviceRef = doc(db, "salon", salon.id, "services", data.id);
+
+        try {
+            await updateDoc(serviceRef, {
+                ...data,
+                updatedAt: new Date(), // opcional: útil pra controle de atualização
+            });
+            console.log("✅ Serviço atualizado:", data.id);
+        } catch (er) {
+            console.error("Erro ao atualizar serviço:", er);
+        }
+    }, [salon?.id]);
+    const deleteService = useCallback(async (data: Services) => {
+        if (!salon?.id || !data.id) {
+            console.error("❌ Faltando ID do salão ou do serviço");
+            return;
+        }
+        const serviceRef = doc(db, "salon", salon.id, "services", data.id);
+        try {
+            await deleteDoc(serviceRef);
+            console.log("✅ Serviço deletado:", data.id);
+        } catch (er) {
+            console.error("Erro ao deletar serviço:", er);
+        }
+    }, [salon?.id]);
+
+    const fetchServices = useCallback(async () => {
+        if (!salon?.id) return
+        try {
+            const servicesRef = collection(db, "salon", salon?.id!, "services")
+            const q = query(servicesRef, orderBy("quantity", "desc"));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                setServiceList([])
+                return
+            };
+            const services = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data() as Services
+            }))
+            setServiceList(services)
+        } catch (er) {
+            console.error("[establishmentEspecialist] ", er)
+        }
+    }, [salon?.id])
     //--------------------------------adicionar avaliação--------------------------//
     const addRatingToSalon = useCallback(async (data: Rating) => {
         const RatingseRef = doc(collection(db, "salon", salon?.id!, "ratings"))
@@ -185,33 +260,47 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         } catch (err) {
             console.log("[salon]erro ao adicionar avaliação: ", err)
         }
-    }, [])
+    }, [salon?.id!])
     //-------------------------------usarSalao----------------------------------//
-    const useSalon = useCallback(async (salonId: string) => {
-        console.log("salao usado.")
-        setLoading(true)
-        if (!salonId) return
+
+    const loadSalonData = useCallback(async (salonId: string) => {
+        if (!salonId) return;
+        setLoading(true);
+
         try {
-            const salonSnap = await getDoc(doc(db, "salon", salonId))
-            if (salonSnap.exists()) {
-                const salon = { id: salonSnap.id, ...salonSnap.data() } as Salon
-                setSalon(salon)
-                setLoading(false)
-                fetchSalonRatings(salonId); // Buscar avaliações ao selecionar um salão
-
-                // console.log("[salon]salao encontrado: ", salon.id)
-                return salon;
+            // 1️⃣ Pega o salão principal
+            const salonSnap = await getDoc(doc(db, "salon", salonId));
+            if (!salonSnap.exists()) {
+                console.warn("Salão não encontrado!");
+                setLoading(false);
+                return;
             }
-            else {
-                alert("nao foi possivel encontrar o chat")
-                setLoading(false)
-                return null
-            }
-        }
-        catch (err) {
-            console.log(err)
-        }
 
+            const salonData = { id: salonSnap.id, ...salonSnap.data() } as Salon;
+            setSalon(salonData);
+
+            // 2️⃣ Pega as coleções relacionadas em paralelo
+            const [ratingsSnap, servicesSnap, specialistsSnap] = await Promise.all([
+                getDocs(collection(db, "salon", salonId, "ratings")),
+                getDocs(collection(db, "salon", salonId, "services")),
+                getDocs(collection(db, "salon", salonId, "specialists")),
+            ]);
+
+            // 3️⃣ Converte tudo pra estado
+            setRatings(ratingsSnap.docs.map(d => ({ id: d.id, ...d.data() } as Rating)));
+            setServiceList(servicesSnap.docs.map(d => ({ id: d.id, ...d.data() } as Services)));
+            setEspecialistaList(specialistsSnap.docs.map(d => ({ id: d.id, ...d.data() } as Specialist)));
+
+        } catch (err) {
+            console.error("Erro ao carregar dados do salão:", err);
+        } finally {
+            // 4️⃣ Só aqui marcamos como carregado
+            setLoading(false);
+        }
+    }, []);
+
+    const useSalon = useCallback(async (salonId: string) => {
+       await loadSalonData(salonId)
     }, [])
 
     //=============================SESSÃO DOS ESPECIALISTAS===================================//
@@ -296,7 +385,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         } catch (err) {
             console.error("Erro ao buscar avaliações:", err);
         }
-    }, []);
+    }, [ratingFilter]);
     //-----------------------media de avaliações------------------------------//
     const getAverageRating = useCallback(async (salon: Salon): Promise<number> => {
         try {
@@ -372,6 +461,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         ratingFilter: ratingFilter,
         specialistList: especialistaList || [],
         isOwner: salon?.ownerID === user?.id,
+        serviceList: serviceList
     }
     const dependences = {
         salon,
@@ -394,6 +484,10 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         addSpecialistToSalon,
         fetchSpecialists,
         fetchSalons,
+        addServicesToSalon,
+        updateServices,
+        deleteService,
+        fetchServices,
     }
 
     return (
@@ -402,7 +496,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                 ...values,
                 ...functions
             }),
-            Object.values(dependences)
+            [Object.values(dependences)]
         )}>
             {children}
         </SalonContext.Provider>

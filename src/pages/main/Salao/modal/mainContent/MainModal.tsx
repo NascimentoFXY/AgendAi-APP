@@ -15,7 +15,7 @@ import { ChatContext } from 'context/chatContext';
 import { styles } from '../../style';
 import colors from '../../../../../configs/theme';
 import ServicesCards from '../../../../../components/homeScreenComponents/ServicesCarroussel';
-import SalaoServices from '../../Services';
+import SalaoServices from '../../Services/services';
 import SalaoEspecialistas from '../../Especialistas';
 import Rating from '../../Avaliacoes';
 import Icon from 'configs/icons';

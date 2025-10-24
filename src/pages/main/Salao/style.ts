@@ -28,8 +28,64 @@ export const styles = StyleSheet.create({
         borderBottomEndRadius: 20,
         borderBottomStartRadius: 20,
         paddingBottom: 0,
+        zIndex: 10
 
 
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalContainer2: {
+        width: "85%",
+        backgroundColor: "#fff",
+        borderRadius: 12,
+        padding: 20,
+        elevation: 5,
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontFamily: font.poppins.bold,
+        marginBottom: 15,
+    },
+    modalButton: {
+        backgroundColor: colors.primary || "#007AFF",
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 10,
+    },
+    modalButtonText: {
+        color: "#fff",
+        fontSize: 16,
+        fontFamily: font.poppins.medium,
+        textAlign: "center",
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 8,
+        padding: 10,
+        marginBottom: 10,
+        flex: 1,
+    },
+    modalActions: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 10,
+    },
+    button: {
+        flex: 1,
+        paddingVertical: 10,
+        borderRadius: 8,
+        alignItems: "center",
+        marginHorizontal: 5,
+    },
+    buttonText: {
+        color: "#fff",
+        fontFamily: font.poppins.medium,
+        textAlign: "center",
     },
     tools: {
         flexDirection: "row",
@@ -76,7 +132,7 @@ export const styles = StyleSheet.create({
         flexDirection: "row",
         gap: 30,
         overflow: "visible",
-        paddingHorizontal:20,
+        paddingHorizontal: 20,
         backgroundColor: colors.background
     },
     salaoNavigationOptions: {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback,useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -33,7 +33,7 @@ export interface Specialist {
 export default function EstablishmentEspecialist() {
   const { notificationList, notifyUserByEmail } = useNotificationContext()!
   const { user } = useAuthContext()!
-  const { salon,fetchSpecialists, specialistList } = useSalonContext()!
+  const { salon, fetchSpecialists, specialistList, addSpecialistToSalon, fetchSalons } = useSalonContext()!
   const [especialistaEmail, setEspecialistaEmail] = useState("");
   const [servico, setServico] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
@@ -46,7 +46,7 @@ export default function EstablishmentEspecialist() {
     const user = await getUserByEmail(email)
     console.log(user)
     return user
-  },[])
+  }, [])
 
   const handleConfirm = useCallback(async () => {
     if (!especialistaEmail || !servico) {
@@ -55,15 +55,32 @@ export default function EstablishmentEspecialist() {
     }
     const userRes = await getUserHandler(especialistaEmail)
     if (!userRes) return
+    try {
+      const specialistRef = doc(db, "salon", salon?.id!, "specialists", userRes?.id!);
 
-    notifyUserByEmail(userRes.email, user?.name!, salon?.id!, servico)
 
-    alert("O convite foi enviado para: " + userRes.name + ". \nAguarde a solicitação.");
+      const specialistSnap = await getDoc(specialistRef);
+      if (userRes.id === user?.id && !specialistSnap.exists()) {
+        addSpecialistToSalon!(salon?.id!, user, `DONO-${servico}`)
+        setModalVisible(false);
+        setEspecialistaEmail("");
+        setServico("");
+        return
+      } else if (specialistSnap.exists()) {
+        alert(`⚠️ ${userRes.name} já foi convidado ou é especialista deste salão.`);
+        return;
+      }
+      notifyUserByEmail(userRes.email, user?.name!, salon?.id!, servico)
 
-    setModalVisible(false);
-    setEspecialistaEmail("");
-    setServico("");
-  },[especialistaEmail, servico]);
+      alert("O convite foi enviado para: " + userRes.name + ". \nAguarde a solicitação.");
+
+      setModalVisible(false);
+      setEspecialistaEmail("");
+      setServico("");
+    } catch (er) {
+      console.error(er)
+    }
+  }, [especialistaEmail, servico]);
   useEffect(() => {
     fetchSpecialists();
   }, [])
@@ -72,9 +89,9 @@ export default function EstablishmentEspecialist() {
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Especialistas</Text>
 
-        <Text style={{ fontFamily: font.poppins.medium }}>
+        {specialistList.length == 0 && <Text style={{ fontFamily: font.poppins.medium }}>
           Você não possui nenhum especialista
-        </Text>
+        </Text>}
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => setModalVisible(true)}
@@ -87,19 +104,15 @@ export default function EstablishmentEspecialist() {
         {/* Cards de especialistas */}
         <SafeAreaView style={styles.professionalContainer}>
 
-          {specialistList?.map((item, index) =>
-            <>
-              {console.log("[ITEM ID]",item.id)}
-
-              <ProfessionalCard
-                key={item.id}
-                userPhoto={item.image} // imagem do usuario
-                name={capitalizeFirstLetter(item.name)} // nome
-                profession={item.service} // serviço ex: Corte de Cabelo
-                cardWidth={calcCardsWidth-10} />
-            </>
-          )
-          }
+          {specialistList?.map((item, index) => (
+            // {console.log("[ITEM ID]", item.id)}
+            <ProfessionalCard
+              key={item.id}
+              userPhoto={item.image} // imagem do usuario
+              name={capitalizeFirstLetter(item.name)} // nome
+              profession={item.service} // serviço ex: Corte de Cabelo
+              cardWidth={calcCardsWidth - 10} />
+          ))}
         </SafeAreaView>
 
         {/* Modal */}
@@ -112,7 +125,7 @@ export default function EstablishmentEspecialist() {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Convidar especialista</Text>
-
+              <Text style={{fontFamily: font.poppins.medium, color: colors.lightGray}}>Você pode incluir seu email cadastrado para fazer parte dos especialistas do salão. </Text>
               <TextInput
                 style={styles.input}
                 placeholder="Email do especialista"
@@ -154,7 +167,7 @@ const styles = StyleSheet.create({
   container: {
     width: width,
     backgroundColor: colors.background,
-    margin: 2,
+    marginVertical: 2,
     flex: 1,
   },
   professionalContainer: {
