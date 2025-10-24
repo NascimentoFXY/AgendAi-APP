@@ -188,7 +188,7 @@ export function Home({ navigation }: any) {
                                     <Text style={{ color: "#fff" }}>{}</Text>
                                 </View>
                                 <View style={{ flexDirection: "row", flex: 1, justifyContent: "space-between", paddingTop: 30, alignItems: "center" }}>
-                                    <Text style={{ color: "#fff", fontSize: 12, paddingTop: 20, }}>Localizado em Faria lima, SP</Text>
+                                    <Text style={{ color: "#fff", fontSize: 12, paddingTop: 20, }}>Localizado em{salon.addres?.split(",")[2]},{salon.addres?.split(",")[1]}</Text>
                                     <CustomButton
                                         backcolor={colors.primary}
                                         border="Circle"
