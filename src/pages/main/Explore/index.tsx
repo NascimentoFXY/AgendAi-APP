@@ -26,6 +26,7 @@ interface Salon {
     latitude: number;
     longitude: number;
     title: string;
+    distance: any
 
 }
 const { width } = Dimensions.get("window");
@@ -64,6 +65,27 @@ export function Explore({ navigation }: any) {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [show, setShow] = useState(true)
     const [reload, setReload] = useState(1)
+
+    function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+        const R = 6371; // raio da Terra em km
+        const dLat = deg2rad(lat2 - lat1);
+        const dLon = deg2rad(lon2 - lon1);
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) *
+            Math.cos(deg2rad(lat2)) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c; // em km
+        return distance;
+    }
+
+    function deg2rad(deg: number) {
+        return deg * (Math.PI / 180);
+    }
+
+
     useEffect(() => {
         const fetchMarkers = async () => {
             if (!salonList) return;
@@ -73,6 +95,13 @@ export function Explore({ navigation }: any) {
                 if (salon.addres) {
                     const coords = await getCoordinates(salon.addres);
                     if (coords) {
+
+                        const distance = getDistanceFromLatLonInKm(
+                            userLocation.latitude,
+                            userLocation.longitude,
+                            coords.latitude,
+                            coords.longitude
+                        );
                         newMarkers.push({
                             ...coords,
                             name: salon.name,
@@ -90,11 +119,14 @@ export function Explore({ navigation }: any) {
                             latitude: coords.latitude,
                             longitude: coords.longitude,
                             title: salon.name,
+                            distance,
                         });
                         // console.log(newMarkers)
                     }
                 }
             }
+            newMarkers.sort((a, b) => a.distance - b.distance);
+
             setMarkers(newMarkers);
         };
 
@@ -157,7 +189,7 @@ export function Explore({ navigation }: any) {
 
             <FlatList
                 horizontal
-                data={salonList}
+                data={markers}
                 keyExtractor={(_, index) => index.toString()}
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
@@ -217,6 +249,9 @@ export function Explore({ navigation }: any) {
                                 {[...Array(5)].map((_, i) => (
                                     <Icon.Ionicons key={i} name="star" color={colors.primary} size={15} />
                                 ))}
+                                <Text>
+                                       {salon.distance ? salon.distance.toFixed(1) + " km" : ""}
+                                </Text>
                             </View>
                             <View style={{ flexDirection: "row", gap: 5, alignItems: "center", }}>
                                 <Icon.Ionicons name='information-circle' size={15} color={colors.lightGray} />

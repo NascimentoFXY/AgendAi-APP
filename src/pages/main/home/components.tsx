@@ -18,63 +18,7 @@ import colors from '../../../configs/theme';
 import ServicesCards from '../../../components/homeScreenComponents/ServicesCarroussel';
 import MainHeader from '../../../components/homeScreenComponents/header';
 import { useNavigation } from '@react-navigation/native';
-export const ServiceCardsData = [
-    {
-        id: 1,
-        content:
-            <ServicesCards
-                icon={
-                    <Entypo name='scissors' size={40} color={"#3b000084"} />
-                }
-                width={75}
 
-                textSize={10}
-                text='Cortar Cabelo'
-                color='#000000ff'
-            />
-
-    },
-    {
-        id: 2,
-        content:
-            <ServicesCards
-                icon={
-                    <MaterialCommunityIcons name="face-mask" size={40} color={"#3b000084"} />
-                }
-                width={75}
-
-                textSize={10}
-                text='Barbear'
-            />
-    },
-    {
-        id: 3,
-        content:
-            <ServicesCards
-                icon={
-                    <FontAwesome5 name="brush" size={40} color={"#3b000084"} />
-                }
-                width={75}
-
-                textSize={10}
-                text='Maquiagem'
-            />
-    },
-    {
-        id: 4,
-        content:
-            <ServicesCards
-                icon={
-                    <Ionicons name="people" size={40} color={"#3b000084"} />
-                }
-                width={75}
-                textSize={10}
-                text='Massagem'
-            />
-    },
-
-
-]
 export const EspecialCardsData = [
     {
         id: 1,

@@ -21,11 +21,12 @@ import Carroussel from '../../../components/homeScreenComponents/carroussel';
 import colors, { font } from '../../../configs/theme';
 import ServicesCards from '../../../components/homeScreenComponents/ServicesCarroussel';
 import MainHeader from '../../../components/homeScreenComponents/header';
-import { ServiceCardsData, EspecialCardsData } from './components';
+import { EspecialCardsData } from './components';
 import { SalonContext, useSalonContext } from '../../../context/salonContext';
 import { ScheduleContext } from 'context/scheduleContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUserLocation } from 'context/userLocation';
+import Catalogo from 'pages/catalogo/catalogo';
 
 
 const cardsWidth = 400;
@@ -47,15 +48,15 @@ interface Salon {
 export default function HomeWrapper({ navigation }: any) {
     const [refreshing, setRefreshing] = useState(false);
     const [refreshingState, setRefreshingState] = useState(0)
-    const {fetchSalons}=useSalonContext()!
+    const { fetchSalons } = useSalonContext()!
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         setRefreshingState(0)
         fetchSalons(),
-        setTimeout(() => {
-            setRefreshing(false);
-            setRefreshingState(refreshingState + 1)
-        }, 500);
+            setTimeout(() => {
+                setRefreshing(false);
+                setRefreshingState(refreshingState + 1)
+            }, 500);
     }, []);
     return (
         <ScrollView
@@ -70,7 +71,7 @@ export default function HomeWrapper({ navigation }: any) {
 }
 export function Home({ navigation }: any) {
     const { user, refreshUserData } = useContext(AuthContext)!;
-    const {searchAddresses} = useUserLocation();
+    const { searchAddresses } = useUserLocation();
     const salonData = useContext(SalonContext)
     const scheduleData = useContext(ScheduleContext)!
     if (!user || !salonData || !scheduleData) {
@@ -79,7 +80,7 @@ export function Home({ navigation }: any) {
     }
     const { salon, salonList, useSalon, getAverageRating } = salonData
     const { createSchedule, schedules, schedule, useSchedule, cancelSchedule, fetchSchedules } = scheduleData!;
-    
+
 
 
 
@@ -97,7 +98,7 @@ export function Home({ navigation }: any) {
                     </View>
 
                     <LinearGradient
-                        colors={['rgba(255, 255, 255, 0)', '#000000ff']} 
+                        colors={['rgba(255, 255, 255, 0)', '#000000ff']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
                         style={styles.linearGradient}
@@ -155,6 +156,7 @@ export function Home({ navigation }: any) {
             <View>
 
                 {/* ==================ESPECIAL PRA VOCE======================================= */}
+
                 <View style={styles.contentHeader}>
 
                     <Text style={styles.contentHeaderTitle}>#EspecialParaVocê</Text>
@@ -170,11 +172,35 @@ export function Home({ navigation }: any) {
                     }}
                 >
 
-                    {EspecialCardsData.map((key) => (
 
-                        <View key={key.id}>
-                            {key.content}
+                    {salonList?.map((salon, index) => (
+                        <View key={salon.id}>
+
+                            <View
+                                style={styles.especialCards}>
+
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ backgroundColor: "#fff", width: 120, padding: 8, borderRadius: 20 }}>Tempo Limitado</Text>
+                                </View>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ fontWeight: 'bold', color: "#fff", fontSize: 24 }}>{salon.name} com desconto</Text>
+                                    <Text style={{ color: "#fff" }}>De até</Text>
+                                    <Text style={{ color: "#fff" }}>{}</Text>
+                                </View>
+                                <View style={{ flexDirection: "row", flex: 1, justifyContent: "space-between", paddingTop: 30, alignItems: "center" }}>
+                                    <Text style={{ color: "#fff", fontSize: 12, paddingTop: 20, }}>Localizado em Faria lima, SP</Text>
+                                    <CustomButton
+                                        backcolor={colors.primary}
+                                        border="Circle"
+                                        text='IR'
+                                        color='#fff'
+                                        width={80}
+                                    />
+                                </View>
+                            </View>
+
                         </View>
+
                     ))}
 
                 </Carroussel>
@@ -188,10 +214,53 @@ export function Home({ navigation }: any) {
                 </View>
 
                 <View style={styles.serviceCards}>
+                    <ServicesCards
 
-                    {ServiceCardsData.map((key) => (
-                        <View key={key.id}>{key.content}</View>
-                    ))}
+                        icon={
+                            <Entypo name='scissors' size={40} color={"#3b000084"} />
+                        }
+                        width={75}
+                        onPress={() => navigation.navigate("Catalogo")}
+                        textSize={10}
+                        text='Cortar Cabelo'
+                        color='#000000ff'
+
+
+                    />
+                    <ServicesCards
+
+                        icon={
+                            <MaterialCommunityIcons name="face-mask" size={40} color={"#3b000084"} />
+                        }
+                        width={75}
+
+                        textSize={10}
+                        text='Barbear'
+                        color='#000000ff'
+                    />
+                    <ServicesCards
+
+                        icon={
+                            <FontAwesome5 name="brush" size={40} color={"#3b000084"} />
+                        }
+                        width={75}
+
+                        textSize={10}
+                        text='Maquiagem'
+                        color='#000000ff'
+                    />
+                    <ServicesCards
+
+                        icon={
+                            <Ionicons name="people" size={40} color={"#3b000084"} />
+                        }
+                        width={75}
+
+                        textSize={10}
+                        text='Massagem'
+                        color='#000000ff'
+                    />
+
 
                 </View>
 
@@ -200,7 +269,7 @@ export function Home({ navigation }: any) {
 
                 <View style={styles.contentHeader}>
                     <Text style={styles.contentHeaderTitle}>Top salões</Text>
-                    <TouchableOpacity onPress={()=>{navigation.navigate("Explore")}}><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={() => { navigation.navigate("Explore") }}><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
 
                 </View>
 
@@ -221,7 +290,9 @@ export function Home({ navigation }: any) {
                     ))}
                     {loading && <ActivityIndicator size={70} style={{ width: Dimensions.get("window").width, alignItems: "center" }} color={colors.primary} />}
                 </Carroussel>
-                
+                <ScrollView>
+                    <Catalogo />
+                </ScrollView>
             </View>
         </ScrollView>
     );

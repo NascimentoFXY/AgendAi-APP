@@ -21,7 +21,20 @@ interface Salon {
     createdAt?: any,
     workSchedule?: any,
     image?: any
+    cupons?: Cupon[],
+    melhorCupom?: any
 
+}
+interface Cupon {
+    codigo?: string,
+    dataFim?: string,
+    dataInicio?: string,
+    descricao?: string,
+    id: string,
+    nome: string,
+    salonID: string,
+    tipoValor?: "porcentagem" | "fixo",
+    valor: number
 }
 export interface Rating {
     id?: any,
@@ -83,6 +96,7 @@ interface SalonContextType {
     updateServices: (data: Services) => Promise<void>,
     deleteService: (data: Services) => Promise<void>,
     fetchServices: () => Promise<void>,
+    fetchCupons: () => Promise<void>,
     specialistList: Specialist[],
     ratingFilter?: string,
     serviceList: Services[]
@@ -109,6 +123,8 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     const [salonList, setSalonList] = useState<Salon[]>([])
     const [serviceList, setServiceList] = useState<Services[]>([])
     const [isInputValid, setInputValid] = useState(false)
+    const [cuponList, setCuponList] = useState<Cupon[]>([]);
+
     const [info, setInfo] = useState<Info>({
         cep: "",
         nome: "",
@@ -300,7 +316,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     }, []);
 
     const useSalon = useCallback(async (salonId: string) => {
-       await loadSalonData(salonId)
+        await loadSalonData(salonId)
     }, [])
 
     //=============================SESSÃO DOS ESPECIALISTAS===================================//
@@ -415,6 +431,31 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     useEffect(() => {
         fetchSalons();
     }, []);
+    // Estado para armazenar os cupons
+
+    // Função para buscar cupons de um salão específico
+    const fetchCupons = useCallback(async (salonId?: string) => {
+        try {
+            const id = salonId || salon?.id;
+            if (!id) return;
+
+            const cuponsRef = collection(db, "salon", id, "cupons");
+            const snapshot = await getDocs(cuponsRef);
+
+            const cupons = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            })) as Cupon[];
+
+            setCuponList(cupons);
+        } catch (error) {
+            console.error("Erro ao buscar cupons:", error);
+        }
+    }, [salon?.id]);
+
+
+ 
+
     const fetchSalons = useCallback(async () => {
         try {
             const q = query(collection(db, "salon"));
@@ -461,7 +502,8 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         ratingFilter: ratingFilter,
         specialistList: especialistaList || [],
         isOwner: salon?.ownerID === user?.id,
-        serviceList: serviceList
+        serviceList: serviceList,
+        cuponList: cuponList
     }
     const dependences = {
         salon,
@@ -488,6 +530,8 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         updateServices,
         deleteService,
         fetchServices,
+        fetchCupons,
+      
     }
 
     return (

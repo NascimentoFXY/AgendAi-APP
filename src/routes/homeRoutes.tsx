@@ -30,6 +30,7 @@ import UserEstablishment from "pages/main/UserEtablishment/establishmentList";
 import EstablishmentTools from "pages/main/UserEtablishment/establishmentTools";
 import NotificationScreen from "pages/main/notification/notification";
 import MarketingTools from "pages/main/UserEtablishment/marketingTools";
+import Catalogo from "pages/catalogo/catalogo";
 export default function MainRoutes({ navigation }: any) {
     const Stack = createNativeStackNavigator();
 
@@ -53,6 +54,7 @@ export default function MainRoutes({ navigation }: any) {
             <Stack.Screen name="EstablishmentTools" component={EstablishmentTools} />
             <Stack.Screen  name="Notifications" component={NotificationScreen} />
             <Stack.Screen  name="MarketingTools" component={MarketingTools} />
+            <Stack.Screen  name="Catalogo" component={Catalogo} />
 
             <Stack.Screen name="ScheduleCancelConclusion" component={ScheduleCancelConclusion}/>
         </Stack.Navigator>
