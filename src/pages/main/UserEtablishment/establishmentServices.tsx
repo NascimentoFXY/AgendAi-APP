@@ -16,6 +16,7 @@ import { Picker } from "@react-native-picker/picker";
 import Icon from "configs/icons";
 import { useSalonContext } from "context/salonContext";
 import { normalizeFont } from "configs/utils";
+import { useAlert } from "context/alertContext";
 
 const { width } = Dimensions.get("window");
 
@@ -34,7 +35,7 @@ interface ServiceTypeProps {
 export default function EstablishmentServices() {
     const { addServicesToSalon, updateServices, serviceList, fetchServices, deleteService } =
         useSalonContext()!;
-
+    const { showAlert } = useAlert();
     const [selectedService, setSelectedService] = useState<ServiceTypeProps | null>(null);
     const [serviceType, setServiceType] = useState<
         "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado"
@@ -47,59 +48,71 @@ export default function EstablishmentServices() {
     const [infoDisplayVisible, setInfoDisplayVisible] = useState(false);
     const [editingService, setEditingService] = useState<ServiceTypeProps | null>(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [customServiceName, setCustomServiceName] = useState(""); // Novo estado
+
 
     useEffect(() => {
         fetchServices();
     }, []);
 
     const handleConfirm = async () => {
-    if (!serviceType) return;
+        if (!serviceType) return;
+        // const confirmed = await showAlert("Deseja salvar as informações?", "confirm");
+        // if (!confirmed) return;
+        
+        if (serviceType === "Personalizado" && !customServiceName.trim()) {
+            alert("Digite o nome do serviço personalizado antes de continuar.");
+            return;
+        }
 
-    const typesArray = services.map((s) => ({
-        itemId: String(s.id),
-        itemDescription: s.itemDescription,
-        itemPrice: s.itemPrice,
-    }));
+        const finalServiceType =
+            serviceType === "Personalizado" ? customServiceName.trim() : serviceType;
 
-    // Verifica se já existe um serviço do mesmo tipo
-    const existingService = serviceList.find(
-        (s) => s.serviceType === serviceType
-    );
+        const typesArray = services.map((s) => ({
+            itemId: String(s.id),
+            itemDescription: s.itemDescription,
+            itemPrice: s.itemPrice,
+        }));
 
-    if (existingService) {
-        // 🔄 Atualiza o serviço existente em vez de criar um novo
-        const updatedData = {
-            ...existingService,
-            serviceType,
-            types: [...existingService.types, ...typesArray], // adiciona os novos tipos
-            quantity: existingService.types.length + typesArray.length,
-        };
+        // Verifica se já existe um serviço do mesmo tipo
+        const existingService = serviceList.find(
+            (s) => s.serviceType === serviceType
+        );
 
-        await updateServices(updatedData);
-        alert(`O serviço "${serviceType}" foi atualizado com sucesso!`);
+        if (existingService) {
+            // 🔄 Atualiza o serviço existente em vez de criar um novo
+            const updatedData = {
+                ...existingService,
+                serviceType: finalServiceType,
+                types: [...existingService.types, ...typesArray], // adiciona os novos tipos
+                quantity: existingService.types.length + typesArray.length,
+            };
 
-        setIsEditing(false);
-        setEditingService(null);
-    } else {
-        // ➕ Cria um novo serviço normalmente
-        const newService = {
-            serviceType,
-            quantity: typesArray.length,
-            types: typesArray,
-        };
+            await updateServices(updatedData);
+            await showAlert("Serviço atualizado com sucesso!", "success")
 
-        await addServicesToSalon(newService);
-        alert(`O serviço "${serviceType}" foi adicionado com sucesso!`);
-    }
+            setIsEditing(false);
+            setEditingService(null);
+        } else {
+            // ➕ Cria um novo serviço normalmente
+            const newService = {
+                serviceType: finalServiceType,
+                quantity: typesArray.length,
+                types: typesArray,
+            };
 
-    // 🔁 Reseta o formulário
-    setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceType }]);
-    setServiceType(undefined);
-    setModalVisible(false);
+            await showAlert(`O serviço "${finalServiceType}" foi adicionado com sucesso!`);
+            await addServicesToSalon(newService);
+        }
 
-    // Atualiza a lista do contexto
-    fetchServices();
-};
+        // 🔁 Reseta o formulário
+        setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceType }]);
+        setServiceType(undefined);
+        setModalVisible(false);
+        setCustomServiceName("");
+        // Atualiza a lista do contexto
+        fetchServices();
+    };
 
 
     const handleChangeDescription = (id: number, newValue: string) => {
@@ -287,9 +300,27 @@ export default function EstablishmentServices() {
                                 <Picker.Item label="Manicure" value="Massagem" />
                                 <Picker.Item label="Personalizado" value="Personalizado" />
                             </Picker>
-
+                            {serviceType === "Personalizado" && (
+                                <View style={{ marginTop: 10, marginBottom: 15 }}>
+                                    <Text style={{ marginBottom: 5 }}>
+                                        Nome do serviço personalizado:
+                                    </Text>
+                                    <TextInput
+                                        value={customServiceName}
+                                        onChangeText={setCustomServiceName}
+                                        placeholder="Ex: Design de sobrancelha"
+                                        style={{
+                                            borderWidth: 1,
+                                            borderColor: "#ccc",
+                                            borderRadius: 8,
+                                            padding: 10,
+                                        }}
+                                    />
+                                </View>
+                            )}
                             {/* Campos dinâmicos */}
                             {services.map((item) => (
+
                                 <View
                                     key={item.id}
                                     style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}

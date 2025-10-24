@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { font } from 'configs/theme';
 import { UserLocationProvider } from 'context/userLocation';
 import NotificationsProvider from 'context/notificationsContext';
+import { AlertProvider } from 'context/alertContext';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     return (
@@ -22,9 +23,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
                 <NotificationsProvider>
                     <SalonProvider>
                         <ScheduleProvider>
-                            <ChatProvider>
-                                {children}
-                            </ChatProvider>
+                            <AlertProvider>
+                                <ChatProvider>
+                                    {children}
+                                </ChatProvider>
+                            </AlertProvider>
                         </ScheduleProvider>
                     </SalonProvider>
                 </NotificationsProvider>

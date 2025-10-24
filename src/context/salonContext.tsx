@@ -44,7 +44,7 @@ interface Specialist {
 
 export interface Services {
     id?: any,
-    serviceType?: "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado",
+    serviceType?: any,
     quantity?: any,
     types: {
         itemId?: string,
