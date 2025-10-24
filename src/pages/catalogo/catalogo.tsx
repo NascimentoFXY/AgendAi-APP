@@ -18,7 +18,8 @@ import {
 } from 'react-native';
 import { styles } from 'pages/main/home/style';
 import colors, { font } from 'configs/theme';
-export default function Catalogo({ navigation, filter }: any) {
+import {useNavigation} from '@react-navigation/native'
+export default function Catalogo() {
 
     const { user } = useAuthContext()!
     const { salon, salonList, fetchSalons, getAverageRating, useSalon } = useSalonContext()!
@@ -46,7 +47,7 @@ export default function Catalogo({ navigation, filter }: any) {
         fetchAllAverages();
     }, [salonList]);
 
-
+    const navigation = useNavigation<any>()
 
     const TopSaloesCardsData = ({ rating, name, salonId, image, description, address, item }: any) => {
         return (
