@@ -11,7 +11,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import Agenda from "../pages/main/agenda";
 import Chat from "../pages/main/Chat";
 import Explore from "../pages/main/Explore";
-import Perfil from "../pages/main/Perfil";
+import Perfil from "../pages/main/tabPerfil/perfilOptionsList";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainRoutes from "./homeRoutes";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -33,6 +33,7 @@ export default function TabRoutes() {
         "ChatScreen",
         "CreateSalon",
         "EstablishmentTools",
+        "UserProfile",
     ];
     const { isOwner } = useSalonContext()!;
     const CustomTabBarButton = (props: any) => (

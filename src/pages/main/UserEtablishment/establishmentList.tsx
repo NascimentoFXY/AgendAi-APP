@@ -1,5 +1,5 @@
 import CustomButton from 'components/customButton';
-import UserOptions from 'components/perfil/options/userProfile';
+import UserOptions from 'components/perfil/options/userProfile/userOptionsComp';
 import Icon from 'configs/icons';
 import colors from 'configs/theme';
 import { useAuthContext } from 'context/auth';

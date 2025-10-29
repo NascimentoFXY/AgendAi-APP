@@ -38,11 +38,13 @@ interface Cupon {
 }
 export interface Rating {
     id?: any,
-    sender: any,
+    sender?: User,
     value: any,
     comment: string,
     image?: any,
     createdAt?: any,
+    salonName?: string,
+    salonID?: string,
 
 }
 interface Specialist {
@@ -270,13 +272,15 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                 sender: data.sender,
                 value: data.value,
                 image: data?.image,
+                salonName: salon?.name,
+                salonID: salon?.id,
                 createdAt: serverTimestamp()
             })
             fetchSalonRatings(salon?.id!)
         } catch (err) {
             console.log("[salon]erro ao adicionar avaliação: ", err)
         }
-    }, [salon?.id!])
+    }, [salon?.id!, salon?.name])
     //-------------------------------usarSalao----------------------------------//
 
     const loadSalonData = useCallback(async (salonId: string) => {

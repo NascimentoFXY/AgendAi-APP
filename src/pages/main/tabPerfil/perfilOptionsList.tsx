@@ -11,12 +11,12 @@ import {
     ScrollView
 } from 'react-native';
 import perfilOptions from '../../../components/perfil/options';
-import UserOptions from '../../../components/perfil/options/userProfile';
+import UserOptions from '../../../components/perfil/options/userProfile/userOptionsComp';
 import colors from '../../../configs/theme';
 import { styles } from './style';
 import CustomButton from '../../../components/customButton';
 import Icon from 'configs/icons';
-export default function Perfil({navigation}: any) {
+export default function Perfil({ navigation }: any) {
     const { user, signOut } = useContext(AuthContext)!
 
     return (
@@ -31,16 +31,17 @@ export default function Perfil({navigation}: any) {
                     width={50}
                     height={50}
                     style={{ zIndex: 3, backgroundColor: "#ffffff00", borderWidth: 1, borderColor: colors.lightGray }}
-                    onPress={()=> navigation.goBack()}
-                    />
+                    onPress={() => navigation.goBack()}
+                />
                 <Text style={{ fontWeight: "bold", fontSize: 16, }}> Perfil</Text>
 
             </SafeAreaView>
             {/* =============================================== */}
-            
-            <UserOptions hasImage image={user?.image!} title={user?.name} subTitle={user?.email} />
+
+            <UserOptions hasImage image={user?.image!} title={user?.name} subTitle={user?.email} onPress={() => navigation.navigate("Home", { screen: "UserProfile" })} />
             {/* Seu Perfil */}
             <UserOptions icon={<FontAwesome5 name='user' size={40} color={colors.secondary} />} title={"seu perfil"}
+                onPress={() => navigation.navigate("Home", { screen: "UserProfile" })}
                 rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }} />
@@ -50,15 +51,15 @@ export default function Perfil({navigation}: any) {
                 rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }}
-                onPress={()=> navigation.navigate('Home', {screen: "Settings"})} />
+                onPress={() => navigation.navigate('Home', { screen: "Settings" })} />
             {/* Salão */}
-              <UserOptions icon={<Icon.MaterialIcons name='home-work' size={40} color={colors.secondary} />} title='Seu(s) estabelecimento(s)'
+            <UserOptions icon={<Icon.MaterialIcons name='home-work' size={40} color={colors.secondary} />} title='Seu(s) estabelecimento(s)'
                 rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }}
-                onPress={()=>{navigation.navigate("Home", {screen: "UserEstablishment"})}}
-                />
-            
+                onPress={() => { navigation.navigate("Home", { screen: "UserEstablishment" }) }}
+            />
+
 
             {/* Politica */}
             <UserOptions icon={<Feather name='lock' size={40} color={colors.secondary} />}
@@ -72,8 +73,8 @@ export default function Perfil({navigation}: any) {
                 rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 title={"Sair"}
                 style={styles.secondaryOptions}
-                titleStyle={{ color: colors.secondary }} 
-                onPress={signOut}/>
+                titleStyle={{ color: colors.secondary }}
+                onPress={signOut} />
         </SafeAreaView>
     )
 }

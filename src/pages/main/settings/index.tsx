@@ -12,7 +12,7 @@ import {
     NativeSyntheticEvent,
     NativeScrollEvent
 } from 'react-native';
-import UserOptions from '../../../components/perfil/options/userProfile';
+import UserOptions from '../../../components/perfil/options/userProfile/userOptionsComp';
 import colors from '../../../configs/theme';
 import { styles } from './styles';
 import CustomButton from '../../../components/customButton';
