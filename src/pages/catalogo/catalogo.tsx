@@ -19,6 +19,7 @@ import {
 import { styles } from 'pages/main/home/style';
 import colors, { font } from 'configs/theme';
 import {useNavigation} from '@react-navigation/native'
+import { normalizeFont } from 'configs/utils';
 export default function Catalogo() {
 
     const { user } = useAuthContext()!
@@ -58,7 +59,7 @@ export default function Catalogo() {
                     </View>
                 </View>
                 <View style={{ flexGrow: 1, paddingHorizontal: 4 }}>
-                    <Text style={{ fontFamily: font.poppins.bold }}>{name}</Text>
+                    <Text style={{ fontFamily: font.poppins.bold, fontSize: normalizeFont(18), width: normalizeFont(140) }}>{name}</Text>
                     <Text style={{ fontFamily: font.poppins.regular, flexWrap: "wrap", width: 100, }} lineBreakMode='tail'>{description}</Text>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: "auto", alignItems: "center" }}>
 
