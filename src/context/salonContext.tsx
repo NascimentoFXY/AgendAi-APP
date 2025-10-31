@@ -269,6 +269,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             await setDoc((RatingseRef), {
                 id: RatingseRef.id,
                 comment: data.comment,
+                senderID: data.sender?.id,
                 sender: data.sender,
                 value: data.value,
                 image: data?.image,

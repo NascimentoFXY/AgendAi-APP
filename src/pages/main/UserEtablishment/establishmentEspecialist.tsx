@@ -125,7 +125,7 @@ export default function EstablishmentEspecialist() {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
               <Text style={styles.modalTitle}>Convidar especialista</Text>
-              <Text style={{fontFamily: font.poppins.medium, color: colors.lightGray}}>Você pode incluir seu email cadastrado para fazer parte dos especialistas do salão. </Text>
+              <Text style={{fontFamily: font.poppins.medium, color: colors.lightGray}}>Você pode incluir seu email cadastrado para fazer parte dos especialistas do estabelecimento. </Text>
               <TextInput
                 style={styles.input}
                 placeholder="Email do especialista"

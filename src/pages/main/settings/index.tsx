@@ -38,12 +38,13 @@ export default function UserSettings({ navigation }: any) {
 
             </SafeAreaView>
             {/* =============================================== */}
-            <UserOptions icon={<Feather name='user' size={40} color={colors.secondary} />} title='Editar Perfil'
+          
+            <UserOptions icon={<Icon.FontAwesome6 name='user-lock' size={40} color={colors.secondary} />} title='Conta'
                 rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }}
             />
-            <UserOptions icon={<Feather name='lock' size={40} color={colors.secondary} />} title='Conta'
+            <UserOptions icon={<Feather name='lock' size={40} color={colors.secondary} />} title='Política de privacidade'
                 rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }}

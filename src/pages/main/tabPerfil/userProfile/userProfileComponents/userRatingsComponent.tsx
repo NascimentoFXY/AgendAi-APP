@@ -1,10 +1,10 @@
 import Icon from "configs/icons";
 import colors, { font } from "configs/theme";
-import { normalizeFont } from "configs/utils";
-import { Rating } from "context/salonContext";
+import { LoadingModal, normalizeFont } from "configs/utils";
+import { Rating, useSalonContext } from "context/salonContext";
 import React from "react";
-
-import { View, Text, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 
 const RatingStars = ({ value }: { value: number }) => {
@@ -23,23 +23,31 @@ const RatingStars = ({ value }: { value: number }) => {
 };
 
 const UserRatingsComp: React.FC<Rating> = (props) => {
-
+    const { useSalon } = useSalonContext()!;
+    const navigation = useNavigation<any>();
+    console.log("salonID: ", props.salonID);
+    const [loading, setLoading] = React.useState(false);
     return (
-        <View style={styles.ratingContainer}>
+        <>
+        <LoadingModal loading={loading}/>
+            <TouchableOpacity activeOpacity={0.7}
+                onPress={async () => {setLoading(true); await useSalon(props.salonID!).then(()=>setLoading(false)); navigation.navigate("Salao") }}
+                style={styles.ratingContainer}>
 
-            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                <Text style={styles.salonName}>{props.salonName}</Text>
-                <Text style={styles.date}>{props.createdAt}</Text>
-            </View>
+                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                    <Text style={styles.salonName}>{props.salonName}</Text>
+                    <Text style={styles.date}>{props.createdAt}</Text>
+                </View>
 
-            <Text numberOfLines={3} style={styles.comment}>{props.comment}</Text>
+                <Text numberOfLines={3} style={styles.comment}>{props.comment}</Text>
 
-            <View style={styles.ratingContent}>
-                <RatingStars value={props.value} />
-                <Text style={styles.ratingValue}> {(props.value).toFixed(1)}</Text>
-            </View>
+                <View style={styles.ratingContent}>
+                    <RatingStars value={props.value} />
+                    <Text style={styles.ratingValue}> {(props.value).toFixed(1)}</Text>
+                </View>
 
-        </View>
+            </TouchableOpacity>
+        </>
     );
 }
 export default UserRatingsComp;
@@ -59,7 +67,7 @@ const styles = StyleSheet.create({
     },
     ratingContent: {
         alignItems: "center",
-    
+
         flexDirection: "row",
         padding: 5,
         gap: 10,

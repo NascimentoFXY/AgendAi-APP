@@ -20,7 +20,7 @@ import { styles } from '../../style';
 import colors, { font } from '../../../../../configs/theme'
 import ServicesCards from '../../../../../components/homeScreenComponents/ServicesCarroussel';
 import SalaoServices from '../../Services/services';
-import SalaoEspecialistas from '../../Especialistas';
+import SalaoEspecialistas from '../../Especialistas/salaoEspecialistas';
 import CustomButton from '../../../../../components/customButton';
 import Icon from '../../../../../configs/icons';
 import TabBarButton from '../../../../../components/TabBar';

@@ -3,11 +3,15 @@ const colors = {
   primary: "#d67776",
   secondary: "#8c5946",
   background: "#f5f5f5",
+  textPrimary: "#231100ff",
   textSecondary: "#fff",
   white: "#fff",
   title: "#545454",
   subTitle: "#a5a5a5",
   lightGray: "#a5a5a5",
+  darkGray: "#545454",
+  black: "#000000",
+  transparentBlack: "#000000bb",
   transparentLightGray: "#a5a5a5bb",
   debug: "#00ff00"
 } as const;

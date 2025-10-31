@@ -59,14 +59,16 @@ export default function Perfil({ navigation }: any) {
                 titleStyle={{ color: colors.secondary }}
                 onPress={() => { navigation.navigate("Home", { screen: "UserEstablishment" }) }}
             />
-
-
-            {/* Politica */}
-            <UserOptions icon={<Feather name='lock' size={40} color={colors.secondary} />}
+            <UserOptions icon={<Icon.AntDesign name='info-circle' size={40} color={colors.secondary} />} title='Central de Ajuda'
                 rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
-                title={"Politica de privacidade"}
                 style={styles.secondaryOptions}
-                titleStyle={{ color: colors.secondary }} />
+                titleStyle={{ color: colors.secondary }}
+                onPress={() => { navigation.navigate("Home", { screen: "UserEstablishment" }) }}
+            />
+
+
+       
+     
 
             {/* SAIR */}
             <UserOptions icon={<MaterialCommunityIcons name='logout' size={40} color={colors.secondary} />}
