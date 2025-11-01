@@ -133,7 +133,7 @@ export default function MainModal({ navigation }: any) {
       ref={scrollRef}
       stickyHeaderIndices={[1]}
       showsVerticalScrollIndicator={false}
-      style={{ zIndex: 10, borderRadius: 20, backgroundColor: colors.background, }}
+      style={{ zIndex: 10, borderRadius: 20, backgroundColor: colors.background, marginTop:-30}}
       onScrollEndDrag={handleScrollEnd}
       scrollEventThrottle={16}
     >

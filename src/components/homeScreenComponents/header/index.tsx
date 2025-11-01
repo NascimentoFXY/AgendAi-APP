@@ -22,12 +22,13 @@ const cardsWidth = 400;
 
 
 export default function MainHeader({ navigation }: any) {
-
-    const {notificationList} = useNotificationContext()!
+    const { notificationList } = useNotificationContext()!
     const { searchAddresses, location } = useUserLocation();
-    const [cidade, setCidade] = useState(<ActivityIndicator />)
+    const [cidade, setCidade] = useState()
     const [bairro, setBairro] = useState()
+    const [loadingLocation, setLoadingLocation] = useState(false);
     useEffect(() => {
+        setLoadingLocation(true);
         const loadAddress = async () => {
             if (location?.latitude && location?.longitude) {
                 try {
@@ -38,9 +39,15 @@ export default function MainHeader({ navigation }: any) {
                         setCidade(first.cidade);
                         setBairro(first.bairro);
                     }
+                    setLoadingLocation(true);
                 } catch (er) {
                     console.log("erro localização header", er)
                 }
+            }
+            else{
+                setCidade(undefined);
+                setBairro(undefined);
+                setLoadingLocation(false);
             }
         };
 
@@ -60,7 +67,9 @@ export default function MainHeader({ navigation }: any) {
 
                         <TouchableOpacity onPress={() => { navigation.navigate("Location") }} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
                             <Ionicons name="location-sharp" size={24} color="#d77a7a" />
-                            <Text style={{ fontSize: 14, fontWeight: '600', marginLeft: 4 }}>{cidade} - {bairro}</Text>
+                 
+                                <Text style={{ fontSize: 14, fontWeight: '600', marginLeft: 4 }}>{cidade || "Selecione sua localização"} - {bairro|| null}</Text>
+
                         </TouchableOpacity>
 
                     </View>
@@ -70,7 +79,7 @@ export default function MainHeader({ navigation }: any) {
                             style={styles.notificationButton}
                             onPress={() => { navigation.navigate("Notifications") }}
                         />
-                        {notificationList!.length > 0 &&<View style={{width:7, height: 7, borderRadius: 10,backgroundColor: "#ff0000", position: "absolute", right: 6, top: 6}}/>}
+                        {notificationList!.length > 0 && <View style={{ width: 7, height: 7, borderRadius: 10, backgroundColor: "#ff0000", position: "absolute", right: 6, top: 6 }} />}
                     </View>
 
                 </View>

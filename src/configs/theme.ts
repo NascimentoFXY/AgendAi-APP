@@ -13,7 +13,8 @@ const colors = {
   black: "#000000",
   transparentBlack: "#000000bb",
   transparentLightGray: "#a5a5a5bb",
-  debug: "#00ff00"
+  debug: "#00ff00",
+  lightYellow: "#deb49f",
 } as const;
 
 export const font = {

@@ -32,6 +32,7 @@ import NotificationScreen from "pages/main/notification/notification";
 import MarketingTools from "pages/main/UserEtablishment/marketingTools";
 import Catalogo from "pages/catalogo/catalogo";
 import UserProfile from "pages/main/tabPerfil/userProfile/userProfile";
+import InfoEspecialista from "pages/main/Salao/Especialistas/infoEspecialista";
 export default function MainRoutes({ navigation }: any) {
     const Stack = createNativeStackNavigator();
 
@@ -43,6 +44,7 @@ export default function MainRoutes({ navigation }: any) {
             <Stack.Screen name="Location" component={Location} />
             <Stack.Screen name="Filter" component={Filters} />
             <Stack.Screen name="Salao" component={SalaoScreen} />
+            <Stack.Screen name="InfoEspecialista" component={InfoEspecialista} />
             <Stack.Screen name="CreateSalon" component={CreateSalon} />
             <Stack.Screen name="AddRating" component={AddRating} />
             <Stack.Screen name="Settings" component={UserSettings} />
@@ -53,12 +55,12 @@ export default function MainRoutes({ navigation }: any) {
             <Stack.Screen name="ScheduleCancelScreen" component={ScheduleCancelScreen} />
             <Stack.Screen name="UserEstablishment" component={UserEstablishment} />
             <Stack.Screen name="EstablishmentTools" component={EstablishmentTools} />
-            <Stack.Screen  name="Notifications" component={NotificationScreen} />
-            <Stack.Screen  name="MarketingTools" component={MarketingTools} />
-            <Stack.Screen  name="Catalogo" component={Catalogo} />
-            <Stack.Screen  name="UserProfile" component={UserProfile} />
+            <Stack.Screen name="Notifications" component={NotificationScreen} />
+            <Stack.Screen name="MarketingTools" component={MarketingTools} />
+            <Stack.Screen name="Catalogo" component={Catalogo} />
+            <Stack.Screen name="UserProfile" component={UserProfile} />
 
-            <Stack.Screen name="ScheduleCancelConclusion" component={ScheduleCancelConclusion}/>
+            <Stack.Screen name="ScheduleCancelConclusion" component={ScheduleCancelConclusion} />
         </Stack.Navigator>
     );
 }

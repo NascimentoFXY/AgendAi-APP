@@ -98,7 +98,9 @@ export default function SalaoEspecialistas() {
                         userPhoto={item.image} // imagem do usuario
                         name={capitalizeFirstLetter(item.name)} // nome
                         profession={item.service} // serviço ex: Corte de Cabelo
-                        cardWidth={calcCardsWidth} />
+                        cardWidth={calcCardsWidth}
+                        onPress={()=>{navigation.navigate("InfoEspecialista")}}
+                        />
                     )
                 )
                 }

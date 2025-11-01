@@ -18,6 +18,8 @@ import CustomButton from '../../../components/customButton';
 import MainModal2 from './modal/mainContent/MainModal';
 import ScheduleModal from './modal/Agendamento/agendamento';
 import { SalonContext } from '../../../context/salonContext';
+import colors from 'configs/theme';
+import Icon from 'configs/icons';
 
 
 const width = Dimensions.get("window").width;
@@ -29,27 +31,24 @@ export default function SalaoScreen({ navigation }: any) {
     return (
         <SafeAreaView style={styles.container}>
             {/* Imagem principal */}
-            <View style={styles.SalaoImagem}>
-                <Image source={{ uri: salon?.image }} style={{ width: "100%", height: "100%" }} />
-                <CustomButton
-                    Icon={<Ionicons name="arrow-back" size={24} color="white" />}
-                    border='Circle'
-                    type='absolute'
-                    width={50}
-                    height={50}
-                    style={{ zIndex: 3, backgroundColor: "#ffffff90", borderWidth: 1, borderColor: "#ffffff99" }}
-                    onPress={() => (navigation.goBack())}
-                />
+               <View style={{backgroundColor: colors.lightGray }}>
 
+                <View style={{width: width, aspectRatio: 16/9, backgroundColor: colors.debug, padding: 20, alignItems: "center", flexDirection: "row",  }}>
+                    <CustomButton
+                        Icon={<Icon.Ionicons name="arrow-back" size={24} color="white" />}
+                        border='Circle'
+                        width={50}
+                        height={50}
+                        style={{ zIndex: 3, backgroundColor: "#ffffff90", borderWidth: 1, borderColor: "#ffffff99" }}
+                        onPress={() => (navigation.goBack())}
+                    />
+                </View>
+                <Image source={{ uri: salon?.image }} style={{ aspectRatio: 16 / 9, width: width, position: "absolute" }}></Image>
+            
             </View>
             {/* modal com informaçoes do salao */}
 
-
-          
-
                 <MainModal2 navigation={navigation} />
-         
-
 
             {!isOwner && <View style={styles.Tab}>
                 <TouchableOpacity
