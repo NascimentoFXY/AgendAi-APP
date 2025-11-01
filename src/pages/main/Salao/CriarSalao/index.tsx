@@ -19,25 +19,32 @@ import { SalonContext } from '../../../../context/salonContext';
 import { Image } from 'react-native';
 import { useState } from 'react';
 import pickImage from '../../../../configs/pickImage';
+import { LoadingModal } from 'configs/utils';
 
 
 
 export default function CreateSalon({ navigation }: any) {
     const [image, setImage] = useState<string | null>(null);
-    const { createSalon, setData } = useContext(SalonContext)!
-
+    const { createSalon, setData, isValid } = useContext(SalonContext)!
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setData({
             image: image
         })
-        console.log("as",image)
+        console.log("[Criar salão]Imagem selecionada:", image)
     }, [image])
 
+    const confirmHandle = async () => {
+        setLoading(true);
+        await createSalon().then(() => {
+            setLoading(false);
+        });
 
+    }
 
     function Photo() {
-       
+
         return (
 
             <TouchableOpacity
@@ -54,7 +61,7 @@ export default function CreateSalon({ navigation }: any) {
                 }}
                 activeOpacity={0.8}
             >
-                {image!=undefined || image != null ? (
+                {image != undefined || image != null ? (
                     <>
                         <Image
                             source={{ uri: image }}
@@ -81,7 +88,7 @@ export default function CreateSalon({ navigation }: any) {
     }
     return (
         <SafeAreaView style={styles.container}>
-
+            <LoadingModal loading={loading} text="Aguarde..." />
             <View style={styles.foto}>
 
                 <CustomButton
@@ -109,7 +116,7 @@ export default function CreateSalon({ navigation }: any) {
                 <Info />
             </ScrollView>
 
-            <TabBarButton title='Finalizar' style={{ backgroundColor: "black" }} onPress={async () => {await createSalon() }} />
+            <TabBarButton title='Finalizar' style={{ backgroundColor: "black" }} onPress={confirmHandle} />
         </SafeAreaView>
     );
 }

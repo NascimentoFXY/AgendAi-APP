@@ -105,19 +105,19 @@ export default function Forms() {
     return (
         <SafeAreaView style={styles.container}>
 
-            <Input placeholder='ADICIONE UM NOME' onChangeText={setNome} style={{ fontFamily: font.poppins.semibold, fontSize: 15,}} />
-            <Input placeholder='Especialidades (ex: Corte de cabelo, etc..)' onChangeText={setEspecialidades} style={{ fontSize: 15 }} />
+            <Input placeholder='ADICIONE UM NOME' onChangeText={setNome} style={{ fontFamily: font.poppins.semibold, fontSize: 15, }} />
+            <Input placeholder='Descrição (breve descrição dos serviços)' onChangeText={setEspecialidades} style={{ fontSize: 15 }} />
             <Input placeholder='CNPJ' value={formatCNPJ(cnpj)} onChangeText={setCnpj} style={{ fontSize: 15 }} maxChar={14} />
 
             <Input placeholder='CEP' style={{ fontSize: 15, }} onChangeText={buscarCep} maxChar={8} />
-            <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-                <Input placeholder='Nome da rua' icon={false} value={rua} style={{ fontSize: 15, width: "32%" }} />
-                <Input placeholder='Cidade' icon={false} value={cidade} style={{ fontSize: 15, width: "32%" }} />
-                <Input placeholder='Bairro' icon={false} value={bairro} style={{ fontSize: 15, width: "32%" }} />
+            <View style={{ justifyContent: "space-between" }}>
+                <Input editable={false} placeholder='Nome da rua' icon={false} value={rua} style={{ fontSize: 15,opacity: 0.5}} />
+                <Input editable={false} placeholder='Cidade' icon={false} value={cidade} style={{ fontSize: 15,opacity: 0.5 }} />
+                <Input editable={false} placeholder='Bairro' icon={false} value={bairro} style={{ fontSize: 15, opacity: 0.5 }} />
             </View>
 
             <Text style={styles.label}>Dias de funcionamento</Text>
-            <Picker style={{borderWidth: 12, height: 'auto'}} selectedValue={selectedValue} onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}>
+            <Picker style={{ borderWidth: 12, height: 'auto' }} selectedValue={selectedValue || "1-5"} onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}>
                 <Picker.Item label="Seg. a Sex." value="1-5" />
                 <Picker.Item label="Seg. a Sáb." value="1-6" />
                 <Picker.Item label="Seg. a Seg." value="1-1" />

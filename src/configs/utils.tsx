@@ -1,4 +1,4 @@
-import { ActivityIndicator, Button, Dimensions, PixelRatio, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Button, Dimensions, PixelRatio, StyleSheet, View, Text } from 'react-native';
 
 import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "@firebase/firestore";
 import { db } from "services/firebase";
@@ -26,6 +26,7 @@ import { Timestamp } from "firebase/firestore";
 import { Modal } from "react-native";
 import React, { useState } from 'react';
 import { User } from 'context/auth';
+import colors, { font } from './theme';
 
 interface FormattedDate {
     display: string; // ex: "Hoje 14:35", "Ontem 13:20" ou "12/10/2025 15:00"
@@ -218,11 +219,17 @@ export function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export const LoadingModal: React.FC<{ loading: boolean }> = ({ loading }) => {
+export const LoadingModal: React.FC<{ loading: boolean, text?: string }> = ({ loading, text }) => {
     return (
         <>
             <Modal visible={loading} transparent animationType='fade'>
-                <ActivityIndicator size={60} style={{ flex: 1, backgroundColor: "#00000055" }} />
+                <View  style={{ flex: 1, backgroundColor: "#ffffff27", alignItems: "center", justifyContent: "center" }} >
+
+                    <ActivityIndicator size={60} color={colors.primary}/>
+                    <Text style={{ fontSize: 20, color: "#000000ff", fontFamily: font.poppins.semibold }}>{text}</Text>
+                </View>
+
+
             </Modal>
         </>
     )

@@ -105,7 +105,7 @@ export default function UserEstablishment({ navigation }: any) {
                         ?.filter(salon => salon.ownerID === user?.id)
                         .map((salon, index) => {
                            
-                            console.log(salon.id)
+                            console.log("[stablishmentList]",salon.id)
                             return (
                                 <TopSaloesCardsData key={salon.id} name={salon.name} rating={5.0} salonId={salon.id} image={salon.image} />
                             )

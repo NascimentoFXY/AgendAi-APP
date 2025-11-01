@@ -84,7 +84,7 @@ interface SalonContextType {
     salon: Salon | null,
     salonList: Salon[] | null,
     ratings: Rating[],
-    createSalon: () => void,
+    createSalon: () => Promise<void>,
     useSalon: (salonID: string) => Promise<void>,
     fetchSalons: () => Promise<void>,
     setData: (data: DataProps) => void,
@@ -157,6 +157,11 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     const createSalon = useCallback(async () => {
 
         if (isInputValid) {
+            if (!info.image && isInputValid) {
+                alert("Por favor, selecione uma imagem para o salão.")
+                setIsValid(false)
+                return
+            }
             try {
                 const salonRef = doc(collection(db, "salon"))
                 const userRef = doc(db, "users", user?.id!)
@@ -180,9 +185,12 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                     ownerOf: salonRef.id
                 })
                 useSalon(salonRef.id)
-                alert(`${info.nome} Foi criado com sucesso!`)
+                navigation.navigate("Home")
                 navigation.navigate("Salao")
+                alert(`${info.nome} Foi criado com sucesso!`)
+
             } catch (err) {
+                setIsValid(false)
                 console.log(err)
             }
 
@@ -459,7 +467,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     }, [salon?.id]);
 
 
- 
+
 
     const fetchSalons = useCallback(async () => {
         try {
@@ -536,20 +544,30 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         deleteService,
         fetchServices,
         fetchCupons,
-      
+
     }
 
     return (
-        <SalonContext.Provider value={React.useMemo(
+        <SalonContext.Provider value={useMemo(
             () => ({
                 ...values,
                 ...functions
             }),
-            [Object.values(dependences)]
+            [
+                salon,
+                ratings,
+                salonList,
+                loading,
+                isInputValid,
+                ratingFilter,
+                especialistaList,
+                user?.id
+            ]
         )}>
             {children}
         </SalonContext.Provider>
     )
+
 }
 export function useSalonContext() {
     const context = useContext(SalonContext);

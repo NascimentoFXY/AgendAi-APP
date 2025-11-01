@@ -3,79 +3,107 @@ import Input from "./Input/input";
 import { useContext, useState } from "react";
 import { SalonContext } from "../../../../../context/salonContext";
 
-
 export default function Horario() {
+  const { setData } = useContext(SalonContext)!;
+  const [abertura, setAbertura] = useState("");
+  const [fechamento, setFechamento] = useState("");
 
-    const {setData}= useContext(SalonContext)!
-    const [abertura, setAbertura] = useState("");
-    const [fechamento, setFechamento] = useState("");
+  // Valida formato e intervalo de horário (HH:MM)
+  const validarHorario = (horario: string) => {
+    if (!horario || horario.length !== 5)return false;
     
-    const validarHorario = (horario: string) => {
+    const [h, m] = horario.split(":").map(Number);
+    return !(isNaN(h) || isNaN(m) || h < 0 || h > 23 || m < 0 || m > 59);
+  };
 
-        const [h, m] = horario.split(":").map(Number);
-        if (isNaN(h) || isNaN(m)) return false;
-        if (h < 0 || h > 23) return false;
-        if (m < 0 || m > 59) return false;
-        return true;
+  // Formata automaticamente enquanto digita
+  const formatarHorario = (text: string) => {
+    let numeros = text.replace(/\D/g, "");
 
-    };
+    // Permitir apagar tudo
+    if (numeros.length === 0) return "";
 
-    function formatarHorario(text: string) {
+    // Limitar a 4 dígitos
+    if (numeros.length > 4) numeros = numeros.slice(0, 4);
 
-        // Remove tudo que não é número
-        let numeros = text.replace(/\D/g, "");
-
-        // Limita a 4 dígitos (HHMM)
-        if (numeros.length > 4) numeros = numeros.slice(0, 4);
-
-        // Insere ":" entre horas e minutos
-        if (numeros.length >= 3) {
-            numeros = numeros.slice(0, 2) + ":" + numeros.slice(2);
-        }
-        if (fechamento && abertura && numeros.length > 4) {
-
-            validarHorario(numeros);
-
-            if (!validarHorario(abertura)) {
-                alert("Erro: " + "Horário de ABERTURA inválido!");
-                return;
-            }
-            if (!validarHorario(fechamento)) {
-                alert("Erro: " + "Horário de FECHAMENTO inválido!");
-                return;
-            }
-        }
-        return numeros;
+    // Inserir “:” após 2 dígitos
+    if (numeros.length > 2) {
+      return numeros.slice(0, 2) + ":" + numeros.slice(2);
     }
 
-    const handleAbertura = (text: string) => {
-        const formatado = formatarHorario(text);
-        if(formatado){
-            setAbertura(formatado);
-            setData({
-                fechamento: fechamento,
-                abertura: formatado
-            })
-        }
-    };
-    const handleFechamento = (text: string) => {
-        const formatado = formatarHorario(text);
-        if(formatado){
-            setFechamento(formatado);
-            setData({
-                fechamento: formatado,
-                abertura: abertura,
-            })
-        }
-    };
+    return numeros;
+  };
 
+  const handleAbertura = (text: string) => {
+    const formatado = formatarHorario(text);
+    setAbertura(formatado);
 
+    // Só atualiza o contexto se for um horário válido completo
+    if (validarHorario(formatado) && validarHorario(fechamento)) {
+      setData({
+        abertura: formatado,
+        fechamento: fechamento,
+      });
+    }
+  };
 
-    return (
-        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-            <Input placeholder='00:00-23:00' icon={false} onChangeText={handleAbertura} maxChar={5} numeric value={abertura} style={{ fontSize: 15, width: "45%", textAlign: "center" }} />
-            <Text>-</Text>
-            <Input placeholder='00:00-23:00' icon={false} onChangeText={handleFechamento} maxChar={5} numeric value={fechamento} style={{ fontSize: 15, width: "45%", textAlign: "center" }} />
-        </View>
-    )
+  const handleFechamento = (text: string) => {
+    const formatado = formatarHorario(text);
+    setFechamento(formatado);
+
+    if (validarHorario(formatado) && validarHorario(abertura)) {
+      setData({
+        abertura: abertura,
+        fechamento: formatado,
+      });
+    }
+  };
+
+  // Avisos automáticos 
+  const mostrarErro = (valor: string) => {
+    if (valor && valor.length === 5 && !validarHorario(valor)) {
+      return <Text style={{ color: "red", fontSize: 12 }}>⛔ Horário inválido</Text>;
+    }
+    return null;
+  };
+
+  return (
+    <View style={{ width: "100%" }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+        <Input
+          placeholder="00:00"
+          icon={false}
+          onChangeText={handleAbertura}
+          maxChar={5}
+          numeric
+          value={abertura}
+          style={{
+            fontSize: 15,
+            width: "40%",
+            textAlign: "center",
+          }}
+        />
+        <Text style={{ fontSize: 18 }}>—</Text>
+        <Input
+          placeholder="00:00"
+          icon={false}
+          onChangeText={handleFechamento}
+          maxChar={5}
+          numeric
+          value={fechamento}
+          style={{
+            fontSize: 15,
+            width: "40%",
+            textAlign: "center",
+          }}
+        />
+      </View>
+
+      {/* Mensagens de erro abaixo dos inputs */}
+      <View style={{ flexDirection: "row", justifyContent: "space-around", marginTop: 5 }}>
+        {mostrarErro(abertura)}
+        {mostrarErro(fechamento)}
+      </View>
+    </View>
+  );
 }

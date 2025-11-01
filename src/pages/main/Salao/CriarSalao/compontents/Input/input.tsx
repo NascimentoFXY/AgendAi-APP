@@ -1,8 +1,8 @@
-import { TextInput, TextStyle, View, ViewStyle } from "react-native"
+import { TextInput, TextInputProps, TextStyle, View, ViewStyle } from "react-native"
 import Icon from "../../../../../../configs/icons"
 import colors from "../../../../../../configs/theme"
 
-interface InputProps {
+interface InputProps extends TextInputProps {
     placeholder: string | undefined,
     icon?: boolean
     style?: TextStyle | ViewStyle,
@@ -12,10 +12,11 @@ interface InputProps {
     numeric?: boolean
 
 }
-export const Input = ({ placeholder, style, icon = true, onChangeText, value, maxChar, numeric = false }: InputProps) => {
+export const Input = ({ placeholder, style, icon = true, onChangeText, value, maxChar, numeric = false, ...props }: InputProps) => {
     return (
         <View style={{ borderBottomColor: colors.lightGray, borderBottomWidth: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
             <TextInput
+                {...props}
                 style={[{ fontSize: 20, flexGrow: 1, width: "90%" }, style]}
                 placeholder={placeholder}
                 onChangeText={onChangeText}
