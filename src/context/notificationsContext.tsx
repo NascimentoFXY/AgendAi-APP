@@ -17,7 +17,7 @@ export interface Notifications {
 }
 interface NotificationContextType {
     notificationList: Notifications[] | null,
-    notifyUserByEmail: (userEmail: string, senderName: string, salonID: string,service: string) => Promise<any>,
+    notifyUserByEmail: (userEmail: string, senderName: string, salonID: string,service: any) => Promise<any>,
     fetchNotifications: () => () => void;
 }
 const NotificationContext = createContext<NotificationContextType | null>(null)

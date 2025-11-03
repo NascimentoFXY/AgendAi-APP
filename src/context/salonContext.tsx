@@ -5,6 +5,7 @@ import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, g
 import { User } from 'context/auth'
 import { DataProps } from "../pages/main/Salao/CriarSalao/compontents/forms";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { ServiceTypeProps } from "pages/main/UserEtablishment/establishmentServices";
 
 interface Salon {
     id?: string
@@ -16,7 +17,7 @@ interface Salon {
     rating?: any,
     addres?: string,
     specialists?: Specialist[],
-    services?: Services,
+    services?: Services[],
     description?: string,
     createdAt?: any,
     workSchedule?: any,
@@ -52,19 +53,21 @@ interface Specialist {
     name: string,
     email: string,
     rating?: string,
-    service: string,
+    service: Services["types"],
     image?: string,
+    profession?: string
 }
 
 
 export interface Services {
     id?: any,
-    serviceType?: any,
+    serviceName?: any,
     quantity?: any,
     types: {
         itemId?: string,
         itemDescription: string
         itemPrice: string;
+        itemDuration?: string;
     }[]
 }
 interface Info {
@@ -85,14 +88,14 @@ interface SalonContextType {
     salonList: Salon[] | null,
     ratings: Rating[],
     createSalon: () => Promise<void>,
-    useSalon: (salonID: string) => Promise<void>,
+    loadSalon: (salonID: string) => Promise<void>,
     fetchSalons: () => Promise<void>,
     setData: (data: DataProps) => void,
     setIsValid: (value: boolean) => void,
     addRatingToSalon: (data: Rating) => void,
     setRatingFilter?: (value: string) => void,
     getAverageRating?: (salon: Salon) => Promise<number>,
-    addSpecialistToSalon?: (salonID: string, user: User, service: string) => Promise<any>
+    addSpecialistToSalon?: (salonID: string, user: User, service: Services["types"]) => Promise<any>
     fetchSpecialists: () => Promise<void>,
     addServicesToSalon: (data: Services) => Promise<void>,
     updateServices: (data: Services) => Promise<void>,
@@ -184,8 +187,8 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                 await updateDoc((userRef), {
                     ownerOf: salonRef.id
                 })
-                useSalon(salonRef.id)
-                navigation.navigate("Home")
+                loadSalon(salonRef.id)
+     
                 navigation.navigate("Salao")
                 alert(`${info.nome} Foi criado com sucesso!`)
 
@@ -207,7 +210,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         try {
             const newService = {
                 id: serviceRef.id,
-                serviceType: data.serviceType,
+                serviceName: data.serviceName,
                 quantity: data.quantity,
                 types: data.types,
             };
@@ -328,25 +331,25 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         }
     }, []);
 
-    const useSalon = useCallback(async (salonId: string) => {
+    const loadSalon = useCallback(async (salonId: string) => {
         await loadSalonData(salonId)
     }, [])
 
     //=============================SESSÃO DOS ESPECIALISTAS===================================//
     const [especialistaList, setEspecialistaList] = useState<Specialist[]>();
     //----------------------------adicionar especialista------------------//
-    const addSpecialistToSalon = useCallback(async (salonID: string, user: User, service: string) => {
+    const addSpecialistToSalon = useCallback(async (salonID: string, user: User, service: Services["types"], profession?: string) => {
         try {
             // Referência direta ao documento do especialista
             const specialistRef = doc(db, "salon", salonID, "specialists", user.id);
 
             // Dados a serem salvos
-            const specialistData: User | { service: string } = {
+            const specialistData: User & {services: Services["types"], profession?: string}= {
                 id: user.id,
                 name: user.name,
                 email: user.email,
-                service: service,
-
+                services: service,
+                profession: profession,
                 image: user.image,
             };
 
@@ -371,7 +374,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             if (querySnapshot.empty) return;
             const specialists = querySnapshot.docs.map(doc => ({
                 id: doc.id,
-                ...doc.data() as { name: string, email: string, service: string }
+                ...doc.data() as { name: string, email: string, service: Services["types"] }
             }))
             setEspecialistaList(specialists)
         } catch (er) {
@@ -530,7 +533,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     };
     const functions = {
         createSalon,
-        useSalon,
+        loadSalon,
         setData,
         setIsValid,
         addRatingToSalon,

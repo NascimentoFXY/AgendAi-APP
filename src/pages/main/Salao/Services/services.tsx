@@ -85,7 +85,7 @@ export default function SalaoServices() {
                 >
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer2}>
-                            <Text style={styles.modalTitle}>{selectedService?.serviceType}</Text>
+                            <Text style={styles.modalTitle}>{selectedService?.serviceName}</Text>
 
                             {selectedService?.types.map((type) => (
                                 <View key={type.itemId} style={{padding: 5, flexDirection: "row", justifyContent: "space-between", borderBottomWidth: 1, borderRadius: 20, borderColor: colors.lightGray}}>
@@ -107,7 +107,7 @@ export default function SalaoServices() {
                     </View>
                 </Modal>
                 {serviceList.map((item) => (
-                    <ServiceItem key={item.id} text={item.serviceType} amount={item.quantity} onPress={() => handleInfoDisplay(item)} />
+                    <ServiceItem key={item.id} text={item.serviceName} amount={item.quantity} onPress={() => handleInfoDisplay(item)} />
                 ))}
             </ScrollView>
         </ScrollView>

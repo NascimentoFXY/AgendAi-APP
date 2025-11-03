@@ -11,7 +11,7 @@ import {
     Dimensions,
 } from 'react-native';
 import UserRatings from './userProfileSections/userRatings';
-import { LoadingModal, normalizeFont, capitalizeFirstLetter } from 'configs/utils';
+import { LoadingModal, normalizeSize, capitalizeFirstLetter } from 'configs/utils';
 import Icon from 'configs/icons';
 import { useAuthContext } from 'context/auth';
 import pickImage from 'configs/pickImage';
@@ -74,7 +74,7 @@ export default function UserProfile() {
                 >
                     <Icon.Ionicons
                         name="camera"
-                        size={normalizeFont(15)}
+                        size={normalizeSize(15)}
                         color={colors.background}
                     />
                     <Text style={styles.editBannerText}>Editar</Text>
@@ -93,7 +93,7 @@ export default function UserProfile() {
                                 <TouchableOpacity onPress={pickUserPhotoFromGalery} activeOpacity={0.7} style={styles.changePhotoButton}>
                                     <Icon.Ionicons
                                         name="camera"
-                                        size={normalizeFont(20)}
+                                        size={normalizeSize(20)}
                                         color={colors.background}
                                     />
                                 </TouchableOpacity>
@@ -101,13 +101,13 @@ export default function UserProfile() {
 
                             <View style={styles.userInfo}>
                                 <View style={styles.userInfoTextWrapper}>
-                                    <Text style={[styles.userInfoText, { fontSize: normalizeFont(16) }]} numberOfLines={2}>
+                                    <Text style={[styles.userInfoText, { fontSize: normalizeSize(16) }]} numberOfLines={2}>
                                         {capitalizeFirstLetter(user?.name!) || 'Nome do Usuário'}
                                     </Text>
                                     <TouchableOpacity style={styles.editUserInfoButton}>
                                         <Icon.AntDesign
                                             name="edit"
-                                            size={normalizeFont(16)}
+                                            size={normalizeSize(16)}
                                             color={colors.darkGray}
                                         />
                                     </TouchableOpacity>
@@ -119,7 +119,7 @@ export default function UserProfile() {
                                     <TouchableOpacity style={styles.editUserInfoButton}>
                                         <Icon.AntDesign
                                             name="edit"
-                                            size={normalizeFont(16)}
+                                            size={normalizeSize(16)}
                                             color={colors.darkGray}
                                         />
                                     </TouchableOpacity>
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
         color: colors.white,
         fontFamily: font.poppins.regular,
         textAlign: 'center',
-        fontSize: normalizeFont(12),
+        fontSize: normalizeSize(12),
     },
     editUserInfoButton: {
         alignItems: 'center',
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
         gap: 5,
         justifyContent: 'center',
-        width: normalizeFont(width * 0.55),
+        width: normalizeSize(width * 0.55),
     },
     userInfoTextWrapper: {
         flexDirection: 'row',
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     },
     userInfoText: {
         fontFamily: font.poppins.semibold,
-        fontSize: normalizeFont(14),
+        fontSize: normalizeSize(14),
         color: colors.textPrimary,
     },
 
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     otherActionText: {
         color: colors.lightGray,
         fontFamily: font.poppins.bold,
-        fontSize: normalizeFont(12),
+        fontSize: normalizeSize(12),
     },
     /** Tabs */
     tabsContainer: {
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     },
     tabText: {
         fontFamily: font.poppins.regular,
-        fontSize: normalizeFont(14),
+        fontSize: normalizeSize(14),
         color: colors.darkGray,
     },
 });

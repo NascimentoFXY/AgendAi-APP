@@ -45,7 +45,7 @@ const { width } = Dimensions.get("window");
 
 export default function Agenda({ showHeader = true, navigation }: { showHeader?: boolean, navigation?: any }) {
     const { createSchedule, schedules, schedule, useSchedule, cancelSchedule, fetchSchedules, updateNotification } = useContext(ScheduleContext)!;
-    const { useSalon, salon } = useContext(SalonContext)!
+    const { loadSalon, salon } = useContext(SalonContext)!
 
     const [refreshing, setRefreshing] = useState(false);
 
@@ -200,7 +200,7 @@ export default function Agenda({ showHeader = true, navigation }: { showHeader?:
 
                                         await useSchedule(item.id).then((res) => {
                                             console.log("Schedule usado: ", res?.salonName);
-                                            useSalon(res?.salonId!);
+                                            loadSalon(res?.salonId!);
                                             navigation.navigate("Home", { screen: "Salao" });
                                         }).catch((error) => {
                                             console.error("Erro ao usar agendamento: ", error);

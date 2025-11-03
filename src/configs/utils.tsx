@@ -185,7 +185,7 @@ export async function getUserByName(name: string) {
 // Baseado em um layout padrão (ex: iPhone 11 = 375px de largura)
 const scale = SCREEN_WIDTH / 375;
 
-export function normalizeFont(size: number) {
+export function normalizeSize(size: number) {
     const newSize = size * scale;
     return Math.round(PixelRatio.roundToNearestPixel(newSize));
 }
@@ -233,4 +233,14 @@ export const LoadingModal: React.FC<{ loading: boolean, text?: string }> = ({ lo
             </Modal>
         </>
     )
+}
+
+export function formatCurrency(value: number | string) {
+  const number = Number(value);
+  if (isNaN(number)) return "R$ 0,00";
+
+  return number.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 }

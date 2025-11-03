@@ -19,11 +19,11 @@ import {
 import { styles } from 'pages/main/home/style';
 import colors, { font } from 'configs/theme';
 import {useNavigation} from '@react-navigation/native'
-import { normalizeFont } from 'configs/utils';
+import { normalizeSize } from 'configs/utils';
 export default function Catalogo() {
 
     const { user } = useAuthContext()!
-    const { salon, salonList, fetchSalons, getAverageRating, useSalon } = useSalonContext()!
+    const { salon, salonList, fetchSalons, getAverageRating, loadSalon } = useSalonContext()!
 
 
     const [averageRatings, setAverageRatings] = useState<{ [salonId: string]: number }>({});
@@ -52,14 +52,14 @@ export default function Catalogo() {
 
     const TopSaloesCardsData = ({ rating, name, salonId, image, description, address, item }: any) => {
         return (
-            <TouchableOpacity activeOpacity={0.7} style={{ flexDirection: 'row', gap: 10, margin: 2, paddingVertical: 10, }} onPress={async () => (navigation.navigate("Salao"), await useSalon(salonId))}>
+            <TouchableOpacity activeOpacity={0.7} style={{ flexDirection: 'row', gap: 10, margin: 2, paddingVertical: 10, }} onPress={async () => (navigation.navigate("Salao"), await loadSalon(salonId))}>
                 <View>
                     <View style={[styles.SaloesCards, { width: 200, height: 120, borderRadius: 10, }]}>
                         <Image source={{ uri: image }} style={{ resizeMode: "cover", position: "absolute", width: "100%", height: "100%" }} />
                     </View>
                 </View>
                 <View style={{ flexGrow: 1, paddingHorizontal: 4 }}>
-                    <Text style={{ fontFamily: font.poppins.bold, fontSize: normalizeFont(18), width: normalizeFont(140) }}>{name}</Text>
+                    <Text style={{ fontFamily: font.poppins.bold, fontSize: normalizeSize(18), width: normalizeSize(140) }}>{name}</Text>
                     <Text style={{ fontFamily: font.poppins.regular, flexWrap: "wrap", width: 100, }} lineBreakMode='tail'>{description}</Text>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: "auto", alignItems: "center" }}>
 

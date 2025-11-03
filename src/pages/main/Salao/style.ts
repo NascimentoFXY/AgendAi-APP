@@ -1,7 +1,7 @@
 import React from "react";
 import { Dimensions, StyleSheet } from "react-native";
 import colors, { font } from "../../../configs/theme";
-import { normalizeFont } from "configs/utils";
+import { normalizeSize } from "configs/utils";
 const { width } = Dimensions.get("window");
 export const styles = StyleSheet.create({
     container: {
@@ -182,7 +182,7 @@ export const styles = StyleSheet.create({
         width: "100%",
         padding: 30,
         backgroundColor: colors.background,
-        height: normalizeFont(110),
+        height: normalizeSize(110),
         bottom: 0,
         borderTopColor: "#a5a5a555",
         borderTopWidth: 1,

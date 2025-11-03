@@ -1,6 +1,6 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
 import colors, { font } from "../../configs/theme";
-import { normalizeFont } from "configs/utils";
+import { normalizeSize } from "configs/utils";
 export const styles = StyleSheet.create({
 
     mainContainer: {
@@ -115,7 +115,7 @@ export const styles = StyleSheet.create({
     },
     text: {
 
-        fontSize: normalizeFont(12),
+        fontSize: normalizeSize(12),
         fontFamily: font.poppins.medium,
 
     }

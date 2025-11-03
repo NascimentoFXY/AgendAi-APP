@@ -57,7 +57,7 @@ export function Explore({ navigation }: any) {
 
     const { user, } = useContext(AuthContext)!
     const [selectedMarker, setSelectedMarker] = useState<Salon | null>(null);
-    const { salon, salonList, getAverageRating, useSalon } = useContext(SalonContext)!
+    const { salon, salonList, getAverageRating, loadSalon } = useContext(SalonContext)!
     const [markers, setMarkers] = useState<Salon[]>([]);
 
     const mapRef = useRef<MapView>(null);
@@ -227,7 +227,7 @@ export function Explore({ navigation }: any) {
 
                         }}
                         onLongPress={() => {
-                            useSalon(salon.id!);
+                            loadSalon(salon.id!);
                             navigation.navigate("Home", { screen: "Salao" });
                         }}
 

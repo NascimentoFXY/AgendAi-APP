@@ -1,6 +1,6 @@
 import Icon from "configs/icons";
 import colors, { font } from "configs/theme";
-import { LoadingModal, normalizeFont } from "configs/utils";
+import { LoadingModal, normalizeSize } from "configs/utils";
 import { Rating, useSalonContext } from "context/salonContext";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -14,7 +14,7 @@ const RatingStars = ({ value }: { value: number }) => {
             <Icon.Ionicons
                 key={i}
                 name="star"
-                size={normalizeFont(25)}
+                size={normalizeSize(25)}
                 color={i <= value ? colors.primary : colors.lightGray}
             />
         );
@@ -23,7 +23,7 @@ const RatingStars = ({ value }: { value: number }) => {
 };
 
 const UserRatingsComp: React.FC<Rating> = (props) => {
-    const { useSalon } = useSalonContext()!;
+    const { loadSalon } = useSalonContext()!;
     const navigation = useNavigation<any>();
     console.log("salonID: ", props.salonID);
     const [loading, setLoading] = React.useState(false);
@@ -31,7 +31,7 @@ const UserRatingsComp: React.FC<Rating> = (props) => {
         <>
         <LoadingModal loading={loading}/>
             <TouchableOpacity activeOpacity={0.7}
-                onPress={async () => {setLoading(true); await useSalon(props.salonID!).then(()=>setLoading(false)); navigation.navigate("Salao") }}
+                onPress={async () => {setLoading(true); await loadSalon(props.salonID!).then(()=>setLoading(false)); navigation.navigate("Salao") }}
                 style={styles.ratingContainer}>
 
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     salonName: {
 
         fontFamily: font.abrilfatface,
-        fontSize: normalizeFont(20),
+        fontSize: normalizeSize(20),
         marginBottom: 5,
     },
     ratingContent: {
@@ -74,15 +74,15 @@ const styles = StyleSheet.create({
     },
     ratingValue: {
         color: "#39342fff",
-        fontSize: normalizeFont(20),
+        fontSize: normalizeSize(20),
         fontFamily: font.poppins.semibold,
         textAlign: "center",
         textAlignVertical: "center",
-        lineHeight: normalizeFont(20),
+        lineHeight: normalizeSize(20),
     },
     comment: {
         fontFamily: font.poppins.regular,
-        fontSize: normalizeFont(16),
+        fontSize: normalizeSize(16),
         marginBottom: 10,
         color: "#666"
 

@@ -38,6 +38,7 @@ export default function CreateSalon({ navigation }: any) {
     const confirmHandle = async () => {
         setLoading(true);
         await createSalon().then(() => {
+
             setLoading(false);
         });
 

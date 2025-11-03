@@ -12,13 +12,14 @@ import {
 } from "react-native";
 import colors, { font } from "configs/theme";
 import ProfessionalCard from "components/Salao/EspecialistaScreen";
-import { capitalizeFirstLetter, getUserByEmail, sendNotification } from "configs/utils";
+import { capitalizeFirstLetter, formatCurrency, getUserByEmail, sendNotification } from "configs/utils";
 import { useAuthContext } from "context/auth";
 import { useNotificationContext } from "context/notificationsContext";
 import { User } from 'context/auth'
-import { useSalonContext } from "context/salonContext";
+import { Services, useSalonContext } from "context/salonContext";
 import { collection, doc, getDoc, getDocs, orderBy, query } from "@firebase/firestore";
 import { db } from "services/firebase";
+import { ServiceTypeProps } from "./establishmentServices";
 const { width } = Dimensions.get("window");
 
 
@@ -27,17 +28,17 @@ export interface Specialist {
   name: string,
   email: string,
   rating?: string,
-  service: string,
+  service: ServiceTypeProps[],
   image?: string,
 }
 export default function EstablishmentEspecialist() {
   const { notificationList, notifyUserByEmail } = useNotificationContext()!
   const { user } = useAuthContext()!
-  const { salon, fetchSpecialists, specialistList, addSpecialistToSalon, fetchSalons } = useSalonContext()!
+  const { salon, fetchSpecialists, specialistList, addSpecialistToSalon, fetchSalons, serviceList } = useSalonContext()!
   const [especialistaEmail, setEspecialistaEmail] = useState("");
-  const [servico, setServico] = useState("");
+  const [especialistaProfession, setEspecialistaProfession] = useState("")
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [selectedOptions, setSelectedOptions] = useState<ServiceTypeProps["types"]>([])
 
   const width = Dimensions.get("window").width;
   const calcCardsWidth = (width / 2) - 40;
@@ -48,8 +49,21 @@ export default function EstablishmentEspecialist() {
     return user
   }, [])
 
+  const toggleOption = (type: ServiceTypeProps["types"][0]) => {
+    const alreadySelected = selectedOptions.some(opt => opt.itemId === type.itemId);
+    if (alreadySelected) {
+      setSelectedOptions(prev => prev.filter(opt => opt.itemId !== type.itemId));
+    } else {
+      setSelectedOptions(prev => [...prev, type]);
+    }
+  };
+
+  useEffect(() => {
+    console.log("[Estab.Specialist] ", selectedOptions)
+  }, [selectedOptions]);
+
   const handleConfirm = useCallback(async () => {
-    if (!especialistaEmail || !servico) {
+    if (!especialistaEmail || !selectedOptions) {
       alert("Preencha todos os campos!");
       return;
     }
@@ -61,26 +75,30 @@ export default function EstablishmentEspecialist() {
 
       const specialistSnap = await getDoc(specialistRef);
       if (userRes.id === user?.id && !specialistSnap.exists()) {
-        addSpecialistToSalon!(salon?.id!, user, `DONO-${servico}`)
+        addSpecialistToSalon!(salon?.id!, user, selectedOptions)
         setModalVisible(false);
         setEspecialistaEmail("");
-        setServico("");
+        setEspecialistaProfession("");
+        setSelectedOptions([])
         return
       } else if (specialistSnap.exists()) {
         alert(`⚠️ ${userRes.name} já foi convidado ou é especialista deste salão.`);
         return;
       }
-      notifyUserByEmail(userRes.email, user?.name!, salon?.id!, servico)
+      notifyUserByEmail(userRes.email, user?.name!, salon?.id!, selectedOptions)
 
       alert("O convite foi enviado para: " + userRes.name + ". \nAguarde a solicitação.");
 
       setModalVisible(false);
       setEspecialistaEmail("");
-      setServico("");
+      setEspecialistaProfession("");
+      setSelectedOptions([])
     } catch (er) {
       console.error(er)
     }
-  }, [especialistaEmail, servico]);
+  }, [especialistaEmail, selectedOptions]);
+
+
   useEffect(() => {
     fetchSpecialists();
   }, [])
@@ -110,7 +128,7 @@ export default function EstablishmentEspecialist() {
               key={item.id}
               userPhoto={item.image} // imagem do usuario
               name={capitalizeFirstLetter(item.name)} // nome
-              profession={item.service} // serviço ex: Corte de Cabelo
+              profession={item.profession} // serviço ex: cabeleireiro
               cardWidth={calcCardsWidth - 10} />
           ))}
         </SafeAreaView>
@@ -124,21 +142,57 @@ export default function EstablishmentEspecialist() {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Convidar especialista</Text>
-              <Text style={{fontFamily: font.poppins.medium, color: colors.lightGray}}>Você pode incluir seu email cadastrado para fazer parte dos especialistas do estabelecimento. </Text>
+              <Text style={styles.modalTitle}>Convidar prestador de serviço</Text>
+              <Text style={{ fontFamily: font.poppins.medium, color: colors.lightGray }}>Você pode incluir seu email cadastrado para fazer parte dos prestadores de serviço do estabelecimento. </Text>
               <TextInput
                 style={styles.input}
-                placeholder="Email do especialista"
+                placeholder="Email do prestador de serviço"
                 value={especialistaEmail}
                 onChangeText={setEspecialistaEmail}
               />
-
+              <Text style={styles.modalTitle}>Profissão:</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Serviço (ex: corte de cabelo, maquiagem...)"
-                value={servico}
-                onChangeText={setServico}
+                placeholder="Profissão (ex: cabeleireiro)"
+                value={especialistaProfession}
+                onChangeText={setEspecialistaProfession}
+
               />
+
+              <Text style={styles.modalTitle}>Selecione ao menos um serviço prestado:</Text>
+              <ScrollView>
+
+                {serviceList.map((service, index) => (
+                  <View key={service.id} style={styles.cardContainer}>
+
+                    <Text style={styles.cardTitle}>
+                      {service.serviceName}
+                    </Text>
+
+                    {service.types.map((type) => {
+
+                      const isSelected = selectedOptions.some(opt => opt.itemId === type.itemId);
+                      return (
+                        <TouchableOpacity
+                          key={type.itemId}
+                          style={[
+                            styles.cardOption,
+                            isSelected && { outlineWidth: 2, outlineColor: "green" }
+                          ]}
+                          onPress={() => toggleOption(type)}
+                        >
+                          <Text style={styles.cardOptionText}>{type.itemDescription}</Text>
+                          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+                            <Text>{formatCurrency(Number(type.itemPrice))}</Text>
+                          </View>
+                        </TouchableOpacity>
+                      );
+
+                    })}
+
+                  </View>
+                ))}
+              </ScrollView>
 
               <View style={styles.modalActions}>
                 <TouchableOpacity
@@ -241,4 +295,37 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600",
   },
+
+  //services
+  cardContainer: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderRadius: 20,
+    borderColor: colors.lightGray,
+    padding: 10,
+    marginVertical: 5
+  },
+  cardTitle: {
+    fontFamily: font.poppins.semibold,
+    textAlign: "center",
+    paddingBottom: 5
+  },
+  cardPrice: {
+
+  },
+  cardOption: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: colors.lightGray,
+    borderRadius: 10,
+    marginVertical: 5,
+    flexDirection: "row",
+    justifyContent: "space-between"
+  },
+  cardOptionText: {
+    fontFamily: font.poppins.regular
+  },
+  iconInactive: {
+    display: "none"
+  }
 });

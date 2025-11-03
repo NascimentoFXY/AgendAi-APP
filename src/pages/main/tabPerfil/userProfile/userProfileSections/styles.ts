@@ -1,5 +1,5 @@
 import colors, { font } from 'configs/theme';
-import { normalizeFont } from 'configs/utils';
+import { normalizeSize } from 'configs/utils';
 import { Dimensions, StyleSheet } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -14,11 +14,11 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     Title: {
-        fontSize: normalizeFont(18),
+        fontSize: normalizeSize(18),
         fontFamily: font.poppins.bold
     },
     lengthText: {
-        fontSize: normalizeFont(18),
+        fontSize: normalizeSize(18),
         fontFamily: font.poppins.bold,
         color: colors.primary,
 

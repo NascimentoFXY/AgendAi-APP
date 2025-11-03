@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, TextStyle, View, ViewStyle, Text, TouchableOpacity, Image } from 'react-native';
 import colors, { font } from '../../../../configs/theme';
-import { getInitials, normalizeFont } from 'configs/utils';
+import { getInitials, normalizeSize } from 'configs/utils';
 import { useAuthContext } from 'context/auth';
 
 interface UserOptionsProps {
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     title: {
         color: colors.white,
         paddingHorizontal: 20,
-        fontSize: normalizeFont(17) ,
+        fontSize: normalizeSize(17) ,
         fontWeight: 'bold'
     },
     subTitle: {

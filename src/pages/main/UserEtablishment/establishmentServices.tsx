@@ -15,20 +15,21 @@ import ServiceItem from "components/Salao/ServicesScreenOptions";
 import { Picker } from "@react-native-picker/picker";
 import Icon from "configs/icons";
 import { useSalonContext } from "context/salonContext";
-import { normalizeFont } from "configs/utils";
+import { formatCurrency, normalizeSize } from "configs/utils";
 import { useAlert } from "context/alertContext";
 
 const { width } = Dimensions.get("window");
 
-interface ServiceTypeProps {
+export interface ServiceTypeProps {
     id?: any;
-    serviceType?: "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado";
+    serviceName?: "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado";
     price?: string;
     quantity?: any;
     types: {
         itemId?: string;
         itemDescription: string;
         itemPrice: string;
+        itemDuration?: any;
     }[];
 }
 
@@ -37,18 +38,19 @@ export default function EstablishmentServices() {
         useSalonContext()!;
     const { showAlert } = useAlert();
     const [selectedService, setSelectedService] = useState<ServiceTypeProps | null>(null);
-    const [serviceType, setServiceType] = useState<
+    const [serviceName, setServiceName] = useState<
         "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado"
     >();
-    const [services, setServices] = useState([
-        { id: Date.now(), itemDescription: "", itemPrice: "", serviceType: serviceType },
-    ]);
     const [servicesList, setServicesList] = useState<ServiceTypeProps[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [infoDisplayVisible, setInfoDisplayVisible] = useState(false);
     const [editingService, setEditingService] = useState<ServiceTypeProps | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [customServiceName, setCustomServiceName] = useState(""); // Novo estado
+    const [serviceDuration, setServiceDuration] = useState(""); // Novo estado
+    const [services, setServices] = useState([
+        { id: Date.now(), itemDescription: "", itemPrice: "", serviceName: serviceName, itemDuration: serviceDuration },
+    ]);
 
 
     useEffect(() => {
@@ -56,34 +58,35 @@ export default function EstablishmentServices() {
     }, []);
 
     const handleConfirm = async () => {
-        if (!serviceType) return;
-        // const confirmed = await showAlert("Deseja salvar as informações?", "confirm");
-        // if (!confirmed) return;
-        
-        if (serviceType === "Personalizado" && !customServiceName.trim()) {
+        if (!serviceName) return;
+        const confirmed = await showAlert("Deseja salvar as informações?", "confirm");
+        if (!confirmed) return;
+
+        if (serviceName === "Personalizado" && !customServiceName.trim()) {
             alert("Digite o nome do serviço personalizado antes de continuar.");
             return;
         }
 
         const finalServiceType =
-            serviceType === "Personalizado" ? customServiceName.trim() : serviceType;
+            serviceName === "Personalizado" ? customServiceName.trim() : serviceName;
 
         const typesArray = services.map((s) => ({
             itemId: String(s.id),
             itemDescription: s.itemDescription,
             itemPrice: s.itemPrice,
+            itemDuration: s.itemDuration,
         }));
 
         // Verifica se já existe um serviço do mesmo tipo
         const existingService = serviceList.find(
-            (s) => s.serviceType === serviceType
+            (s) => s.serviceName === serviceName
         );
 
         if (existingService) {
-            // 🔄 Atualiza o serviço existente em vez de criar um novo
+            // Atualiza o serviço existente em vez de criar um novo
             const updatedData = {
                 ...existingService,
-                serviceType: finalServiceType,
+                serviceName: finalServiceType,
                 types: [...existingService.types, ...typesArray], // adiciona os novos tipos
                 quantity: existingService.types.length + typesArray.length,
             };
@@ -94,9 +97,9 @@ export default function EstablishmentServices() {
             setIsEditing(false);
             setEditingService(null);
         } else {
-            // ➕ Cria um novo serviço normalmente
+            //  Cria um novo serviço normalmente
             const newService = {
-                serviceType: finalServiceType,
+                serviceName: finalServiceType,
                 quantity: typesArray.length,
                 types: typesArray,
             };
@@ -106,12 +109,12 @@ export default function EstablishmentServices() {
         }
 
         // 🔁 Reseta o formulário
-        setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceType }]);
-        setServiceType(undefined);
+        setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceName, itemDuration: "" }]);
+        setServiceName(undefined);
         setModalVisible(false);
         setCustomServiceName("");
         // Atualiza a lista do contexto
-        fetchServices();
+        await fetchServices();
     };
 
 
@@ -128,6 +131,13 @@ export default function EstablishmentServices() {
             prev.map((item) => (item.id === id ? { ...item, itemPrice: numericValue } : item))
         );
     };
+    const handleChangeDuration = (id: number, newValue: string) => {
+        const numericValue = newValue.replace(/[^\d,]/g, '').replace(',', '.');
+
+        setServices((prev) =>
+            prev.map((item) => (item.id === id ? { ...item, itemDuration: numericValue } : item))
+        );
+    };
 
     const handleInfoDisplay = (item: ServiceTypeProps) => {
         setSelectedService(item);
@@ -138,18 +148,13 @@ export default function EstablishmentServices() {
         if (acao === "add") {
             setServices((prev) => [
                 ...prev,
-                { id: Date.now() + Math.random(), itemDescription: "", itemPrice: "", serviceType },
+                { id: Date.now() + Math.random(), itemDescription: "", itemPrice: "", serviceName, itemDuration: "" },
             ]);
             return;
         }
 
         if (acao === "removeOne" && id !== undefined) {
             setServices((prev) => prev.filter((item) => item.id !== id));
-            return;
-        }
-
-        if (acao === "removeAll") {
-            setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceType }]);
             return;
         }
     };
@@ -181,7 +186,7 @@ export default function EstablishmentServices() {
                     {serviceList.map((item) => (
                         <ServiceItem
                             key={item.id}
-                            text={item.serviceType}
+                            text={item.serviceName}
                             amount={item.quantity}
                             onPress={() => handleInfoDisplay(item)}
                         />
@@ -201,13 +206,13 @@ export default function EstablishmentServices() {
                 >
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer}>
-                            <Text style={styles.modalTitle}>{selectedService?.serviceType}</Text>
+                            <Text style={styles.modalTitle}>{selectedService?.serviceName}</Text>
 
                             {selectedService?.types.map((type) => (
                                 <View key={type.itemId} style={{ padding: 5, flexDirection: "row", justifyContent: "space-between", borderBottomWidth: 1, borderRadius: 20, borderColor: colors.lightGray }}>
                                     <Text>{type.itemDescription}</Text>
 
-                                    <Text>R$ {type.itemPrice}</Text>
+                                    <Text>{formatCurrency(type.itemPrice)}</Text>
                                 </View>
                             ))}
 
@@ -216,7 +221,7 @@ export default function EstablishmentServices() {
                                     style={[styles.addButton, { marginHorizontal: "auto" }]}
                                     onPress={() => {
                                         setInfoDisplayVisible(false);
-                                        setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceType }]);
+                                        setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceName, itemDuration: "" }]);
                                     }}
                                 >
                                     <Text style={styles.buttonText}>Fechar</Text>
@@ -230,13 +235,14 @@ export default function EstablishmentServices() {
                                         setEditingService(selectedService);
 
                                         if (selectedService) {
-                                            setServiceType(selectedService.serviceType);
+                                            setServiceName(selectedService.serviceName);
                                             setServices(
                                                 selectedService.types.map((type) => ({
                                                     id: Number(type.itemId),
                                                     itemDescription: type.itemDescription,
                                                     itemPrice: type.itemPrice,
-                                                    serviceType: selectedService.serviceType,
+                                                    serviceName: selectedService.serviceName,
+                                                    itemDuration: type.itemDuration,
                                                 }))
                                             );
                                         }
@@ -291,8 +297,8 @@ export default function EstablishmentServices() {
                             <Text>Tipo de serviço:</Text>
                             <Picker
                                 style={{ borderWidth: 12, height: "auto" }}
-                                selectedValue={serviceType}
-                                onValueChange={(itemValue) => setServiceType(itemValue)}
+                                selectedValue={serviceName}
+                                onValueChange={(itemValue) => setServiceName(itemValue)}
                             >
                                 <Picker.Item label="Corte de cabelo" value="Corte de cabelo" />
                                 <Picker.Item label="Maquiagem" value="Maquiagem" />
@@ -300,7 +306,7 @@ export default function EstablishmentServices() {
                                 <Picker.Item label="Manicure" value="Massagem" />
                                 <Picker.Item label="Personalizado" value="Personalizado" />
                             </Picker>
-                            {serviceType === "Personalizado" && (
+                            {serviceName === "Personalizado" && (
                                 <View style={{ marginTop: 10, marginBottom: 15 }}>
                                     <Text style={{ marginBottom: 5 }}>
                                         Nome do serviço personalizado:
@@ -325,24 +331,29 @@ export default function EstablishmentServices() {
                                     key={item.id}
                                     style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}
                                 >
-                                    <View
-                                        style={[
-                                            styles.form,
-                                        ]}
-                                    >
+                                    <View style={styles.form}>
                                         <TextInput
                                             value={item.itemDescription}
-                                            style={[styles.input, { flexGrow: 1, marginRight: 5 }]}
+                                            style={[styles.input]}
                                             placeholder="Descrição do tipo"
                                             onChangeText={(text) => handleChangeDescription(item.id, text)}
                                         />
-                                        <TextInput
-                                            keyboardType="numeric"
-                                            value={item.itemPrice}
-                                            placeholder="Preço R$"
-                                            style={[styles.input, { width: normalizeFont(90) }]}
-                                            onChangeText={(text) => handleChangePrice(item.id, text)}
-                                        />
+                                        <View style={{flexDirection: "row"}}>
+                                            <TextInput
+                                                keyboardType="numeric"
+                                                value={item.itemPrice}
+                                                placeholder="Preço R$"
+                                                style={[styles.input, {width: "50%"}]}
+                                                onChangeText={(text) => handleChangePrice(item.id, text)}
+                                            />
+                                            <TextInput
+                                                keyboardType="numeric"
+                                                value={item.itemDuration}
+                                                placeholder="duração (minutos)"
+                                                style={[styles.input, {width: "50%"}]}
+                                                onChangeText={(text) => handleChangeDuration(item.id, text)}
+                                            />
+                                        </View>
                                     </View>
 
                                     <TouchableOpacity
@@ -383,7 +394,7 @@ export default function EstablishmentServices() {
                                     onPress={() => {
                                         setModalVisible(false);
                                         setIsEditing(false);
-                                        setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceType }]);
+                                        setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceName, itemDuration: "" }]);
                                     }}
                                 >
                                     <Text style={styles.buttonText}>Cancelar</Text>
@@ -412,10 +423,10 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     form: {
-        marginRight: "auto",
-        flexGrow: 1,
+        flex: 1,
         borderBottomWidth: 1,
         borderColor: colors.transparentLightGray,
+   
         borderRadius: 20,
         paddingVertical: 8,
     },
@@ -465,7 +476,7 @@ const styles = StyleSheet.create({
         borderColor: "#ccc",
         borderRadius: 8,
         padding: 10,
-        flexGrow: 1,
+        flexGrow: 1
     },
     modalActions: {
         flexDirection: "row",

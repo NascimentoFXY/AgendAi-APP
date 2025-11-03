@@ -27,10 +27,10 @@ export default function UserEstablishment({ navigation }: any) {
     const [loading, setLoading] = useState(false)
     const loadData = async (salonID: string) => {
         setLoading(true)
-        await useSalon(salonID)
+        await loadSalon(salonID)
         setLoading(false)
     }
-    const { isOwner, salonList, useSalon } = useSalonContext()!;
+    const { isOwner, salonList, loadSalon } = useSalonContext()!;
     const { user } = useAuthContext()!;
 
     if(!salonList) return
@@ -42,7 +42,6 @@ export default function UserEstablishment({ navigation }: any) {
                     style={styles.SaloesCards}>
                     <Image source={{ uri: image }} style={{ resizeMode: "cover", position: "absolute", width: "100%", height: "100%" }} />
 
-                    <LoadingModal loading={loading} />
                     <View style={styles.saloesHeart}>
                         <Icon.FontAwesome5 name='heart' size={30} />
                     </View>
@@ -66,12 +65,13 @@ export default function UserEstablishment({ navigation }: any) {
             </TouchableOpacity>
         )
     }
-
-
-
+    
+    
+    
     return (
         <SafeAreaView style={stylesLocal.container}>
 
+            <LoadingModal loading={loading} />
             {/* HEADER====================================== */}
             <SafeAreaView style={stylesLocal.headerContainer}>
                 <CustomButton

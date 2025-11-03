@@ -33,7 +33,7 @@ const { width } = Dimensions.get("window")
 export default function MainModal({ navigation }: any) {
     const scrollRef = useRef<ScrollView>(null);
     const [currentPage, setCurrentPage] = useState(0)
-    const { salon, loading, isOwner, useSalon, } = useContext(SalonContext)!
+    const { salon, loading, isOwner, loadSalon, } = useContext(SalonContext)!
     const { user } = useContext(AuthContext)!
     const pages = [<SalaoServices />, <SalaoEspecialistas />, <Rating />]
     const { createChat, useChat } = useContext(ChatContext)!

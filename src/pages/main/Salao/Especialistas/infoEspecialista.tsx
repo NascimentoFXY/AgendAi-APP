@@ -1,7 +1,7 @@
 import CustomButton from 'components/customButton';
 import Icon from 'configs/icons';
 import colors, { font } from 'configs/theme';
-import { normalizeFont } from 'configs/utils';
+import { normalizeSize } from 'configs/utils';
 import { useAuthContext } from 'context/auth';
 import { useSalonContext } from 'context/salonContext';
 import React from 'react';
@@ -127,11 +127,11 @@ const styles = StyleSheet.create({
     },
     //Section Titles
     sectionTitle: {
-        fontSize: normalizeFont(20),
+        fontSize: normalizeSize(20),
         fontFamily: font.poppins.bold,
     },
     itemAmount: {
-        fontSize: normalizeFont(16),
+        fontSize: normalizeSize(16),
         color: colors.primary,
         fontFamily: font.poppins.bold,
     },
@@ -149,12 +149,12 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     cardName: {
-        fontSize: normalizeFont(18),
+        fontSize: normalizeSize(18),
         fontFamily: font.poppins.semibold,
 
     },
     cardDesc: {
-        fontSize: normalizeFont(14),
+        fontSize: normalizeSize(14),
         color: colors.darkGray,
         marginVertical: 10,
         fontFamily: font.poppins.regular,
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     cardPrice: {
-        fontSize: normalizeFont(16),
+        fontSize: normalizeSize(16),
         fontFamily: font.poppins.semibold,
         color: colors.primary,
     },

@@ -1,5 +1,5 @@
 import colors, { font } from 'configs/theme';
-import { normalizeFont } from 'configs/utils';
+import { normalizeSize } from 'configs/utils';
 import React, { useEffect, useState } from 'react';
 import {
     View,
@@ -27,12 +27,12 @@ export const CupomCard: React.FC<{ cupom?: any, onPress?: () => void }> = ({ cup
     return (
         <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
             <Text style={styles.cardTitle}>{cupom?.descricao || "Cupom de desconto"}</Text>
-            <Text style={{ fontSize: normalizeFont(12) }}>{cupom?.duracao || "Cortes masculinos"}</Text>
+            <Text style={{ fontSize: normalizeSize(12) }}>{cupom?.duracao || "Cortes masculinos"}</Text>
             <Text style={{ fontFamily: font.poppins.regular, color: colors.primary }}>
                 {cupom.tipoValor != "porcentagem" ? "R$" : ""} {cupom?.valor || 20}{cupom.tipoValor === "porcentagem" ? "%" : ""}
             </Text>
             <View>
-                <Text style={{ fontFamily: font.poppins.regular, color: colors.lightGray, fontSize: normalizeFont(12) }}>
+                <Text style={{ fontFamily: font.poppins.regular, color: colors.lightGray, fontSize: normalizeSize(12) }}>
                     Valido até {cupom?.duracao || "30/10"}
                 </Text>
             </View>
@@ -189,13 +189,13 @@ export default function MarketingTools() {
                             <Text style={styles.sectionTitle}>Conteudo Visual</Text>
                             <View style={{ flexDirection: "row", gap: 10 }}>
                                 <View style={{ width: "50%" }}>
-                                    <TouchableOpacity style={{ width: "100%", height: normalizeFont(60), backgroundColor: colors.lightGray, borderRadius: 8 }}
+                                    <TouchableOpacity style={{ width: "100%", height: normalizeSize(60), backgroundColor: colors.lightGray, borderRadius: 8 }}
                                         onPress={() => handlePickConteudoVisual(4, 3)}
                                     />
                                     <Text style={{ textAlign: "center" }}>Antes e depois</Text>
                                 </View>
                                 <View style={{ width: "50%" }}>
-                                    <TouchableOpacity style={{ width: "100%", height: normalizeFont(60), backgroundColor: colors.lightGray, borderRadius: 8 }}
+                                    <TouchableOpacity style={{ width: "100%", height: normalizeSize(60), backgroundColor: colors.lightGray, borderRadius: 8 }}
                                         onPress={() => handlePickConteudoVisual(16, 9)}
                                     />
                                     <Text style={{ textAlign: "center" }}>Videos</Text>

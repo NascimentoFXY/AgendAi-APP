@@ -5,7 +5,7 @@ import NotificationAction from "components/notifications/notificationAction";
 import NotificationActions from "components/notifications/notificationActions";
 import Icon from "configs/icons";
 import colors, { font } from "configs/theme";
-import { normalizeFont } from "configs/utils";
+import { normalizeSize } from "configs/utils";
 import { useAuthContext } from "context/auth";
 import { useNotificationContext } from "context/notificationsContext";
 import { useSalonContext } from "context/salonContext";
@@ -39,7 +39,7 @@ export default function NotificationScreen({ navigation }: any) {
                     style={{ borderWidth: 1, borderColor: colors.lightGray, backgroundColor: colors.background }}
                     onPress={()=>{navigation.goBack()}}
                 />
-                <Text style={{ fontFamily: font.poppins.bold, fontSize: normalizeFont(20), margin: "auto" }}>Notificações</Text>
+                <Text style={{ fontFamily: font.poppins.bold, fontSize: normalizeSize(20), margin: "auto" }}>Notificações</Text>
             </View>
             {
                notificationList

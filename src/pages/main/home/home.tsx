@@ -78,7 +78,7 @@ export function Home({ navigation }: any) {
         // Exiba um carregamento ou redirecione para a tela de login
         return <ActivityIndicator />;
     }
-    const { salon, salonList, useSalon, getAverageRating } = salonData
+    const { salon, salonList, loadSalon, getAverageRating } = salonData
     const { createSchedule, schedules, schedule, useSchedule, cancelSchedule, fetchSchedules } = scheduleData!;
 
 
@@ -86,7 +86,7 @@ export function Home({ navigation }: any) {
 
     const TopSaloesCardsData = ({ rating, name, salonId, image }: any) => {
         return (
-            <TouchableOpacity onPress={async () => (navigation.navigate("Salao"), await useSalon(salonId))} >
+            <TouchableOpacity onPress={async () => (navigation.navigate("Salao"), await loadSalon(salonId))} >
                 <View
 
                     style={styles.SaloesCards}>
