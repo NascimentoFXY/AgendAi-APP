@@ -1,7 +1,7 @@
 import CustomButton from 'components/customButton';
 import Icon from 'configs/icons';
 import colors, { font } from 'configs/theme';
-import { normalizeSize } from 'configs/utils';
+import { formatCurrency, normalizeSize } from 'configs/utils';
 import { useAuthContext } from 'context/auth';
 import { useSalonContext } from 'context/salonContext';
 import React from 'react';
@@ -48,15 +48,16 @@ const Cards = (props: InfoCardProps) => {
         </View>
     )
 }
-export default function InfoEspecialista({ navigation }: any) {
-    const { salon, isOwner } = useSalonContext()!;
+export default function InfoEspecialista({ navigation, props }: any) {
+    const { salon, isOwner, specialist } = useSalonContext()!;
     const { user } = useAuthContext()!;
+
     return (
         <SafeAreaView style={styles.container}>
             {/* Banner */}
-            <View style={{backgroundColor: colors.lightGray }}>
+            <View style={{ backgroundColor: colors.lightGray }}>
 
-                <View style={{width: width, aspectRatio: 16/9, backgroundColor: colors.debug, padding: 20, alignItems: "center", flexDirection: "row",  }}>
+                <View style={{ width: width, aspectRatio: 16 / 9, backgroundColor: colors.debug, padding: 20, alignItems: "center", flexDirection: "row", }}>
                     <CustomButton
                         Icon={<Icon.Ionicons name="arrow-back" size={24} color="white" />}
                         border='Circle'
@@ -67,15 +68,15 @@ export default function InfoEspecialista({ navigation }: any) {
                     />
                 </View>
                 <Image source={{ uri: salon?.image }} style={{ aspectRatio: 16 / 9, width: width, position: "absolute" }}></Image>
-            
+
             </View>
             {/* ------ */}
 
             <View style={styles.modalContainer}>
                 <View style={styles.specialistInfoContainer}>
-                    <Image style={styles.specialistPhoto}></Image>
-                    <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 10 }}>Nome do Especialista</Text>
-                    <Text style={{ fontSize: 16, color: colors.darkGray }}>Profissão do Especialista</Text>
+                    <Image style={styles.specialistPhoto} source={{uri: specialist?.image || undefined}}></Image>
+                    <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 10 }}>{specialist?.name}</Text>
+                    <Text style={{ fontSize: 16, color: colors.darkGray }}>{specialist?.profession}</Text>
 
                     <View style={{ flexDirection: "row", alignItems: "center", marginTop: 10 }}>
                         <Icon.AntDesign name="star" size={16} color={colors.primary} />
@@ -86,10 +87,18 @@ export default function InfoEspecialista({ navigation }: any) {
                 <ScrollView>
                     <View style={{ flexDirection: "row", gap: 10, alignItems: "center", padding: 20, }}>
                         <Text style={styles.sectionTitle}>Lista de Serviços</Text>
-                        <Text style={styles.itemAmount}>(quantidade)</Text>
+                        <Text style={styles.itemAmount}>({specialist?.services.length})</Text>
                     </View>
-
-                    <Cards nomeServico="Corte de Cabelo" intervalo="30 min" preco="R$ 50,00" descricao="Corte de cabelo masculino ou feminino, com estilo personalizado." />
+                    {specialist?.services.map((item, index) => (
+                        <Cards
+                            key={item.itemId}
+                            nomeServico={item.itemName}
+                            intervalo={item.itemDuration + " Minutos" || ""}
+                            preco={formatCurrency(item.itemPrice)}
+                            descricao={item.itemDescription || ""}
+                            
+                            />
+                    ))}
                 </ScrollView>
             </View>
         </SafeAreaView>

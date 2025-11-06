@@ -14,42 +14,32 @@ import colors, { font } from "configs/theme";
 import ServiceItem from "components/Salao/ServicesScreenOptions";
 import { Picker } from "@react-native-picker/picker";
 import Icon from "configs/icons";
-import { useSalonContext } from "context/salonContext";
+import { Services, useSalonContext } from "context/salonContext";
 import { formatCurrency, normalizeSize } from "configs/utils";
 import { useAlert } from "context/alertContext";
+import { ServiceTypeCard } from "components/ServiceTypeCard/ServiceTypeCard";
 
 const { width } = Dimensions.get("window");
 
-export interface ServiceTypeProps {
-    id?: any;
-    serviceName?: "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado";
-    price?: string;
-    quantity?: any;
-    types: {
-        itemId?: string;
-        itemDescription: string;
-        itemPrice: string;
-        itemDuration?: any;
-    }[];
-}
+
 
 export default function EstablishmentServices() {
     const { addServicesToSalon, updateServices, serviceList, fetchServices, deleteService } =
         useSalonContext()!;
     const { showAlert } = useAlert();
-    const [selectedService, setSelectedService] = useState<ServiceTypeProps | null>(null);
+    const [selectedService, setSelectedService] = useState<Services | null>(null);
     const [serviceName, setServiceName] = useState<
-        "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado"
+        "Corte de cabelo" | "Maquiagem" | "Massagem" | "Personalizado" | string
     >();
-    const [servicesList, setServicesList] = useState<ServiceTypeProps[]>([]);
+    const [servicesList, setServicesList] = useState<Services[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [infoDisplayVisible, setInfoDisplayVisible] = useState(false);
-    const [editingService, setEditingService] = useState<ServiceTypeProps | null>(null);
+    const [editingService, setEditingService] = useState<Services | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [customServiceName, setCustomServiceName] = useState(""); // Novo estado
     const [serviceDuration, setServiceDuration] = useState(""); // Novo estado
     const [services, setServices] = useState([
-        { id: Date.now(), itemDescription: "", itemPrice: "", serviceName: serviceName, itemDuration: serviceDuration },
+        { id: Date.now(), itemName: "", itemDescription: "", itemPrice: "", serviceName: serviceName, itemDuration: serviceDuration },
     ]);
 
 
@@ -74,6 +64,7 @@ export default function EstablishmentServices() {
             itemId: String(s.id),
             itemDescription: s.itemDescription,
             itemPrice: s.itemPrice,
+            itemName: s.itemName,
             itemDuration: s.itemDuration,
         }));
 
@@ -109,7 +100,7 @@ export default function EstablishmentServices() {
         }
 
         // 🔁 Reseta o formulário
-        setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceName, itemDuration: "" }]);
+        setServices([{ id: Date.now(), itemName: "", itemDescription: "", itemPrice: "", serviceName, itemDuration: "" }]);
         setServiceName(undefined);
         setModalVisible(false);
         setCustomServiceName("");
@@ -121,6 +112,11 @@ export default function EstablishmentServices() {
     const handleChangeDescription = (id: number, newValue: string) => {
         setServices((prev) =>
             prev.map((item) => (item.id === id ? { ...item, itemDescription: newValue } : item))
+        );
+    };
+    const handleChangeName = (id: number, newValue: string) => {
+        setServices((prev) =>
+            prev.map((item) => (item.id === id ? { ...item, itemName: newValue } : item))
         );
     };
 
@@ -139,7 +135,7 @@ export default function EstablishmentServices() {
         );
     };
 
-    const handleInfoDisplay = (item: ServiceTypeProps) => {
+    const handleInfoDisplay = (item: Services) => {
         setSelectedService(item);
         setInfoDisplayVisible(true);
     };
@@ -148,7 +144,7 @@ export default function EstablishmentServices() {
         if (acao === "add") {
             setServices((prev) => [
                 ...prev,
-                { id: Date.now() + Math.random(), itemDescription: "", itemPrice: "", serviceName, itemDuration: "" },
+                { id: Date.now() + Math.random(), itemName: "", itemDescription: "", itemPrice: "", serviceName, itemDuration: "" },
             ]);
             return;
         }
@@ -209,11 +205,7 @@ export default function EstablishmentServices() {
                             <Text style={styles.modalTitle}>{selectedService?.serviceName}</Text>
 
                             {selectedService?.types.map((type) => (
-                                <View key={type.itemId} style={{ padding: 5, flexDirection: "row", justifyContent: "space-between", borderBottomWidth: 1, borderRadius: 20, borderColor: colors.lightGray }}>
-                                    <Text>{type.itemDescription}</Text>
-
-                                    <Text>{formatCurrency(type.itemPrice)}</Text>
-                                </View>
+                                <ServiceTypeCard key={type.itemId} type={type} />
                             ))}
 
                             <View style={styles.modalActions}>
@@ -221,7 +213,7 @@ export default function EstablishmentServices() {
                                     style={[styles.addButton, { marginHorizontal: "auto" }]}
                                     onPress={() => {
                                         setInfoDisplayVisible(false);
-                                        setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceName, itemDuration: "" }]);
+                                        setServices([{ id: Date.now(), itemName: "", itemDescription: "", itemPrice: "", serviceName, itemDuration: "" }]);
                                     }}
                                 >
                                     <Text style={styles.buttonText}>Fechar</Text>
@@ -239,10 +231,11 @@ export default function EstablishmentServices() {
                                             setServices(
                                                 selectedService.types.map((type) => ({
                                                     id: Number(type.itemId),
-                                                    itemDescription: type.itemDescription,
+                                                    itemDescription: type.itemDescription || "Nenhuma descrição adicionada.",
                                                     itemPrice: type.itemPrice,
                                                     serviceName: selectedService.serviceName,
-                                                    itemDuration: type.itemDuration,
+                                                    itemDuration: type.itemDuration || "",
+                                                    itemName: type.itemName,
                                                 }))
                                             );
                                         }
@@ -332,25 +325,33 @@ export default function EstablishmentServices() {
                                     style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}
                                 >
                                     <View style={styles.form}>
-                                        <TextInput
-                                            value={item.itemDescription}
-                                            style={[styles.input]}
-                                            placeholder="Descrição do tipo"
-                                            onChangeText={(text) => handleChangeDescription(item.id, text)}
-                                        />
-                                        <View style={{flexDirection: "row"}}>
+                                        <View style={{ marginBottom: 10, gap: 2 }}>
+                                            <TextInput
+                                                value={item.itemName}
+                                                style={[styles.input]}
+                                                placeholder="Nome do serviço"
+                                                onChangeText={(text) => handleChangeName(item.id, text)}
+                                            />
+                                            <TextInput
+                                                value={item.itemDescription}
+                                                style={[styles.input]}
+                                                placeholder="Descrição do serviço (opicional)"
+                                                onChangeText={(text) => handleChangeDescription(item.id, text)}
+                                            />
+                                        </View>
+                                        <View style={{ flexDirection: "row" }}>
                                             <TextInput
                                                 keyboardType="numeric"
                                                 value={item.itemPrice}
                                                 placeholder="Preço R$"
-                                                style={[styles.input, {width: "50%"}]}
+                                                style={[styles.input, { width: "50%" }]}
                                                 onChangeText={(text) => handleChangePrice(item.id, text)}
                                             />
                                             <TextInput
                                                 keyboardType="numeric"
                                                 value={item.itemDuration}
                                                 placeholder="duração (minutos)"
-                                                style={[styles.input, {width: "50%"}]}
+                                                style={[styles.input, { width: "50%" }]}
                                                 onChangeText={(text) => handleChangeDuration(item.id, text)}
                                             />
                                         </View>
@@ -394,7 +395,7 @@ export default function EstablishmentServices() {
                                     onPress={() => {
                                         setModalVisible(false);
                                         setIsEditing(false);
-                                        setServices([{ id: Date.now(), itemDescription: "", itemPrice: "", serviceName, itemDuration: "" }]);
+                                        setServices([{ id: Date.now(), itemName: "", itemDescription: "", itemPrice: "", serviceName, itemDuration: "" }]);
                                     }}
                                 >
                                     <Text style={styles.buttonText}>Cancelar</Text>
@@ -426,7 +427,7 @@ const styles = StyleSheet.create({
         flex: 1,
         borderBottomWidth: 1,
         borderColor: colors.transparentLightGray,
-   
+
         borderRadius: 20,
         paddingVertical: 8,
     },
@@ -495,4 +496,5 @@ const styles = StyleSheet.create({
         fontFamily: font.poppins.medium,
         textAlign: "center",
     },
+
 });

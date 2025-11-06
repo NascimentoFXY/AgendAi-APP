@@ -19,7 +19,6 @@ import { User } from 'context/auth'
 import { Services, useSalonContext } from "context/salonContext";
 import { collection, doc, getDoc, getDocs, orderBy, query } from "@firebase/firestore";
 import { db } from "services/firebase";
-import { ServiceTypeProps } from "./establishmentServices";
 const { width } = Dimensions.get("window");
 
 
@@ -28,7 +27,8 @@ export interface Specialist {
   name: string,
   email: string,
   rating?: string,
-  service: ServiceTypeProps[],
+  service: Services[],
+  profession: string,
   image?: string,
 }
 export default function EstablishmentEspecialist() {
@@ -38,7 +38,7 @@ export default function EstablishmentEspecialist() {
   const [especialistaEmail, setEspecialistaEmail] = useState("");
   const [especialistaProfession, setEspecialistaProfession] = useState("")
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState<ServiceTypeProps["types"]>([])
+  const [selectedOptions, setSelectedOptions] = useState<Services["types"]>([])
 
   const width = Dimensions.get("window").width;
   const calcCardsWidth = (width / 2) - 40;
@@ -49,8 +49,8 @@ export default function EstablishmentEspecialist() {
     return user
   }, [])
 
-  const toggleOption = (type: ServiceTypeProps["types"][0]) => {
-    const alreadySelected = selectedOptions.some(opt => opt.itemId === type.itemId);
+  const toggleOption = (type: Services["types"][0]) => {
+    const alreadySelected = selectedOptions.some(opt=> opt.itemId === type.itemId);
     if (alreadySelected) {
       setSelectedOptions(prev => prev.filter(opt => opt.itemId !== type.itemId));
     } else {
@@ -75,14 +75,14 @@ export default function EstablishmentEspecialist() {
 
       const specialistSnap = await getDoc(specialistRef);
       if (userRes.id === user?.id && !specialistSnap.exists()) {
-        addSpecialistToSalon!(salon?.id!, user, selectedOptions)
+        addSpecialistToSalon!(salon?.id!, user, selectedOptions, especialistaProfession)
         setModalVisible(false);
         setEspecialistaEmail("");
         setEspecialistaProfession("");
         setSelectedOptions([])
         return
       } else if (specialistSnap.exists()) {
-        alert(`⚠️ ${userRes.name} já foi convidado ou é especialista deste salão.`);
+        alert(`${userRes.name} já foi convidado ou é especialista deste salão.`);
         return;
       }
       notifyUserByEmail(userRes.email, user?.name!, salon?.id!, selectedOptions)
@@ -172,6 +172,7 @@ export default function EstablishmentEspecialist() {
                     {service.types.map((type) => {
 
                       const isSelected = selectedOptions.some(opt => opt.itemId === type.itemId);
+                      
                       return (
                         <TouchableOpacity
                           key={type.itemId}
@@ -181,10 +182,10 @@ export default function EstablishmentEspecialist() {
                           ]}
                           onPress={() => toggleOption(type)}
                         >
-                          <Text style={styles.cardOptionText}>{type.itemDescription}</Text>
-                          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-                            <Text>{formatCurrency(Number(type.itemPrice))}</Text>
-                          </View>
+                          <Text style={styles.cardOptionText} numberOfLines={1}>{type.itemName}</Text>
+
+                          <Text style={{color: colors.primary, fontFamily: font.poppins.semibold}}>{formatCurrency(Number(type.itemPrice))}</Text>
+
                         </TouchableOpacity>
                       );
 
@@ -323,7 +324,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   cardOptionText: {
-    fontFamily: font.poppins.regular
+    fontFamily: font.poppins.regular,
+    flex: 1
   },
   iconInactive: {
     display: "none"

@@ -19,6 +19,8 @@ import { SalonContext, Services } from '../../../../context/salonContext';
 import { AuthContext } from '../../../../context/auth';
 import Icon from 'configs/icons';
 import { useNavigation } from '@react-navigation/native'
+import { formatCurrency } from 'configs/utils';
+import { ServiceTypeCard } from 'components/ServiceTypeCard/ServiceTypeCard';
 
 
 
@@ -88,11 +90,7 @@ export default function SalaoServices() {
                             <Text style={styles.modalTitle}>{selectedService?.serviceName}</Text>
 
                             {selectedService?.types.map((type) => (
-                                <View key={type.itemId} style={{padding: 5, flexDirection: "row", justifyContent: "space-between", borderBottomWidth: 1, borderRadius: 20, borderColor: colors.lightGray}}>
-                                    <Text>{type.itemDescription}</Text>
-                           
-                                    <Text>R$ {type.itemPrice}</Text>
-                                </View>
+                                 <ServiceTypeCard type={type} key={type.itemId}/>
                             ))}
 
                             <View style={styles.modalActions}>
@@ -115,3 +113,32 @@ export default function SalaoServices() {
     )
 
 }
+const card = StyleSheet.create({
+    cardContainer: {
+        padding: 20,
+        borderWidth: 1,
+        borderRadius: 20,
+        borderColor: colors.lightGray,
+        gap: 20,
+        marginVertical: 10
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        justifyContent: "space-between",
+
+    },
+    cardTitle: {
+        fontFamily: font.poppins.bold,
+        width: "50%",
+        fontSize: 12
+    },
+    cardPrice: {
+        fontFamily: font.poppins.semibold,
+        color: colors.primary,
+    },
+    cardDuration: {
+        fontFamily: font.poppins.regular,
+        width: "50%",
+
+    },
+})

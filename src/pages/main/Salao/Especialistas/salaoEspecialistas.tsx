@@ -28,7 +28,7 @@ const calcCardsWidth = (width / 2) - 40;
 export default function SalaoEspecialistas() {
     const navigation = useNavigation() as any
     const [especialistaList, setEspecialistaList] = useState<Specialist[]>();
-    const { salon, isOwner } = useSalonContext()!
+    const { salon, isOwner, selectSpecialist } = useSalonContext()!
     useEffect(() => {
         const fetchSpecialists = async () => {
 
@@ -41,8 +41,8 @@ export default function SalaoEspecialistas() {
                 if (querySnapshot.empty) return;
                 const specialists = querySnapshot.docs.map(doc => ({
                     id: doc.id,
-                    ...doc.data() as { name: string, email: string, service: string }
-                }))
+                    ...doc.data()
+                }) as Specialist)
                 setEspecialistaList(specialists)
             } catch (er) {
                 console.error("[establishmentEspecialist] ", er)
@@ -97,11 +97,17 @@ export default function SalaoEspecialistas() {
                         key={item.id}
                         userPhoto={item.image} // imagem do usuario
                         name={capitalizeFirstLetter(item.name)} // nome
-                        profession={item.service} // serviço ex: Corte de Cabelo
+                        profession={item.profession} // serviço ex: Corte de Cabelo
                         cardWidth={calcCardsWidth}
-                        onPress={()=>{navigation.navigate("InfoEspecialista")}}
-                        />
-                    )
+                        onPress={async () => {
+                            await selectSpecialist(item.id).then((res) => {
+                                if(!res)return
+                                navigation.navigate("InfoEspecialista")
+                                console.log("aaa",res.id)
+                            })
+                        }}
+                    />
+                )
                 )
                 }
 
