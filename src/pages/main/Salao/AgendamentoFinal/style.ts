@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import colors from "../../../../configs/theme";
+import colors, { font } from "../../../../configs/theme";
 export const styles = StyleSheet.create({
     container:{
         alignItems: "center",
@@ -56,8 +56,9 @@ export const styles = StyleSheet.create({
         alignItems: "center"
     },
     content:{
-   
+        
         padding: 20,
+        margin: 20,
         borderWidth: 0.9,
         borderRadius: 20,
         borderColor: "#0000000f",
@@ -70,14 +71,18 @@ export const styles = StyleSheet.create({
     },
     label:{
         fontSize: 16,
-        fontWeight: "bold",
+        fontFamily:font.poppins.semibold,
         textAlignVertical: "center",
-        color: "#a0a0a0"
+        color: "#a0a0a0",
+        width: "50%"
     },
     label2:{
         fontSize: 16,
-        fontWeight: "bold",
-        textAlignVertical: "center"
+        fontFamily:font.poppins.semibold,
+        textAlignVertical: "center",
+        width: "50%",
+        justifyContent:"flex-end",
+        textAlign: "right"
         
     },
     labelContainer:{

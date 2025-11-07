@@ -3,7 +3,8 @@ import Icon from 'configs/icons';
 import colors, { font } from 'configs/theme';
 import { formatCurrency, normalizeSize } from 'configs/utils';
 import { useAuthContext } from 'context/auth';
-import { useSalonContext } from 'context/salonContext';
+import { Services, useSalonContext } from 'context/salonContext';
+import { useNavigation } from '@react-navigation/native'
 import React from 'react';
 import {
     View,
@@ -22,11 +23,26 @@ interface InfoCardProps {
     intervalo: string;
     preco: string;
     descricao: string;
+    duracao?: string;
+    navigation: any;
+    specialist: any;
+    id: any;
 }
+
 const Cards = (props: InfoCardProps) => {
     function onPress() {
-        //lógica de agendamento
+        props.navigation.navigate("Scheduling", {
+            specialist: props.specialist, // vindo do contexto
+            service: {
+                itemName: props.nomeServico,
+                itemDescription: props.descricao,
+                itemPrice: props.preco,
+                itemDuration: props.duracao,
+                itemId: props.id,
+            } as Services["types"][0]
+        });
     }
+
     return (
         <View style={styles.card}>
             <View style={styles.cardHeader}>
@@ -40,7 +56,7 @@ const Cards = (props: InfoCardProps) => {
             <Text style={styles.cardDesc}>{props.descricao}</Text>
 
             <View style={styles.cardActionsSection}>
-                <Text style={styles.cardPrice}>{props.preco}</Text>
+                <Text style={styles.cardPrice}>{formatCurrency(props.preco)}</Text>
                 <TouchableOpacity style={styles.cardBtn} onPress={onPress}>
                     <Text>Agendar</Text>
                 </TouchableOpacity>
@@ -74,7 +90,7 @@ export default function InfoEspecialista({ navigation, props }: any) {
 
             <View style={styles.modalContainer}>
                 <View style={styles.specialistInfoContainer}>
-                    <Image style={styles.specialistPhoto} source={{uri: specialist?.image || undefined}}></Image>
+                    <Image style={styles.specialistPhoto} source={{ uri: specialist?.image || undefined }}></Image>
                     <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 10 }}>{specialist?.name}</Text>
                     <Text style={{ fontSize: 16, color: colors.darkGray }}>{specialist?.profession}</Text>
 
@@ -92,12 +108,16 @@ export default function InfoEspecialista({ navigation, props }: any) {
                     {specialist?.services.map((item, index) => (
                         <Cards
                             key={item.itemId}
+                            id={item.itemId}
                             nomeServico={item.itemName}
                             intervalo={item.itemDuration + " Minutos" || ""}
-                            preco={formatCurrency(item.itemPrice)}
+                            preco={item.itemPrice}
                             descricao={item.itemDescription || ""}
-                            
-                            />
+                            duracao={item.itemDuration}
+                            navigation={navigation}
+                            specialist={specialist}
+                        />
+
                     ))}
                 </ScrollView>
             </View>

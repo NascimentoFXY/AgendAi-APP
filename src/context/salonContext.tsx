@@ -47,7 +47,7 @@ export interface Rating {
     salonID?: string,
 
 }
-interface Specialist {
+export interface Specialist {
     id?: string,
     name: string,
     email: string,

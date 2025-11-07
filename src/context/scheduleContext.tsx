@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode, use, useEffect } from 'react';
 import { auth, db } from 'services/firebase';
 import { AuthContext } from './auth';
-import { SalonContext } from './salonContext';
+import { SalonContext, Services } from './salonContext';
 import { collection, doc, getDoc, getDocs, orderBy, query, serverTimestamp, setDoc, updateDoc, where, writeBatch } from '@firebase/firestore';
-import { Specialist } from 'pages/main/UserEtablishment/establishmentEspecialist';
-
+import { Specialist } from "context/salonContext"
 export interface ScheduleParams {
     id?: string;
     userId: string;
@@ -19,6 +18,7 @@ export interface ScheduleParams {
     showNotification?: boolean;
     status: string;
     specialist: Specialist
+    service: Services["types"][0]
 }
 type ScheduleContextType = {
     schedules: ScheduleParams[];
@@ -30,7 +30,7 @@ type ScheduleContextType = {
     useSchedule: (schedule: any) => Promise<ScheduleParams | undefined>;
     schedule: ScheduleParams;
     showNotification?: boolean;
-    updateNotification?: (value: boolean, scheduleId: string ) => Promise<void>
+    updateNotification?: (value: boolean, scheduleId: string) => Promise<void>
 };
 export const ScheduleContext = createContext<ScheduleContextType | undefined>(undefined);
 
@@ -40,6 +40,8 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
     const { user } = useContext(AuthContext)!;
     const { salon } = useContext(SalonContext)!;
     const [scheduleData, setScheduleData] = useState<ScheduleParams>();
+
+
 
     const fetchSchedules = async () => {
         if (!user) return;
@@ -60,10 +62,10 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
         fetchSchedules();
     }, [user]);
 
-
     const confirmActions = (data: ScheduleParams) => {
         try {
             setScheduleData({ ...data });
+            console.warn(data)
         } catch (error) {
             console.error("Erro ao confirmar agendamento: ", error);
             return null;
@@ -130,13 +132,13 @@ const ScheduleProvider = ({ children }: { children: ReactNode }) => {
             console.error("Erro ao cancelar agendamento: ", error);
         }
     };
-    async function updateNotification(value: boolean, scheduleId: string){
+    async function updateNotification(value: boolean, scheduleId: string) {
         const scheduleRef = doc(db, "users", user?.id!, "schedules", scheduleId)
-        try{
-            await updateDoc(scheduleRef,{
+        try {
+            await updateDoc(scheduleRef, {
                 showNotification: value,
             })
-        }catch(er){
+        } catch (er) {
             alert(er)
         }
     }

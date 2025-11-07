@@ -27,7 +27,7 @@ export interface Specialist {
   name: string,
   email: string,
   rating?: string,
-  service: Services[],
+  services: Services[],
   profession: string,
   image?: string,
 }

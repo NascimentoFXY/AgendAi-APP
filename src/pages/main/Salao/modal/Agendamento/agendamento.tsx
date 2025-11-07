@@ -15,31 +15,41 @@ import {
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { styles } from '../../style';
-import colors from '../../../../../configs/theme'
+import colors, { font } from '../../../../../configs/theme'
 import ServicesCards from '../../../../../components/homeScreenComponents/ServicesCarroussel';
 import SalaoServices from '../../Services/services';
 import SalaoEspecialistas from '../../Especialistas/salaoEspecialistas';
 import Rating from '../../Avaliacoes';
 import ProfessionalCard from '../../../../../components/Salao/EspecialistaScreen';
-import { SalonContext } from '../../../../../context/salonContext';
+import { SalonContext, Services } from '../../../../../context/salonContext';
 import { ScheduleContext, ScheduleParams } from 'context/scheduleContext';
 import TabBarButton from 'components/TabBar';
 import CustomButton from 'components/customButton';
 import { AuthContext } from 'context/auth';
-import { Specialist } from 'pages/main/UserEtablishment/establishmentEspecialist';
+import { Specialist } from "context/salonContext"
+import { formatCurrency } from 'configs/utils';
 
 const scrollProps = {
     showsHorizontalScrollIndicator: false,
     horizontal: true,
     snapToInterval: 110,
 }
-
-
-
-export default function Scheduling({ navigation }: any) {
+export default function Scheduling({ navigation, route }: any) {
     const { salon, loading, specialistList } = useContext(SalonContext)!
     const { user } = useContext(AuthContext)!
     const { cancelSchedule, confirmActions } = useContext(ScheduleContext)!
+
+    const { specialist: selectedFromInfo, service } = route.params || {};
+
+    const [selectedSpecialist, setSelectedSpecialist] = useState<Specialist | null>(
+        selectedFromInfo || null
+    );
+
+    const [selectedService, setSelectedService] = useState<Services["types"][0] | null>(service || null);
+
+    const serviceDuration = selectedService?.itemDuration
+        ? parseInt(selectedService?.itemDuration)
+        : 20; // padrão 20 min se nada vier
     const start = (salon?.opHour).split("-")[0] || "08:00";
 
     const end = (salon?.opHour).split("-")[1] || "18:00";
@@ -50,7 +60,7 @@ export default function Scheduling({ navigation }: any) {
     // converte tudo pra minutos
     const startTotal = startHours * 60 + startMinutes;
     const endTotal = endHours * 60 + endMinutes;
-    const interval = 20;
+    const interval = serviceDuration;
     const HourItems: any = []
     const now = new Date();
     const currentTotal = now.getHours() * 60 + now.getMinutes();
@@ -59,8 +69,7 @@ export default function Scheduling({ navigation }: any) {
 
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [selectedDay, setSelectedDay] = useState<number | null>(null);
-    const [selectedSpecialist, setSelectedSpecialist] = useState<Specialist | null>(null);
-    const [selectedSchedule, setSelectedSchedule] = useState<ScheduleParams>({
+    const [selectedSchedule, setSelectedSchedule] = useState<ScheduleParams | null>({
         salonName: salon?.name || "undefined",
         salonId: salon?.id || "undefined",
         userId: user?.id || "undefined",
@@ -69,7 +78,12 @@ export default function Scheduling({ navigation }: any) {
         time: selectedTime || "undefined",
         address: salon?.addres || "undefined",
         status: "active",
-        specialist: selectedSpecialist?.name || null,
+        specialist: selectedSpecialist!,
+        serviceId: selectedService?.itemId,
+        service: selectedService || {
+            itemName: '',
+            itemPrice: '',
+        }
 
     });
     useEffect(() => {
@@ -94,7 +108,7 @@ export default function Scheduling({ navigation }: any) {
                     activeOpacity={0.8}
                     onPress={() => {
                         setSelectedTime(formattedTime);
-                        setSelectedSchedule((prev) => ({
+                        setSelectedSchedule((prev) => prev && ({
                             ...prev,
                             time: `${formattedTime}`, // salva o dia formatado
                         }));
@@ -154,7 +168,7 @@ export default function Scheduling({ navigation }: any) {
                     activeOpacity={0.8}
                     onPress={() => {
                         setSelectedDay(i);
-                        setSelectedSchedule((prev) => ({
+                        setSelectedSchedule((prev) => prev && ({
                             ...prev,
                             date: `${date.getMonth() + day}|${weekDay} ${day} de ${month}`, // salva o dia formatado
                         }));
@@ -203,7 +217,7 @@ export default function Scheduling({ navigation }: any) {
         }
         console.log(specialistObject)
         setSelectedSpecialist(specialistObject);
-        setSelectedSchedule((prev) => ({
+        setSelectedSchedule((prev) => prev && ({
             ...prev,
             specialist: specialistObject as any
         }))
@@ -245,38 +259,81 @@ export default function Scheduling({ navigation }: any) {
                 </View>
 
             </View>
+
+
+
+
+
+
+
+
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Text style={styles.subTitle}>Agendamento</Text>
+                {selectedService && (
+                     <TouchableOpacity key={selectedService.itemId}
+                            style={{ padding: 20, backgroundColor: "white", margin: 5, outlineColor: colors.primary, outlineWidth:1 }}
+                            onPress={() => setSelectedService(null)}
+                        >
+                        <Text style={{ fontSize: 18, fontFamily: font.poppins.bold }}>{selectedService.itemName}</Text>
+                        <Text>{selectedService.itemDescription}</Text>
+                        <Text style={{ color: colors.primary }}>{formatCurrency(selectedService.itemPrice)}</Text>
+                        <Text>Duração: {selectedService.itemDuration} Minutos</Text>
+                    </TouchableOpacity>
+                )}
 
-                <View>
-                    <Text style={styles.title}>Dia</Text>
+                {selectedSpecialist && selectedService && (
+                    <>
 
-                    <ScrollView
-                        {...scrollProps}
-                        style={{
-                        }}
-                        contentContainerStyle={{ gap: 10, paddingRight: 20, paddingLeft: 20 }}>
-                        {/* conteudos */}
-                        {DayItems.map((item: any) => (
-                            <View key={item.id}>
-                                {item.content}
-                            </View>
-                        ))}
-                    </ScrollView>
-                </View>
-                <View>
-                    <Text style={styles.title}>Horario</Text>
-                    <ScrollView
-                        {...scrollProps}
-                        contentContainerStyle={{ gap: 10, paddingRight: 20, paddingLeft: 20 }}
-                    >
-                        {HourItems.map((item: any) => (
-                            <View key={item.id}>
-                                {item.content}
-                            </View>
-                        ))}
-                    </ScrollView>
-                </View>
+                        <View>
+                            <Text style={styles.title}>Dia</Text>
+
+                            <ScrollView
+                                {...scrollProps}
+                                style={{
+                                }}
+                                contentContainerStyle={{ gap: 10, paddingRight: 20, paddingLeft: 20 }}>
+                                {/* conteudos */}
+                                {DayItems.map((item: any) => (
+                                    <View key={item.id}>
+                                        {item.content}
+                                    </View>
+                                ))}
+                            </ScrollView>
+                        </View>
+
+                        <View>
+                            <Text style={styles.title}>Horario</Text>
+                            <ScrollView
+                                {...scrollProps}
+                                contentContainerStyle={{ gap: 10, paddingRight: 20, paddingLeft: 20 }}
+                            >
+                                {HourItems.map((item: any) => (
+                                    <View key={item.id}>
+                                        {item.content}
+                                    </View>
+                                ))}
+                            </ScrollView>
+                        </View>
+
+                    </>
+                )}
+
+                {selectedSpecialist && !selectedService && <View>
+                    {selectedSpecialist?.services.map((item, index) => (
+                        <TouchableOpacity key={item.itemId}
+                            style={{ padding: 20, backgroundColor: "white", margin: 5 }}
+                            onPress={() => setSelectedService(item)}
+                        >
+
+                            <Text style={{ fontSize: 18, fontFamily: font.poppins.bold }}>{item.itemName}</Text>
+                            <Text>{item.itemDescription}</Text>
+                            <Text style={{ color: colors.primary }}>{formatCurrency(item.itemPrice)}</Text>
+                            <Text>Duração: {item.itemDuration} Minutos</Text>
+
+                        </TouchableOpacity>
+                    ))}
+                </View>}
+
                 <View>
                     <Text style={styles.title}>Especialistas</Text>
 
@@ -295,15 +352,21 @@ export default function Scheduling({ navigation }: any) {
                                     outlineWidth: selectedSpecialist?.id === specialistList[index].id ? 2 : 0,
                                     outlineColor: colors.primary,
                                 }}
-                                cardWidth={(Dimensions.get("window").width / 2) - 40} name={item.name} profession={item.service} userPhoto={item.image}
-                                onPress={() => {selectSpecialist(specialistList[index])}} />
+                                cardWidth={(Dimensions.get("window").width / 2) - 40}
+                                name={item.name}
+                                profession={item.profession}
+                                userPhoto={item.image}
+
+                                onPress={() => { selectSpecialist(specialistList[index] as any) }} />
                         ))}
                     </View>
 
                 </View>
 
+
+
             </ScrollView>
-            <TabBarButton title='Reservar horário' onPress={() => { confirmActions(selectedSchedule); navigation.navigate("ScheduleFinal") }} />
+            <TabBarButton title='Reservar horário' onPress={() => { selectedSchedule && confirmActions(selectedSchedule); navigation.navigate("ScheduleFinal") }} />
         </SafeAreaView>
 
 
