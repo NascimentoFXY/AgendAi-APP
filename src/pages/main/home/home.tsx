@@ -27,6 +27,7 @@ import { ScheduleContext } from 'context/scheduleContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUserLocation } from 'context/userLocation';
 import Catalogo from 'pages/catalogo/catalogo';
+import Icon from 'configs/icons';
 
 
 const cardsWidth = 400;
@@ -78,13 +79,15 @@ export function Home({ navigation }: any) {
         // Exiba um carregamento ou redirecione para a tela de login
         return <ActivityIndicator />;
     }
-    const { salon, salonList, loadSalon, getAverageRating } = salonData
+    const { salon, salonList, loadSalon, getAverageRating, saveSalon, savedList, removeSalon } = salonData
     const { createSchedule, schedules, schedule, useSchedule, cancelSchedule, fetchSchedules } = scheduleData!;
 
 
 
 
     const TopSaloesCardsData = ({ rating, name, salonId, image }: any) => {
+        const isFavorite = savedList?.some((s) => s.id === salonId);
+
         return (
             <TouchableOpacity onPress={async () => (navigation.navigate("Salao"), await loadSalon(salonId))} >
                 <View
@@ -93,9 +96,12 @@ export function Home({ navigation }: any) {
                     <Image source={{ uri: image }} style={{ resizeMode: "cover", position: "absolute", width: "100%", height: "100%" }} />
 
 
-                    <View style={styles.saloesHeart}>
+                    {!isFavorite && <TouchableOpacity style={styles.saloesHeart} onPress={() => { saveSalon(salonId) }}>
                         <FontAwesome5 name='heart' size={30} />
-                    </View>
+                    </TouchableOpacity>}
+                    {isFavorite && <TouchableOpacity style={styles.saloesHeart} onPress={() => { removeSalon(salonId) }}>
+                        <Icon.FontAwesome6 name='heart-circle-minus' size={30} />
+                    </TouchableOpacity>}
 
                     <LinearGradient
                         colors={['rgba(255, 255, 255, 0)', '#000000ff']}
@@ -185,7 +191,7 @@ export function Home({ navigation }: any) {
                                 <View style={{ flex: 1 }}>
                                     <Text style={{ fontWeight: 'bold', color: "#fff", fontSize: 24 }}>{salon.name} com desconto</Text>
                                     <Text style={{ color: "#fff" }}>De até</Text>
-                                    <Text style={{ color: "#fff" }}>{}</Text>
+                                    <Text style={{ color: "#fff" }}>{ }</Text>
                                 </View>
                                 <View style={{ flexDirection: "row", flex: 1, justifyContent: "space-between", paddingTop: 30, alignItems: "center" }}>
                                     <Text style={{ color: "#fff", fontSize: 12, paddingTop: 20, }}>Localizado em{salon.addres?.split(",")[2]},{salon.addres?.split(",")[1]}</Text>

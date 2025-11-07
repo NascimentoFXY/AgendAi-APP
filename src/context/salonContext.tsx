@@ -1,7 +1,7 @@
 import React, { useState, createContext, use, useEffect, useContext, useCallback, useMemo } from "react";
 import { AuthContext } from "./auth";
 import { db, uploadImageAndSaveToFirestore } from "../services/firebase";
-import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc, deleteDoc, serverTimestamp, Timestamp, updateDoc } from "@firebase/firestore";
+import { setDoc, doc, collection, query, orderBy, getDocs, addDoc, onSnapshot, getDoc, deleteDoc, serverTimestamp, Timestamp, updateDoc, where } from "@firebase/firestore";
 import { User } from 'context/auth'
 import { DataProps } from "../pages/main/Salao/CriarSalao/compontents/forms";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
@@ -104,12 +104,17 @@ interface SalonContextType {
     fetchServices: () => Promise<void>,
     fetchCupons: () => Promise<void>,
     selectSpecialist: (id: any) => Promise<Specialist | undefined>,
+    saveSalon: (salonID: string) => Promise<void>,
+    removeSalon: (salonID: string) => Promise<void>,
+    fetchSaved: () => Promise<void>,
+    savedList: Salon[],
     specialistList: Specialist[],
     ratingFilter?: string,
     serviceList: Services[]
-    loading: boolean,
-    isValid: boolean,
-    isOwner: boolean,
+    loading: Boolean,
+    isValid: Boolean,
+    isOwner: Boolean,
+    isFavorite: Boolean,
 }
 
 
@@ -132,7 +137,8 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     const [serviceList, setServiceList] = useState<Services[]>([])
     const [isInputValid, setInputValid] = useState(false)
     const [cuponList, setCuponList] = useState<Cupon[]>([]);
-
+    const [savedList, setSavedList] = useState<Salon[]>([])
+    const [isFavorite, setIsFavorite] = useState<Boolean>(false)
     const [info, setInfo] = useState<Info>({
         cep: "",
         nome: "",
@@ -338,6 +344,103 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         await loadSalonData(salonId)
     }, [])
 
+    //=================================================Salvar salão===================================================//
+
+    const saveSalon = useCallback(async (salonID: string) => {
+        try {
+            if (!salonID) return
+
+            const userFavoritesRef = collection(db, "users", user!.id, "favorites");
+
+            //  Verifica se o salão já está salvo nos favoritos
+            const q = query(userFavoritesRef, where("id", "==", salonID));
+            const existing = await getDocs(q);
+
+            if (!existing.empty) {
+                console.log("Salão já está nos favoritos!");
+                return;
+            }
+
+            // 🔹 Busca os dados do salão no Firestore principal
+            const salonRef = doc(db, "salon", salonID);
+            const salonSnap = await getDoc(salonRef);
+
+            if (!salonSnap.exists()) {
+                console.warn("Salão não encontrado!");
+                return;
+            }
+
+            const salonData = salonSnap.data();
+
+            // 🔹 Cria o documento dentro de "users/{id}/favorites"
+            const favoriteRef = doc(userFavoritesRef);
+            await setDoc(favoriteRef, {
+                ...salonData
+            }).then(fetchSaved);
+
+            console.log("✅ Salão salvo nos favoritos com sucesso!");
+        } catch (error) {
+            console.error("Erro ao salvar salão nos favoritos:", error);
+        }
+    }, [user]);
+
+    const removeSalon = useCallback(async (salonID: string) => {
+        try {
+            if (!salonID || !user?.id) return;
+
+            const userFavoritesRef = collection(db, "users", user.id, "favorites");
+
+            // 🔹 Busca o documento exato do salão nos favoritos
+            const q = query(userFavoritesRef, where("id", "==", salonID));
+            const existing = await getDocs(q);
+
+            if (existing.empty) {
+                console.log("Salão não está nos favoritos!");
+                return;
+            }
+
+            // 🔹 Deleta todos os documentos que correspondem ao salão
+            for (const docSnap of existing.docs) {
+                await deleteDoc(doc(userFavoritesRef, docSnap.id));
+            }
+
+            console.log("❌ Salão removido dos favoritos com sucesso!");
+
+            // 🔹 Atualiza a lista local
+            await fetchSaved();
+        } catch (error) {
+            console.error("Erro ao remover salão dos favoritos:", error);
+        }
+    }, [user]);
+
+
+
+    const fetchSaved = async () => {
+        try {
+
+
+            const userFavoritesRef = collection(db, "users", user!.id, "favorites");
+            const allFavoritesSnap = await getDocs(userFavoritesRef);
+            const favoritesList = allFavoritesSnap.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data() as Salon,
+            }));
+
+            setSavedList(favoritesList)
+        } catch (er) { }
+    }
+    useEffect(() => {
+        const isSalonFavorite = () => {
+            if (!salon) return
+            const _isFavorite = savedList.some((s) => s.id === salon?.id);
+            console.log("é fav?", _isFavorite)
+            setIsFavorite(_isFavorite);
+        };
+        isSalonFavorite();
+    }, [salon]);
+
+    //=================================================FIM SALVAR SALÃO===================================================//
+
     //=============================SESSÃO DOS ESPECIALISTAS===================================//
     const [especialistaList, setEspecialistaList] = useState<Specialist[]>();
     //----------------------------adicionar especialista------------------//
@@ -410,7 +513,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         } catch (err) {
             console.error("[selectSpecialist] Erro ao buscar especialista:", err);
         }
-    },[salon?.id]);
+    }, [salon?.id]);
     //=============================FIM-SESSÃO DOS ESPECIALISTAS===================================//
     // --------------------Busca avaliações---------------------------------------------//
     const [ratings, setRatings] = useState<Rating[]>([]);
@@ -475,7 +578,11 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
 
     // -----------------------atualizar----------------------------------//
     useEffect(() => {
-        fetchSalons();
+        const fetch = async () => {
+            await fetchSalons();
+
+        }
+        fetch()
     }, []);
     // Estado para armazenar os cupons
 
@@ -550,7 +657,9 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         isOwner: salon?.ownerID === user?.id,
         serviceList: serviceList,
         specialist: specialist,
-        cuponList: cuponList
+        cuponList: cuponList,
+        savedList: savedList,
+        isFavorite: isFavorite
     }
     const dependences = {
         salon,
@@ -561,7 +670,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         ratingFilter,
         especialistaList,
         user: user?.id,
-        specialist
+        specialist,
     };
     const functions = {
         createSalon,
@@ -580,6 +689,9 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         fetchServices,
         fetchCupons,
         selectSpecialist,
+        saveSalon,
+        fetchSaved,
+        removeSalon
 
     }
 
@@ -598,7 +710,9 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                 ratingFilter,
                 especialistaList,
                 user?.id,
-                specialist
+                specialist,
+                savedList,
+                isFavorite,
             ]
         )}>
             {children}

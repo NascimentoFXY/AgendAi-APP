@@ -16,6 +16,7 @@ import Icon from 'configs/icons';
 import { useAuthContext } from 'context/auth';
 import pickImage from 'configs/pickImage';
 import TabBarButton from 'components/TabBar';
+import UserSaved from './userProfileSections/userSaved';
 
 const { width, height } = Dimensions.get('window');
 
@@ -162,7 +163,7 @@ export default function UserProfile() {
                     {/* Content Scroll */}
                     <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
                         <UserRatings />
-                        <UserRatings />
+                        <UserSaved />
                     </ScrollView>
                 </View>
             </ScrollView>

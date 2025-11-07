@@ -65,7 +65,7 @@ export default function MainModal({ navigation }: any) {
         <Text style={styles.SalaoNome}>{salon?.name}</Text>
         <Text style={styles.SalaoSubTitle}>{salon?.description}</Text>
       </View>
-
+    
       <View style={styles.SalaoLocContainer}>
         {!isOwner ? (
           <View style={[styles.SalaoLocText]}>
@@ -118,25 +118,26 @@ export default function MainModal({ navigation }: any) {
 
 
   const handleScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-  const y = event.nativeEvent.contentOffset.y;
-  // Se passou da metade do header, "gruda"
-  if (y > STICKY_HEADER_POINT / 2 && y < STICKY_HEADER_POINT) {
-    scrollRef.current?.scrollTo({ y: STICKY_HEADER_POINT, animated: true });
-  }
-  else if(y<STICKY_HEADER_POINT){
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
-  }
-};
+    const y = event.nativeEvent.contentOffset.y;
+    // Se passou da metade do header, "gruda"
+    if (y > STICKY_HEADER_POINT / 2 && y < STICKY_HEADER_POINT) {
+      scrollRef.current?.scrollTo({ y: STICKY_HEADER_POINT, animated: true });
+    }
+    else if (y < STICKY_HEADER_POINT) {
+      scrollRef.current?.scrollTo({ y: 0, animated: true });
+    }
+  };
 
   return (
     <ScrollView
       ref={scrollRef}
       stickyHeaderIndices={[1]}
       showsVerticalScrollIndicator={false}
-      style={{ zIndex: 10, borderRadius: 20, backgroundColor: colors.background, marginTop:-30}}
+      style={{ zIndex: 10, borderRadius: 20, backgroundColor: colors.background, marginTop: -30 }}
       onScrollEndDrag={handleScrollEnd}
       scrollEventThrottle={16}
     >
+      
       <Header />
 
       <View style={styles.NavigationOptions}>

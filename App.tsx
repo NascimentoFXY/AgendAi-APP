@@ -15,6 +15,8 @@ import { useEffect, useState } from 'react';
 import MainScreen from './src/components/MainScreenLogo';
 import { font } from 'configs/theme';
 import Providers from 'context/providers/providers';
+import { clearIndexedDbPersistence } from "firebase/firestore";
+import { db } from 'services/firebase';
 
 const getFonts = () => Font.loadAsync({
   'poppins-regular': require("./assets/fonts/poppins/Poppins-Regular.ttf"),
@@ -31,26 +33,34 @@ const getFonts = () => Font.loadAsync({
 });
 
 
-
 export function PrivateRoute() {
   const { isAuthenticated, loading, isComplete } = useContext(AuthContext)!;
   // console.log("esta completo? ", isComplete)
   if (loading) return <ActivityIndicator size="large" />;
-
+  
   if (isAuthenticated && !isComplete) {
     return <CompleteProfile />;
   }
-
+  
   return isAuthenticated && isComplete ? <TabRoutes /> : <Routes />;
-
+  
 }
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
-
+  
+  useEffect(() => {
+    async function clearCache() {
+  
+      await clearIndexedDbPersistence(db).catch((e) =>
+        console.warn("Erro ao limpar cache Firestore:", e)
+      );
+    }
+    clearCache();
+  }, []);
   useEffect(() => {
     getFonts().then(() => setFontsLoaded(true));
   }, []);
-
+  
   if (!fontsLoaded) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -65,5 +75,5 @@ export default function App() {
       </Providers>
     </NavigationContainer>
   );
-
+  
 }
