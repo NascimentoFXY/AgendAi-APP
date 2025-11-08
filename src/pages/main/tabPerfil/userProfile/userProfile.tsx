@@ -1,5 +1,5 @@
 import colors, { font } from 'configs/theme';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     View,
     Text,
@@ -9,6 +9,8 @@ import {
     Image,
     StyleSheet,
     Dimensions,
+    NativeSyntheticEvent,
+    NativeScrollEvent,
 } from 'react-native';
 import UserRatings from './userProfileSections/userRatings';
 import { LoadingModal, normalizeSize, capitalizeFirstLetter } from 'configs/utils';
@@ -28,6 +30,11 @@ export default function UserProfile() {
     const [userName, setUserName] = useState<string | null>(null);
     const [userEmail, setUserEmail] = useState<string | null>(null);
     const [hasEdited, setHasEdited] = useState<boolean>(false);
+    const scrollRef = useRef<ScrollView>(null);
+    const [currentPage, setCurrentPage] = useState(0);
+    const pages = [1, 2, 3]
+
+
     useEffect(() => {
         setLoading(true);
         const loadUserData = async () => {
@@ -59,6 +66,22 @@ export default function UserProfile() {
         });
         setLoading(false);
     }
+
+    const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width)
+        // console.log(pageIndex)
+        setCurrentPage(pageIndex);
+    }, [width])
+
+    const scrollToPage = useCallback((pageIndex: number) => {
+        if (pageIndex >= 0 && pageIndex < pages.length && scrollRef.current) {
+            scrollRef.current.scrollTo({ x: width * pageIndex, animated: true });
+        } else {
+
+            console.warn(`Página com índice ${pageIndex} não encontrada.`);
+        }
+    }, [width, pages]);
+
     return (
         <SafeAreaView style={styles.container}>
             <LoadingModal loading={isLoading} />
@@ -83,7 +106,7 @@ export default function UserProfile() {
             </View>
 
             {/* Modal / Content */}
-            <ScrollView contentContainerStyle={{paddingBottom: 250}} style={{borderRadius: 20,paddingTop: 80, marginTop: -100}} >
+            <ScrollView contentContainerStyle={{ paddingBottom: 250 }} style={{ borderRadius: 20, paddingTop: 80, marginTop: -100 }} >
                 {/* Header */}
                 <View style={styles.modalContainer}>
                     <View style={styles.modalHeader}>
@@ -148,22 +171,29 @@ export default function UserProfile() {
 
                         {/* Tabs */}
                         <ScrollView horizontal contentContainerStyle={styles.tabsContainer} showsHorizontalScrollIndicator={false}>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={()=>{scrollToPage(0)}}>
                                 <Text style={styles.tabText}>Minhas avaliações</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity>
-                                <Text style={styles.tabText}>Avaliações sobre mim</Text>
+                            <TouchableOpacity onPress={()=>{scrollToPage(1)}}>
+                                <Text style={styles.tabText}>Favoritos</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity>
-                                <Text style={styles.tabText}>Salvos</Text>
+                            <TouchableOpacity onPress={()=>{scrollToPage(2)}}>
+                                <Text style={styles.tabText}>Avaliações sobre mim</Text>
                             </TouchableOpacity>
                         </ScrollView>
                     </View>
 
                     {/* Content Scroll */}
-                    <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
+                    <ScrollView
+                        ref={scrollRef}
+                        onScroll={handleScroll}
+                        horizontal
+                        pagingEnabled
+                        showsHorizontalScrollIndicator={false}>
+
                         <UserRatings />
                         <UserSaved />
+                        <UserRatings />
                     </ScrollView>
                 </View>
             </ScrollView>
@@ -222,7 +252,7 @@ const styles = StyleSheet.create({
     modalHeader: {
         borderRadius: 20,
         borderBottomWidth: 1,
-     
+
     },
 
     /** User Info */
