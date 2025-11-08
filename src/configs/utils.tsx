@@ -223,9 +223,9 @@ export const LoadingModal: React.FC<{ loading: boolean, text?: string }> = ({ lo
     return (
         <>
             <Modal visible={loading} transparent animationType='fade'>
-                <View  style={{ flex: 1, backgroundColor: "#ffffff27", alignItems: "center", justifyContent: "center" }} >
+                <View style={{ flex: 1, backgroundColor: "#ffffff27", alignItems: "center", justifyContent: "center" }} >
 
-                    <ActivityIndicator size={60} color={colors.primary}/>
+                    <ActivityIndicator size={60} color={colors.primary} />
                     <Text style={{ fontSize: 20, color: "#000000ff", fontFamily: font.poppins.semibold }}>{text}</Text>
                 </View>
 
@@ -235,12 +235,20 @@ export const LoadingModal: React.FC<{ loading: boolean, text?: string }> = ({ lo
     )
 }
 
-export function formatCurrency(value: number | string) {
-  const number = Number(value);
-  if (isNaN(number)) return "R$ 0,00";
+export function formatCurrency(value: any) {
 
-  return number.toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
+    const number = Number(value);
+    if (isNaN(number)) return "R$ 0,00";
+
+    return number.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+    });
+}
+
+export function formatDate(value: string): string {
+    const cleaned = value.replace(/\D/g, "").slice(0, 4);
+
+    if (cleaned.length <= 2) return cleaned;
+    return `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
 }
