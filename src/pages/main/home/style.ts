@@ -44,8 +44,8 @@ export const styles = StyleSheet.create({
     },
     especialCards: {
         backgroundColor: "#242424ff",
-        width: normalizeSize(400),
-        height: normalizeSize(260),
+        width: normalizeSize(350),
+        height: normalizeSize(250),
         borderRadius: 30,
         padding: 12,
         overflow: "hidden",

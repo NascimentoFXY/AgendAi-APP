@@ -34,7 +34,7 @@ export interface Specialist {
 export default function EstablishmentEspecialist() {
   const { notificationList, notifyUserByEmail } = useNotificationContext()!
   const { user } = useAuthContext()!
-  const { salon, fetchSpecialists, specialistList, addSpecialistToSalon, fetchSalons, serviceList } = useSalonContext()!
+  const { salon, fetchSpecialists, specialistList, addSpecialistToSalon, fetchSalons, serviceList, loadSalon } = useSalonContext()!
   const [especialistaEmail, setEspecialistaEmail] = useState("");
   const [especialistaProfession, setEspecialistaProfession] = useState("")
   const [modalVisible, setModalVisible] = useState(false);
@@ -48,9 +48,13 @@ export default function EstablishmentEspecialist() {
     console.log(user)
     return user
   }, [])
+  const loadData = useCallback(async () => {
+    await loadSalon(salon?.id!)
+
+  }, [salon?.id!])
 
   const toggleOption = (type: Services["types"][0]) => {
-    const alreadySelected = selectedOptions.some(opt=> opt.itemId === type.itemId);
+    const alreadySelected = selectedOptions.some(opt => opt.itemId === type.itemId);
     if (alreadySelected) {
       setSelectedOptions(prev => prev.filter(opt => opt.itemId !== type.itemId));
     } else {
@@ -58,9 +62,7 @@ export default function EstablishmentEspecialist() {
     }
   };
 
-  useEffect(() => {
-    console.log("[Estab.Specialist] ", selectedOptions)
-  }, [selectedOptions]);
+
 
   const handleConfirm = useCallback(async () => {
     if (!especialistaEmail || !selectedOptions) {
@@ -88,7 +90,7 @@ export default function EstablishmentEspecialist() {
       notifyUserByEmail(userRes.email, user?.name!, salon?.id!, selectedOptions)
 
       alert("O convite foi enviado para: " + userRes.name + ". \nAguarde a solicitação.");
-
+      loadData();
       setModalVisible(false);
       setEspecialistaEmail("");
       setEspecialistaProfession("");
@@ -172,7 +174,7 @@ export default function EstablishmentEspecialist() {
                     {service.types.map((type) => {
 
                       const isSelected = selectedOptions.some(opt => opt.itemId === type.itemId);
-                      
+
                       return (
                         <TouchableOpacity
                           key={type.itemId}
@@ -184,7 +186,7 @@ export default function EstablishmentEspecialist() {
                         >
                           <Text style={styles.cardOptionText} numberOfLines={1}>{type.itemName}</Text>
 
-                          <Text style={{color: colors.primary, fontFamily: font.poppins.semibold}}>{formatCurrency(Number(type.itemPrice))}</Text>
+                          <Text style={{ color: colors.primary, fontFamily: font.poppins.semibold }}>{formatCurrency(Number(type.itemPrice))}</Text>
 
                         </TouchableOpacity>
                       );

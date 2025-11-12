@@ -27,7 +27,7 @@ import { useAlert } from 'context/alertContext';
 const { width, height } = Dimensions.get('window');
 
 export default function UserProfile() {
-    const { user } = useAuthContext()!;
+    const { user, refreshUserData } = useAuthContext()!;
     const [isLoading, setLoading] = useState<boolean>(false);
     const [userBaner, setUserBanner] = useState<string | null>(null);
     const [userPhoto, setUserPhoto] = useState<string | null>(null);
@@ -43,25 +43,30 @@ export default function UserProfile() {
     const alert = useAlert().showAlert
     const handleSave = async () => {
         try {
+            setLoading(true)
+            console.log("id do usuario:", user?.id)
             const userRef = doc(db, "users", user?.id!);
             const imagePath = `images/users/${user?.id}/userPhoto.jpg`
-            console.log("[usuario alterou a imagem?", userPhoto != user?.image!)
-            const ImageURL = userPhoto != user?.image && await uploadImageAndSaveToFirestore(userPhoto!, "_", imagePath)
-            console.log(ImageURL);
+            console.log("[Imagem tentando ser enviada:]", userPhoto)
+            const ImageURL = await uploadImageAndSaveToFirestore(userPhoto!, imagePath)
+            console.log("[ImagemURL Gerada:]",ImageURL);
             const newData = {
                 image: ImageURL,
                 name: userName,
                 email: userEmail,
-
+                
             }
-
-            if(user)
-            await updateDoc(userRef, newData);
+            if (user)
+                await updateDoc(userRef, newData);
             alert("Dados atualizados", "success")
         } catch (er) {
-            console.error(er)
+            console.warn(er)
+            alert("Um erro ocorreu, tente novamente.", "error")
+        } finally{
+            refreshUserData();
+            setLoading(false)
         }
-
+        
     }
     useEffect(() => {
         setLoading(true);
@@ -99,12 +104,15 @@ export default function UserProfile() {
         const userRef = doc(db, "users", user?.id!);
         const path = `images/users/${user?.id}/userPhoto.jpg`
         const image = await pickImage(1, 1);
-        if(!image) return;
-        console.log("[ImageURL]",image)
+        if (!image) {
+            setLoading(false);
+            return
+        };
+
         setUserPhoto(image)
         setLoading(false);
     }
-
+    console.log("Foto selecionada:",userPhoto)
     const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const pageIndex = Math.round(event.nativeEvent.contentOffset.x / width)
         // console.log(pageIndex)
@@ -131,16 +139,7 @@ export default function UserProfile() {
                     blurRadius={userBaner ? 0 : 5}
                     style={[styles.bannerImage, userBaner && { opacity: 1 }]}
                 />
-                <TouchableOpacity activeOpacity={0.7} style={styles.editBannerButton}
-                    onPress={pickBannerImageFromGalery}
-                >
-                    <Icon.Ionicons
-                        name="camera"
-                        size={normalizeSize(15)}
-                        color={colors.background}
-                    />
-                    <Text style={styles.editBannerText}>Editar</Text>
-                </TouchableOpacity>
+                
             </View>
 
             {/* Modal / Content */}
@@ -246,7 +245,7 @@ export default function UserProfile() {
                     </ScrollView>
                 </View>
             </ScrollView>
-            {hasEdited && <TabBarButton title='Salvar' onPress={handleSave} />}
+            {hasEdited && <TabBarButton title='Salvar' onPress={async()=>handleSave()} />}
         </SafeAreaView>
     );
 }

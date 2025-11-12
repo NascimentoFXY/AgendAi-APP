@@ -14,18 +14,18 @@ import {
 } from "react-native";
 import { Input } from "../../components/input";
 import CustomButton from "../../components/customButton";
-import { db, uploadUserImage } from 'services/firebase';
+import { db, uploadImageAndSaveToFirestore, uploadUserImage } from 'services/firebase';
 import { doc, getDoc, updateDoc } from '@firebase/firestore';
 export default function CompletePerfil({ navigation }: any) {
 
     const { user, setComplete, updateUser } = useContext(AuthContext)!;
-
     const [image, setImage] = React.useState('');
     const updateUserData = async () => {
         try {
+            const path = `images/users/${user?.id!}/userPhoto.png`
             if (image) {
                 updateUser({
-                    image: await uploadUserImage(image, user?.id!),
+                    image: await uploadImageAndSaveToFirestore(image,path),
                     isComplete: true,
                 })
             }

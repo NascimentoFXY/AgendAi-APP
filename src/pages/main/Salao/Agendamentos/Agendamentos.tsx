@@ -2,7 +2,7 @@ import { collection, doc, getDocs, orderBy, query, updateDoc } from '@firebase/f
 import AgendamentoCard from 'components/Salao/AgendamentoCards';
 import Icon from 'configs/icons';
 import colors, { font } from 'configs/theme';
-import { normalizeSize } from 'configs/utils';
+import { formatCurrency, normalizeSize } from 'configs/utils';
 import { useAlert } from 'context/alertContext';
 import { useSalonContext } from 'context/salonContext';
 import { ScheduleContext, ScheduleParams } from 'context/scheduleContext';
@@ -17,7 +17,9 @@ import {
   StyleSheet,
   Image,
   Dimensions,
-  Modal
+  Modal,
+  ViewStyle,
+  TextStyle
 } from 'react-native';
 import { db } from 'services/firebase';
 const { width } = Dimensions.get("window")
@@ -68,6 +70,11 @@ const Cards = (props: Partial<ScheduleParams>) => {
       console.error("Erro ao concluir agendamento:", er);
     }
   };
+
+
+  const statusStyle: TextStyle = {
+    color: props.status == "canceled" ? "red" : props.status == "done" ? "#075acfff" : "#11fe08ff"
+  }
   return (
     <TouchableOpacity style={{ backgroundColor: colors.white, padding: 20, borderRadius: 10 }} onPress={pressHandle}>
 
@@ -93,15 +100,23 @@ const Cards = (props: Partial<ScheduleParams>) => {
               <Text>{props.specialist?.name}</Text>
             </View>
             <View style={{ flexDirection: "row", gap: 5 }}>
+              <Text style={{ fontFamily: font.poppins.regular }}>Cliente:</Text>
+              <Text>{props.userName}</Text>
+            </View>
+            <View style={{ flexDirection: "row", gap: 5 }}>
               <Text style={{ fontFamily: font.poppins.regular }}>Status:</Text>
-              <Text>{props.status === "canceled" ? "Cancelado" : "Ativos"}</Text>
+              <Text style={{...statusStyle}}>{props.status === "canceled" ? "Cancelado" : props.status == "done" ? "Concluido" : "Ativo"}</Text>
+            </View>
+            <View style={{ flexDirection: "row", gap: 5 }}>
+              <Text style={{ fontFamily: font.poppins.regular }}>Valor a pagar:</Text>
+              <Text style={{color:"green"}}>{formatCurrency(props.service?.itemPrice)}</Text>
             </View>
             {props.status === "canceled" &&
               <View style={{ gap: 5 }}>
                 <Text style={{ fontFamily: font.poppins.regular }}>Motivo do cancelamento:</Text>
                 <View>
                   {props.cancelMotive ? props.cancelMotive.map((motivos, index) => (
-                    <Text>{motivos}</Text>
+                    <Text key={index}>{motivos}</Text>
                   )) :
                     <Text>Não informado</Text>
                   }</View>
@@ -110,11 +125,11 @@ const Cards = (props: Partial<ScheduleParams>) => {
 
           <View>
 
-            <TouchableOpacity onPress={() => concluirHandle(props.salonId!, props.userId!, props.id!)} style={{ padding: 5, backgroundColor: colors.primary, borderRadius: 20, marginHorizontal: 10 }}>
+            {props.status == "active" && <TouchableOpacity onPress={() => concluirHandle(props.salonId!, props.userId!, props.id!)} style={{ padding: 5, backgroundColor: colors.primary, borderRadius: 20, marginHorizontal: 10 }}>
               <Text style={{ fontFamily: font.poppins.semibold, color: colors.white, textAlign: "center" }}>
                 Definir como Concluido
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity>}
           </View>
         </View>
       </Modal>
@@ -135,7 +150,9 @@ const Cards = (props: Partial<ScheduleParams>) => {
       </View>
       <View style={{ flexDirection: "row", gap: 5 }}>
         <Text style={{ fontFamily: font.poppins.regular }}>Status:</Text>
-        <Text>{props.status === "canceled" ? "Cancelado" : "Ativos"}</Text>
+        <Text style={{
+          ...statusStyle
+        }}>{props.status === "canceled" ? "Cancelado" : props.status == "done" ? "Concluido" : "Ativo"}</Text>
       </View>
 
     </TouchableOpacity >
@@ -154,7 +171,7 @@ export default function SalaoAgendamentos() {
 
       const scheduleRef = collection(db, "salon", salon.id, "schedules");
 
-      const q = query(scheduleRef, orderBy("date", "desc"));
+      const q = query(scheduleRef, orderBy("date", "asc"));
 
 
       const snapshot = await getDocs(q);
@@ -184,7 +201,7 @@ export default function SalaoAgendamentos() {
           <Text style={{ fontFamily: font.poppins.bold, fontSize: normalizeSize(18), color: colors.primary }}> ({scheduleList?.length})</Text>
         </View>
         {scheduleList?.map((schedule, index) => (
-          <Cards
+          <Cards key={schedule.id}
             {...schedule}
           />
         ))}

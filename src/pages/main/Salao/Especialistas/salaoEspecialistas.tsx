@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -28,7 +28,7 @@ const calcCardsWidth = (width / 2) - 40;
 export default function SalaoEspecialistas() {
     const navigation = useNavigation() as any
     const [especialistaList, setEspecialistaList] = useState<Specialist[]>();
-    const { salon, isOwner, selectSpecialist } = useSalonContext()!
+    const { salon, isOwner, selectSpecialist,loadSalon } = useSalonContext()!
     useEffect(() => {
         const fetchSpecialists = async () => {
 
@@ -51,6 +51,7 @@ export default function SalaoEspecialistas() {
 
         fetchSpecialists()
     }, [])
+
     return (
         <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
 
@@ -99,7 +100,7 @@ export default function SalaoEspecialistas() {
                         name={capitalizeFirstLetter(item.name)} // nome
                         profession={item.profession} // serviço ex: Corte de Cabelo
                         cardWidth={calcCardsWidth}
-                        rating={Number(item.ratingAverage ?? 5)} 
+                        rating={Number(item.ratingAverage ?? 5)}
 
                         onPress={async () => {
                             await selectSpecialist(item.id).then((res) => {

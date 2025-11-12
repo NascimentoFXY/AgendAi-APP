@@ -84,7 +84,7 @@ export function Home({ navigation }: any) {
     }
     const { salon, salonList, loadSalon, saveSalon, savedList, removeSalon } = salonData
     const { createSchedule, schedules, schedule, useSchedule, cancelSchedule, fetchSchedules } = scheduleData!;
-    const [premiumSalonList, setPremiumSalonList] = useState<Salon[] | null>()
+    const [premiumSalonList, setPremiumSalonList] = useState<Salon[] | null>(null)
 
     const getTopSaloes = async () => {
         try {
@@ -92,31 +92,31 @@ export function Home({ navigation }: any) {
             const usersRef = collection(db, "users");
             const usersQuery = query(usersRef, where("isPremium", "==", true));
             const usersSnapshot = await getDocs(usersQuery);
-            
+
             // Pegar os IDs dos donos premium
             const premiumUserIds = usersSnapshot.docs.map(doc => doc.id);
-            
+
             if (premiumUserIds.length === 0) {
                 setPremiumSalonList([]);
                 return;
             }
-            
+
             //  Buscar salões cujo dono (ownerId) esteja na lista de premiumUserIds
             const salonRef = collection(db, "salon");
             const salonsSnapshot = await getDocs(salonRef);
-            
+
             const salons = salonsSnapshot.docs
-            .map(doc => ({ id: doc.id, ...doc.data() }))
-            .filter((salon: any) => premiumUserIds.includes(salon.ownerID)); // <-- Filtra
-            
+                .map(doc => ({ id: doc.id, ...doc.data() }))
+                .filter((salon: any) => premiumUserIds.includes(salon.ownerID)); // <-- Filtra
+
             setPremiumSalonList(salons as any);
         } catch (err) {
             console.error("Erro ao buscar salões de usuários premium:", err);
         }
     };
-    
+
     useEffect(() => {
-      getTopSaloes();
+        getTopSaloes();
     }, [user.id]);
 
 
@@ -179,7 +179,7 @@ export function Home({ navigation }: any) {
 
                 {/* ==================ESPECIAL PRA VOCE======================================= */}
 
-                {salonList?.filter((salon) => salon.maxPromo) && (
+                {premiumSalonList?.length! > 0 && salonList?.filter((salon) => salon.maxPromo) && (
                     <>
                         <View style={styles.contentHeader}>
 
@@ -209,9 +209,9 @@ export function Home({ navigation }: any) {
 
 
 
-                                                pagingEnabled showsHorizontalScrollIndicator={false} style={{ width: 400, height: 260 }}>
+                                                pagingEnabled showsHorizontalScrollIndicator={false} style={{ width: 350, height: 250 }}>
                                                 <View>
-                                                    <Image source={{ uri: salon.image }} style={{ width: 400, height: 260 }} />
+                                                    <Image source={{ uri: salon.image }} style={{ width: 350, height: 250 }} />
                                                     <LinearGradient
                                                         colors={['rgba(255, 255, 255, 0)', '#000000d4']}
                                                         start={{ x: 0, y: 0 }}
@@ -265,24 +265,30 @@ export function Home({ navigation }: any) {
 
                 {/* ============================================Top Saloes=============================== */}
 
-                <View style={styles.contentHeader}>
-                    <Text style={styles.contentHeaderTitle}>Top salões</Text>
-                    <TouchableOpacity onPress={() => { navigation.navigate("Explore") }}><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
+                {premiumSalonList?.length! > 0 &&
 
-                </View>
+                    <View>
+                        <View style={styles.contentHeader}>
+                            <Text style={styles.contentHeaderTitle}>Top salões</Text>
+                            <TouchableOpacity onPress={() => { navigation.navigate("Explore") }}><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
 
-                <Carroussel
-                    cardsWidth={300}
-                    cardsGap={20}
-                    contentContainerStyle={{
-                        paddingHorizontal: 20,
+                        </View>
 
-                    }}>
-                    {!loading && premiumSalonList?.map((key: any) => (
-                        <TopSaloesCardsData key={key.id} name={key.name} rating={key.rating.toFixed(1) || (0).toFixed(1)} salonId={key.id} image={key.image} />
-                    ))}
-                    {loading && <ActivityIndicator size={70} style={{ width: Dimensions.get("window").width, alignItems: "center" }} color={colors.primary} />}
-                </Carroussel>
+                        <Carroussel
+                            cardsWidth={300}
+                            cardsGap={20}
+                            contentContainerStyle={{
+                                paddingHorizontal: 20,
+
+                            }}>
+                            {!loading && premiumSalonList?.map((key: any) => (
+                                <TopSaloesCardsData key={key.id} name={key.name} rating={key.rating.toFixed(1) || (0).toFixed(1)} salonId={key.id} image={key.image} />
+                            ))}
+                            {loading && <ActivityIndicator size={70} style={{ width: Dimensions.get("window").width, alignItems: "center" }} color={colors.primary} />}
+                        </Carroussel>
+                    </View>
+
+                }
 
 
                 {/* =========================FAVORITOS=================================== */}

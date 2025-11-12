@@ -203,47 +203,47 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     }
 
     async function getAllSalonsWithSubcollections() {
-    try {
-        const salonsRef = collection(db, "salon");
-        const salonsSnap = await getDocs(salonsRef);
+        try {
+            const salonsRef = collection(db, "salon");
+            const salonsSnap = await getDocs(salonsRef);
 
-        const salonsData = await Promise.all(
-            salonsSnap.docs.map(async (salonDoc) => {
-                const salonRef = salonDoc.ref;
+            const salonsData = await Promise.all(
+                salonsSnap.docs.map(async (salonDoc) => {
+                    const salonRef = salonDoc.ref;
 
-                // Pega subcoleções em paralelo
-                const [servicesSnap, specialistsSnap, cuponsSnap, promoSnap] = await Promise.all([
-                    getDocs(collection(salonRef, "services")),
-                    getDocs(collection(salonRef, "specialists")),
-                    getDocs(collection(salonRef, "cupons")),
-                    getDocs(collection(salonRef, "promo")),
-                ]);
+                    // Pega subcoleções em paralelo
+                    const [servicesSnap, specialistsSnap, cuponsSnap, promoSnap] = await Promise.all([
+                        getDocs(collection(salonRef, "services")),
+                        getDocs(collection(salonRef, "specialists")),
+                        getDocs(collection(salonRef, "cupons")),
+                        getDocs(collection(salonRef, "promo")),
+                    ]);
 
-                // Mapeia dados das subcoleções
-                const services = servicesSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-                const specialists = specialistsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-                const cupons = cuponsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-                const promos = promoSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                    // Mapeia dados das subcoleções
+                    const services = servicesSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                    const specialists = specialistsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                    const cupons = cuponsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                    const promos = promoSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-                return {
-                    id: salonDoc.id,
-                    ...salonDoc.data(),
-                    services,
-                    specialists,
-                    cupons,
-                    promos,
-                };
-            })
-        );
+                    return {
+                        id: salonDoc.id,
+                        ...salonDoc.data(),
+                        services,
+                        specialists,
+                        cupons,
+                        promos,
+                    };
+                })
+            );
 
-        // Atualiza o estado com todos os salões completos
-        setSalonCList(salonsData as any);
-        return salonsData;
-    } catch (error) {
-        console.error("❌ Erro ao buscar todos os salões:", error);
-        return [];
+            // Atualiza o estado com todos os salões completos
+            setSalonCList(salonsData as any);
+            return salonsData;
+        } catch (error) {
+            console.error("❌ Erro ao buscar todos os salões:", error);
+            return [];
+        }
     }
-}
 
 
 
@@ -260,6 +260,8 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             try {
                 const salonRef = doc(collection(db, "salon"))
                 const userRef = doc(db, "users", user?.id!)
+                const imagePath = `images/salons/${salon?.id}/salonPhoto.jpg`
+
                 // console.log("[salon]tentando criar salão com: \n ", info.nome, info.cnpj, info.cep)
                 await setDoc((salonRef), {
                     id: salonRef.id,
@@ -267,7 +269,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
                     name: info.nome,
                     ownerID: user?.id,
                     ownerName: user?.name,
-                    image: await uploadImageAndSaveToFirestore(info.image, salonRef.id),
+                    image: await uploadImageAndSaveToFirestore(info.image, imagePath),
                     opHour: info?.horario,
                     addres: `${info.rua}, ${info.bairro}, ${info.cidade}, ${info.cep}`,
                     description: info.especialidades,
@@ -398,7 +400,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
 
                 const salonRef = doc(db, "salon", salon.id);
                 await updateDoc(salonRef, { rating: average });
-                
+
                 fetchSalonRatings(salon.id);
 
                 console.log(`[salon] Avaliação adicionada. Média atual: ${average}`);

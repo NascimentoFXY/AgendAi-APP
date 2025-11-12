@@ -20,7 +20,7 @@ import { useAuthContext } from 'context/auth';
 import { useAlert } from 'context/alertContext';
 
 export default function Assinatura() {
-  const { user } = useAuthContext()!
+  const { user,refreshUserData } = useAuthContext()!
   const alert = useAlert().showAlert
 
   const [select, setSelect] = useState(1);
@@ -30,6 +30,7 @@ export default function Assinatura() {
       await updateDoc(userRef, {
         isPremium: true
       })
+      refreshUserData();
       alert("Você agora fazer parte dos assinantes premium!", "success")
     } catch (er) {
       console.error("[Premium]", er)

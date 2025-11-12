@@ -123,7 +123,7 @@ export default function Catalogo({ filtro }: { filtro?: string }) {
                     </TouchableOpacity>
                 </View>
                 <View>
-                    {!loading && saloesFiltrados?.map((key) => (
+                    {!loading && saloesFiltrados?.length! > 0 ? saloesFiltrados?.map((key) => (
                         <TopSaloesCardsData key={key.id} name={key.name} rating={key.rating.toFixed(1) || 0.0}
                             salonId={key.id}
                             image={key.image}
@@ -132,7 +132,14 @@ export default function Catalogo({ filtro }: { filtro?: string }) {
                             item={key}
                             navigation={navigation}
                         />
-                    ))}
+                    ))
+
+                        : (
+                            <View>
+                                <Text style={{ margin: "auto", fontFamily: font.poppins.semibold, fontSize: 18, width: "50%", textAlign: "center", color: colors.lightGray }}>Nenhum estabelecimento encontrado.</Text>
+                            </View>
+                        )
+                    }
 
                     {loading && <ActivityIndicator size={70} style={{ width: Dimensions.get("window").width, alignItems: "center" }} color={colors.primary} />}
                 </View>

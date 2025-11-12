@@ -7,13 +7,10 @@
 import { initializeApp } from "firebase/app";
 
 import * as ImageManipulator from "expo-image-manipulator";
-import { getAuth, getReactNativePersistence, initializeAuth, } from "firebase/auth";
-import { collection, getFirestore, doc, getDoc, addDoc, setDoc } from "@firebase/firestore";
+import { getReactNativePersistence, initializeAuth, } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "@firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { updateDoc } from "@firebase/firestore/lite";
-import { useContext } from "react";
-import { AuthContext } from "context/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDz02HFYTNFWquEMeHiniW086WgTPDqwKU",
@@ -51,11 +48,15 @@ export async function getUserNameById(salonID: string): Promise<string | null> {
 
 
 
-
-export const uploadImageAndSaveToFirestore = async (imageUri: string, salonID?: string, path?: string) => {
+/** 
+  Comprimi e salva uma imagem no firebase storage
+*/
+export const uploadImageAndSaveToFirestore = async (imageUri: string, path: string) => {
   try {
-    if (!imageUri || !salonID || salonID == "_") return;
-
+    if (!imageUri || !path) {
+      console.warn("campos faltando:", imageUri, path);
+      return;
+    };
     let compress = 1.0;
     let compressed = await ImageManipulator.manipulateAsync(
       imageUri,
@@ -64,11 +65,12 @@ export const uploadImageAndSaveToFirestore = async (imageUri: string, salonID?: 
     );
 
     while (true) {
+      console.log("[Image path recebido:", path)
       const response = await fetch(compressed.uri);
       const blob = await response.blob();
 
       if (blob.size <= 500 * 1024 || compress <= 0.1) {
-        const storageRef = ref(storage, path ? path :`images/salons/${salonID}/salonImage.jpg`);
+        const storageRef = ref(storage, path);
         await uploadBytes(storageRef, blob);
         const url = await getDownloadURL(storageRef);
         console.log("✅ Upload feito com", (blob.size / 1024).toFixed(1), "KB");

@@ -56,7 +56,6 @@ export default function Cadastro({ navigation }: any) {
                 <View style={styles.header}>
 
                     <Text style={styles.bold}>Crie sua conta</Text>
-                    <Text style={{ fontSize: 12, marginBottom: 20, textAlign: "center" }}>Insira suas informações abaixo ou registre-se com sua conta social</Text>
 
                 </View>
 

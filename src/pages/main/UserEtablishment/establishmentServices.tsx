@@ -24,8 +24,7 @@ const { width } = Dimensions.get("window");
 
 
 export default function EstablishmentServices() {
-    const { addServicesToSalon, updateServices, serviceList, fetchServices, deleteService, fetchSalons } =
-        useSalonContext()!;
+    const { addServicesToSalon, updateServices, serviceList, fetchServices, deleteService, fetchSalons, loadSalon, salon } = useSalonContext()!;
     const { showAlert } = useAlert();
     const [selectedService, setSelectedService] = useState<Services | null>(null);
     const [serviceName, setServiceName] = useState<
@@ -42,10 +41,11 @@ export default function EstablishmentServices() {
         { id: Date.now(), itemName: "", itemDescription: "", itemPrice: "", serviceName: serviceName, itemDuration: serviceDuration },
     ]);
 
+    const loadData = async () => {
+        await loadSalon(salon?.id!)
+        await fetchServices();
 
-    useEffect(() => {
-        fetchServices();
-    }, [serviceList, services]);
+    }
 
     const handleConfirm = async () => {
         if (!serviceName) return;
@@ -173,7 +173,7 @@ export default function EstablishmentServices() {
 
                     <View style={{ marginLeft: "auto", width: 50 }} />
                     <Text style={[styles.title]}>Serviços</Text>
-                    <TouchableOpacity style={{ marginLeft: "auto", width: 50, marginTop: -20 }}>
+                    <TouchableOpacity style={{ marginLeft: "auto", width: 50, marginTop: -20 }} onPress={loadData}>
                         <Icon.MaterialCommunityIcons name="reload" size={24} />
                     </TouchableOpacity>
                 </View>

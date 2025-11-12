@@ -28,15 +28,16 @@ export default function UserEstablishment({ navigation }: any) {
     const loadData = async (salonID: string) => {
         setLoading(true)
         await loadSalon(salonID)
-        setLoading(false)
+        setLoading(false),
+        navigation.navigate("EstablishmentTools")
     }
     const { isOwner, salonList, loadSalon } = useSalonContext()!;
     const { user } = useAuthContext()!;
 
-    if(!salonList) return
+    if (!salonList) return
     const TopSaloesCardsData = ({ rating, name, salonId, image }: any) => {
         return (
-            <TouchableOpacity onPress={async () => (await loadData(salonId), navigation.navigate("EstablishmentTools"))} >
+            <TouchableOpacity onPress={async () => await loadData(salonId)} >
                 <View
 
                     style={styles.SaloesCards}>
@@ -47,7 +48,7 @@ export default function UserEstablishment({ navigation }: any) {
                     </View>
 
                     <LinearGradient
-                        colors={['rgba(255, 255, 255, 0)', '#000000ff']} 
+                        colors={['rgba(255, 255, 255, 0)', '#000000ff']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
                         style={styles.linearGradient}
@@ -65,9 +66,9 @@ export default function UserEstablishment({ navigation }: any) {
             </TouchableOpacity>
         )
     }
-    
-    
-    
+
+
+
     return (
         <SafeAreaView style={stylesLocal.container}>
 
@@ -104,8 +105,8 @@ export default function UserEstablishment({ navigation }: any) {
                     salonList
                         ?.filter(salon => salon.ownerID === user?.id)
                         .map((salon, index) => {
-                           
-                            console.log("[stablishmentList]",salon.id)
+
+                            console.log("[stablishmentList]", salon.id)
                             return (
                                 <TopSaloesCardsData key={salon.id} name={salon.name} rating={5.0} salonId={salon.id} image={salon.image} />
                             )
