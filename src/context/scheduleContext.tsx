@@ -17,6 +17,8 @@ export interface ScheduleParams {
     userName?: string;
     showNotification?: boolean;
     status: string;
+    cancelMotive: any[],
+    concludedAt: any,
     specialist: Specialist
     service: Services["types"][0]
 }

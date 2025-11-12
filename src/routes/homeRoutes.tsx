@@ -33,6 +33,7 @@ import MarketingTools from "pages/main/UserEtablishment/marketingTools";
 import Catalogo from "pages/catalogo/catalogo";
 import UserProfile from "pages/main/tabPerfil/userProfile/userProfile";
 import InfoEspecialista from "pages/main/Salao/Especialistas/infoEspecialista";
+import Assinatura from "pages/assinatura/assinatura";
 export default function MainRoutes({ navigation }: any) {
     const Stack = createNativeStackNavigator();
 
@@ -59,6 +60,7 @@ export default function MainRoutes({ navigation }: any) {
             <Stack.Screen name="MarketingTools" component={MarketingTools} />
             <Stack.Screen name="Catalogo" component={Catalogo} />
             <Stack.Screen name="UserProfile" component={UserProfile} />
+            <Stack.Screen name="Assinatura" component={Assinatura} />
 
             <Stack.Screen name="ScheduleCancelConclusion" component={ScheduleCancelConclusion} />
         </Stack.Navigator>

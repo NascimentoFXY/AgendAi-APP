@@ -111,21 +111,7 @@ export default function Cadastro({ navigation }: any) {
 
 
                 <View style={{ width: "100%", height: "auto", alignItems: "center", justifyContent: "center", marginBottom: 100 }}>
-                    <Text>Ou entre com</Text>
-                    <View style={styles.optionsContainer}>
-                        <TouchableOpacity style={styles.options}>
-                            <Text></Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.options}>
-                            <Text></Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.options}>
-                            <Text></Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.options}>
-                            <Text></Text>
-                        </TouchableOpacity>
-                    </View>
+                   
 
                     <View style={{ flexDirection: "row", marginTop: 20, alignItems: "center" }}>
                         <Text>Já tem uma conta? </Text>

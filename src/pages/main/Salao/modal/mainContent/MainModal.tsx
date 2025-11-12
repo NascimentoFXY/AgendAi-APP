@@ -20,6 +20,7 @@ import SalaoEspecialistas from '../../Especialistas/salaoEspecialistas';
 import Rating from '../../Avaliacoes';
 import Icon from 'configs/icons';
 import { MaterialIcons, FontAwesome5, MaterialCommunityIcons, Ionicons, Entypo } from '@expo/vector-icons';
+import SalaoAgendamentos from '../../Agendamentos/Agendamentos';
 
 const { height } = Dimensions.get("window");
 
@@ -65,7 +66,7 @@ export default function MainModal({ navigation }: any) {
         <Text style={styles.SalaoNome}>{salon?.name}</Text>
         <Text style={styles.SalaoSubTitle}>{salon?.description}</Text>
       </View>
-    
+
       <View style={styles.SalaoLocContainer}>
         {!isOwner ? (
           <View style={[styles.SalaoLocText]}>
@@ -137,14 +138,30 @@ export default function MainModal({ navigation }: any) {
       onScrollEndDrag={handleScrollEnd}
       scrollEventThrottle={16}
     >
-      
+
       <Header />
 
       <View style={styles.NavigationOptions}>
-        <ScrollView contentContainerStyle={styles.salaoNavigationScroll} horizontal showsHorizontalScrollIndicator={false}>
-          {["Serviços", "Especialistas", "Avaliações", "Galeria"].map((tab, i) => (
-            <TouchableOpacity key={i} style={styles.NavigationOptions} onPress={() => handleTabPress(i)}>
-              <Text style={[styles.NavigationOptionsText, currentPage === i && { color: colors.primary }]}>
+        <ScrollView
+          contentContainerStyle={styles.salaoNavigationScroll}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+        >
+          {(isOwner
+            ? ["Agendamentos", "Serviços", "Especialistas", "Avaliações", "Galeria"]
+            : ["Serviços", "Especialistas", "Avaliações", "Galeria"]
+          ).map((tab, i) => (
+            <TouchableOpacity
+              key={i}
+              style={styles.NavigationOptions}
+              onPress={() => handleTabPress(i)}
+            >
+              <Text
+                style={[
+                  styles.NavigationOptionsText,
+                  currentPage === i && { color: colors.primary },
+                ]}
+              >
                 {tab}
               </Text>
               <View style={currentPage === i ? styles.underline : styles.none} />
@@ -154,9 +171,22 @@ export default function MainModal({ navigation }: any) {
       </View>
 
       <View style={{ minHeight: height }}>
-        {currentPage === 0 && <SalaoServices />}
-        {currentPage === 1 && <SalaoEspecialistas />}
-        {currentPage === 2 && <Rating />}
+        {isOwner ? (
+          <>
+            {currentPage === 0 && <SalaoAgendamentos />}
+            {currentPage === 1 && <SalaoServices />}
+            {currentPage === 2 && <SalaoEspecialistas />}
+            {currentPage === 3 && <Rating />}
+
+          </>
+        ) : (
+          <>
+            {currentPage === 0 && <SalaoServices />}
+            {currentPage === 1 && <SalaoEspecialistas />}
+            {currentPage === 2 && <Rating />}
+        
+          </>
+        )}
       </View>
     </ScrollView>
   );

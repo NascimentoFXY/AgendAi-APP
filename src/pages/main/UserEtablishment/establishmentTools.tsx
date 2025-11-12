@@ -23,36 +23,88 @@ import TabBarButton from 'components/TabBar';
 import EstablishmentEspecialist from './establishmentEspecialist';
 import EstablishmentServices from './establishmentServices';
 import MarketingTools from './marketingTools';
+import { updateDoc } from '@firebase/firestore';
+import { formatCNPJ, LoadingModal, normalizeSize } from 'configs/utils';
+import { useAlert } from 'context/alertContext';
+import { uploadImageAndSaveToFirestore } from 'services/firebase';
+import CustomButton from 'components/customButton';
+import { useAuthContext } from 'context/auth';
 
-export default function EstablishmentTools() {
-  const { salon, salonList } = useSalonContext()!
+export default function EstablishmentTools({ navigation }: any) {
+  const { salon, salonList, SalonRef } = useSalonContext()!
   const { width } = Dimensions.get("window")
-
+  const {user}= useAuthContext()!
   const [image, setImage] = useState<string | undefined>()
   const [salonName, setSalonName] = useState("")
   const [salonDescription, setSalonDescription] = useState("")
   const [salonCNPJ, setSalonCNPJ] = useState("")
   const scrollRef = useRef<ScrollView>(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isEdited, setIsEdited] = useState(false)
+  const [saving, setSaving] = useState<boolean>(false)
+  const alert = useAlert().showAlert
+  const isPremium = user?.isPremium
+  async function pickImageasync() {
+    const image = await pickImage(16, 9)
+    if (!image) return
+    setImage(image)
+  }
+  async function updateSalon() {
+    if (!isEdited) {
+      console.warn("não foi editado")
+      return
+    }
+    try {
+      setLoading(true)
+      setSaving(true)
+      const ref = SalonRef() as any;
+      let data: any = {
+        name: salonName,
+        description: salonDescription,
+        CNPJ: salonCNPJ,
+      };
+
+      // ✅ Só envia nova imagem se o estado mudou e tiver algo novo
+      if (image && image !== salon?.image) {
+        const salonImage = await uploadImageAndSaveToFirestore(image, salon?.id);
+        data.image = salonImage;
+      }
+      await updateDoc(ref, data)
+      setSaving(false)
+      setLoading(false)
+
+
+      alert("Dados Alterados.", "success")
+    } catch (er) {
+      console.error(er)
+    }
+  }
 
   useEffect(() => {
     if (salon) {
       setImage(salon.image);
       setSalonName(salon.name);
       setSalonDescription(salon.description!);
-      setSalonCNPJ(salon.CNPJ);
-
+      setSalonCNPJ(formatCNPJ(salon.CNPJ));
+      setIsEdited(false)
     }
   }, [salon]);
+
+  useEffect(() => {
+    if (!salon) return;
+
+    const hasChanges =
+      salonName !== salon.name ||
+      salonDescription !== salon.description ||
+      salonCNPJ !== formatCNPJ(salon.CNPJ) ||
+      image !== salon.image;
+
+    setIsEdited(hasChanges);
+  }, [salonName, salonDescription, salonCNPJ, image, salon]);
+
   const pages = useMemo(() => [0, 1, 2], [])
 
-
-
-  async function pickImageasync() {
-    const image = await pickImage()
-    if (!image) return
-    setImage(image)
-  }
   if (!salon) {
     return (
       <SafeAreaView style={styles.container}>
@@ -82,7 +134,12 @@ export default function EstablishmentTools() {
       contentContainerStyle={{ gap: 20, paddingHorizontal: 20 }}
       showsHorizontalScrollIndicator={false}
     >
-      {["Especialistas", "Serviços", "Ferramentas de marketing"].map((label, index) => (
+      {isPremium &&["Especialistas", "Serviços", "Ferramentas de marketing"].map((label, index) => (
+        <TouchableOpacity key={index} style={styles.options} onPress={() => scrollToPage(index)}>
+          <Text style={styles.optionsText}>{label}</Text>
+        </TouchableOpacity>
+      ))}
+      {!isPremium &&["Especialistas", "Serviços"].map((label, index) => (
         <TouchableOpacity key={index} style={styles.options} onPress={() => scrollToPage(index)}>
           <Text style={styles.optionsText}>{label}</Text>
         </TouchableOpacity>
@@ -92,68 +149,89 @@ export default function EstablishmentTools() {
 
   return (
     <SafeAreaView style={styles.container}>
-     
 
-        <View>
-          <Image source={{ uri: image }} style={{ position: "absolute", width: width, aspectRatio: 16 / 9 }} />
+      <LoadingModal loading={loading} />
 
-          <TouchableOpacity style={{ width: width, aspectRatio: 16 / 9, justifyContent: "center", alignItems: "center" }}
-            onPress={pickImageasync}
-          >
-            <Icon.MaterialIcons name="add-a-photo" size={60} color="#ffffff90" />
-            <Text style={{ fontFamily: font.poppins.bold, color: "#ffffff90" }}>Alterar foto</Text>
-          </TouchableOpacity>
+
+      <View>
+        <CustomButton
+          Icon={<Icon.Ionicons name="arrow-back" size={24} color="white" />}
+          border='Circle'
+          width={50}
+          height={50}
+          type='absolute'
+          top={75}
+          left={20}
+          style={{ zIndex: 3, backgroundColor: "#6b6b6ba8", borderWidth: 1, borderColor: "#ffffff99" }}
+          onPress={() => (navigation.goBack())}
+        />
+        <Image source={{ uri: image }} style={{ position: "absolute", width: width, aspectRatio: 16 / 9 }} />
+
+        <TouchableOpacity style={{ width: width, aspectRatio: 16 / 9, justifyContent: "center", alignItems: "center" }}
+          onPress={pickImageasync}
+        >
+          <Icon.MaterialIcons name="add-a-photo" size={60} color="#ffffff90" />
+          <Text style={{ fontFamily: font.poppins.bold, color: "#ffffff90" }}>Alterar foto</Text>
+        </TouchableOpacity>
+
+      </View>
+
+      <ScrollView style={styles.modal} stickyHeaderIndices={[1]}>
+
+
+        <View style={{ padding: 20 }}>
+          <View>
+            <TouchableOpacity onPress={()=> navigation.navigate("Salao")}>
+
+              <Text style={{ fontSize: normalizeSize(14), fontFamily: font.poppins.semibold,color: colors.primary, textAlign:"right" }}>Ir para</Text>
+            </TouchableOpacity>
+
+          </View>
+          <View>
+            <Text style={styles.inputLabel}>Nome do estabelecimento</Text>
+            <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonName} />
+          </View>
+          <View>
+            <Text style={styles.inputLabel}>Descrição</Text>
+            <Input placeholder='Alterar nome' onChangeText={setSalonDescription} value={salonDescription} />
+          </View>
+          <View>
+            <Text style={styles.inputLabel}>CNPJ</Text>
+            <Input placeholder='Alterar nome' onChangeText={(text) => { setSalonCNPJ(formatCNPJ(text)) }} value={salonCNPJ} />
+          </View>
 
         </View>
 
-        <ScrollView style={styles.modal} stickyHeaderIndices={[1]}>
-     
+        <ScrollView
+          horizontal
+          contentContainerStyle={{ gap: 20, paddingHorizontal: 20, zIndex: 10, backgroundColor: colors.background }}
+          showsHorizontalScrollIndicator={false}
+        >
 
-            <View style={{ padding: 20 }}>
-              <View>
-                <Text style={styles.inputLabel}>Nome do estabelecimento</Text>
-                <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonName} />
-              </View>
-              <View>
-                <Text style={styles.inputLabel}>Descrição</Text>
-                <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonDescription} />
-              </View>
-              <View>
-                <Text style={styles.inputLabel}>CNPJ</Text>
-                <Input placeholder='Alterar nome' onChangeText={setSalonName} value={salonCNPJ} />
-              </View>
-            </View>
-
-            <ScrollView
-              horizontal
-              contentContainerStyle={{ gap: 20, paddingHorizontal: 20, zIndex:10, backgroundColor: colors.background }}
-              showsHorizontalScrollIndicator={false}
-            >
-
-              {navigationOptions}
+          {navigationOptions}
 
 
-            </ScrollView>
+        </ScrollView>
 
-          <ScrollView
-            ref={scrollRef}
-            onScroll={handleScroll}
-            scrollEventThrottle={12}
-            pagingEnabled
-            horizontal
-            style={{maxWidth: width}}
+        <ScrollView
+          ref={scrollRef}
+          onScroll={handleScroll}
+          scrollEventThrottle={12}
+          pagingEnabled
+          horizontal
+          style={{ maxWidth: width }}
 
-          >
-            <EstablishmentEspecialist />
-            <EstablishmentServices />
-            <MarketingTools />
+        >
+          <EstablishmentEspecialist />
+          <EstablishmentServices />
+          <MarketingTools saving={saving} />
 
 
-          </ScrollView>
+        </ScrollView>
 
-   
+
       </ScrollView >
-      <TabBarButton title='Salvar' />
+      {isEdited && <TabBarButton title='Salvar' onPress={updateSalon} />}
     </SafeAreaView >
   );
 }
@@ -177,7 +255,7 @@ const styles = StyleSheet.create({
   content: {
     alignItems: 'center',
     backgroundColor: colors.debug
-  
+
   },
 
   modal: {
@@ -186,7 +264,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: -20,
     backgroundColor: colors.background,
-    marginBottom: 120,
   },
   inputLabel: {
     fontSize: 18,

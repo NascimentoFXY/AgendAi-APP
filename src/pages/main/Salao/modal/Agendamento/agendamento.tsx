@@ -28,6 +28,7 @@ import CustomButton from 'components/customButton';
 import { AuthContext } from 'context/auth';
 import { Specialist } from "context/salonContext"
 import { formatCurrency } from 'configs/utils';
+import { useAlert } from 'context/alertContext';
 
 const scrollProps = {
     showsHorizontalScrollIndicator: false,
@@ -35,60 +36,123 @@ const scrollProps = {
     snapToInterval: 110,
 }
 export default function Scheduling({ navigation, route }: any) {
-    const { salon, loading, specialistList } = useContext(SalonContext)!
-    const { user } = useContext(AuthContext)!
-    const { cancelSchedule, confirmActions } = useContext(ScheduleContext)!
-
+    // Contexts
+    const { salon, loading, specialistList, promoList } = useContext(SalonContext)!;
+    const { user } = useContext(AuthContext)!;
+    const { cancelSchedule, confirmActions } = useContext(ScheduleContext)!;
+    const alert = useAlert().showAlert;
     const { specialist: selectedFromInfo, service } = route.params || {};
 
+    // States
     const [selectedSpecialist, setSelectedSpecialist] = useState<Specialist | null>(
         selectedFromInfo || null
     );
-
-    const [selectedService, setSelectedService] = useState<Services["types"][0] | null>(service || null);
-
-    const serviceDuration = selectedService?.itemDuration
-        ? parseInt(selectedService?.itemDuration)
-        : 20; // padrão 20 min se nada vier
-    const start = (salon?.opHour).split("-")[0] || "08:00";
-
-    const end = (salon?.opHour).split("-")[1] || "18:00";
-
-
-    const [startHours, startMinutes] = start.split(":").map(Number);
-    const [endHours, endMinutes] = end.split(":").map(Number);
-    // converte tudo pra minutos
-    const startTotal = startHours * 60 + startMinutes;
-    const endTotal = endHours * 60 + endMinutes;
-    const interval = serviceDuration;
-    const HourItems: any = []
-    const now = new Date();
-    const currentTotal = now.getHours() * 60 + now.getMinutes();
-    console.log("currentTotla", currentTotal)
-
-
+    const [selectedService, setSelectedService] = useState<Services["types"][0] | null>(
+        service || null
+    );
     const [selectedTime, setSelectedTime] = useState<string | null>(null);
     const [selectedDay, setSelectedDay] = useState<number | null>(null);
-    const [selectedSchedule, setSelectedSchedule] = useState<ScheduleParams | null>({
+
+    const [finalScheduleValue, setFinalScheduleValue] = useState<any>();
+
+    const [selectedSchedule, setSelectedSchedule] = useState<Partial<ScheduleParams> | null>({
         salonName: salon?.name || "undefined",
         salonId: salon?.id || "undefined",
         userId: user?.id || "undefined",
         userName: user?.name || "undefined",
-        date: "undefined",
-        time: selectedTime || "undefined",
         address: salon?.addres || "undefined",
         status: "active",
-        specialist: selectedSpecialist!,
-        serviceId: selectedService?.itemId,
-        service: selectedService || {
-            itemName: '',
-            itemPrice: '',
-        }
-
+        specialist: selectedSpecialist || undefined,
     });
+
+    // Derived values
+    const serviceDuration = selectedService?.itemDuration
+        ? parseInt(selectedService?.itemDuration)
+        : 20; // padrão 20 min se nada vier
+    const start = (salon?.opHour).split("-")[0] || "08:00";
+    const end = (salon?.opHour).split("-")[1] || "18:00";
+    const [startHours, startMinutes] = start.split(":").map(Number);
+    const [endHours, endMinutes] = end.split(":").map(Number);
+    const startTotal = startHours * 60 + startMinutes;
+    const endTotal = endHours * 60 + endMinutes;
+    const interval = serviceDuration;
+    const HourItems: any = [];
+    const now = new Date();
+    const currentTotal = now.getHours() * 60 + now.getMinutes();
+    console.log("[Service]", selectedService);
+
+    // Effects
     useEffect(() => {
-        console.log("selectedSchedule", selectedSchedule)
-    }, [selectedSchedule])
+        try {
+
+            if (!selectedService) return;
+            setSelectedSchedule(prev => ({
+                ...prev,
+                service: {
+                    ...selectedService,
+                    itemPrice: finalScheduleValue,
+                }
+            }) as any);
+        } catch (er) {
+            console.error(er)
+        }
+    }, [selectedService]);
+
+    // 1️⃣ Adicione um novo useEffect para recalcular o preço final sempre que o serviço mudar
+    useEffect(() => {
+
+        try {
+
+
+            if (!selectedService) return;
+
+            // Função interna que aplica as promoções
+            const calcPromoValue = (price: any, serviceName: string) => {
+                let finalPrice = parseFloat(price);
+                const applicablePromos = promoList.filter(
+                    (promo) => promo.aplicableTo === "all" || promo.service === serviceName
+                );
+
+                applicablePromos.forEach((promo) => {
+                    const promoValue = parseFloat(promo.valor);
+                    const isPercent = promo.tipoValor === "porcentagem";
+
+                    if (isPercent) {
+                        finalPrice -= finalPrice * (promoValue / 100);
+                    } else {
+                        finalPrice -= promoValue;
+                    }
+
+                    if (finalPrice < 0) finalPrice = 0;
+                });
+
+                return finalPrice;
+            };
+
+            // 2️⃣ Calcula o preço com desconto
+            const discountedValue = calcPromoValue(selectedService.itemPrice, selectedService.itemName);
+
+            // 3️⃣ Atualiza o estado do valor final
+            setFinalScheduleValue(discountedValue);
+
+            // 4️⃣ Atualiza também o agendamento com o valor final já descontado
+            setSelectedSchedule((prev) =>
+                prev
+                    ? {
+                        ...prev,
+                        service: {
+                            ...selectedService,
+                            itemPrice: discountedValue,
+                        },
+                    } as any
+                    : null
+            );
+        } catch (er) {
+            console.error(er)
+        }
+    }, [selectedService, promoList]);
+
+
 
     const today = new Date();
     const isTodaySelected = selectedDay === 0;
@@ -215,14 +279,51 @@ export default function Scheduling({ navigation, route }: any) {
         const specialistObject = {
             ...specialist
         }
-        console.log(specialistObject)
         setSelectedSpecialist(specialistObject);
         setSelectedSchedule((prev) => prev && ({
             ...prev,
             specialist: specialistObject as any
         }))
     }
+    const calcPromo = (price: any, serviceName: string) => {
+        const isInPromo = promoList.some((promo) => promo.aplicableTo == "all" || promo.service == serviceName)
+        try {
+            if (!isInPromo) return formatCurrency(price);
+            let finalPrice = parseFloat(price);
+            const applicablePromos = promoList.filter(
+                (promo) => promo.aplicableTo === "all" || promo.service === serviceName
+            );
 
+            // Aplicar cada promoção em sequência
+            applicablePromos.forEach((promo) => {
+                const promoValue = parseFloat(promo.valor);
+                const isPercent = promo.tipoValor === "porcentagem";
+
+                if (isPercent) {
+                    finalPrice -= finalPrice * (promoValue / 100);
+                } else {
+                    finalPrice -= promoValue;
+                }
+
+                // Evitar preço negativo
+                if (finalPrice < 0) finalPrice = 0;
+            });
+
+            return formatCurrency(finalPrice);
+
+        } catch (error) {
+            console.error("Erro ao calcular promoção:", error);
+            return formatCurrency(price);
+        }
+    };
+    const handleConfirm = () => {
+        if (!selectedSchedule || !selectedService || !selectedDay || !selectedTime || !selectedSpecialist) {
+            alert("Preeencha todos os campos.", "success")
+            return;
+        }
+        confirmActions(selectedSchedule as any);
+        navigation.navigate("ScheduleFinal")
+    }
     return (
         <SafeAreaView style={styles.container}>
             {/* Imagem principal */}
@@ -270,13 +371,43 @@ export default function Scheduling({ navigation, route }: any) {
             <ScrollView showsVerticalScrollIndicator={false}>
                 <Text style={styles.subTitle}>Agendamento</Text>
                 {selectedService && (
-                     <TouchableOpacity key={selectedService.itemId}
-                            style={{ padding: 20, backgroundColor: "white", margin: 5, outlineColor: colors.primary, outlineWidth:1 }}
-                            onPress={() => setSelectedService(null)}
-                        >
+                    <TouchableOpacity key={selectedService.itemId}
+                        style={{ padding: 20, backgroundColor: "white", margin: 5, outlineColor: colors.primary, outlineWidth: 1 }}
+                        onPress={() => setSelectedService(null)}
+                    >
                         <Text style={{ fontSize: 18, fontFamily: font.poppins.bold }}>{selectedService.itemName}</Text>
                         <Text>{selectedService.itemDescription}</Text>
-                        <Text style={{ color: colors.primary }}>{formatCurrency(selectedService.itemPrice)}</Text>
+                        {(() => {
+                            const originalPrice = formatCurrency(selectedService.itemPrice);
+                            const finalPrice = calcPromo(selectedService.itemPrice, selectedService.itemName);
+                            const hasDiscount = originalPrice !== finalPrice;
+
+                            return (
+                                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                                    {hasDiscount && (
+                                        <Text
+                                            style={{
+                                                textDecorationLine: "line-through",
+                                                color: colors.lightGray,
+                                                fontFamily: font.poppins.medium,
+                                                fontSize: 14,
+                                            }}
+                                        >
+                                            {originalPrice}
+                                        </Text>
+                                    )}
+                                    <Text
+                                        style={{
+                                            color: colors.primary,
+                                            fontFamily: font.poppins.bold,
+                                            fontSize: 16,
+                                        }}
+                                    >
+                                        {finalPrice}
+                                    </Text>
+                                </View>
+                            );
+                        })()}
                         <Text>Duração: {selectedService.itemDuration} Minutos</Text>
                     </TouchableOpacity>
                 )}
@@ -318,21 +449,53 @@ export default function Scheduling({ navigation, route }: any) {
                     </>
                 )}
 
-                {selectedSpecialist && !selectedService && <View>
-                    {selectedSpecialist?.services.map((item, index) => (
-                        <TouchableOpacity key={item.itemId}
-                            style={{ padding: 20, backgroundColor: "white", margin: 5 }}
-                            onPress={() => setSelectedService(item)}
-                        >
+                {selectedSpecialist && !selectedService &&
+                    <View>
+                        {selectedSpecialist?.services.map((item, index) => (
+                            <TouchableOpacity key={item.itemId}
+                                style={{ padding: 20, backgroundColor: "white", margin: 5 }}
+                                onPress={() => setSelectedService(item)}
+                            >
 
-                            <Text style={{ fontSize: 18, fontFamily: font.poppins.bold }}>{item.itemName}</Text>
-                            <Text>{item.itemDescription}</Text>
-                            <Text style={{ color: colors.primary }}>{formatCurrency(item.itemPrice)}</Text>
-                            <Text>Duração: {item.itemDuration} Minutos</Text>
+                                <Text style={{ fontSize: 18, fontFamily: font.poppins.bold }}>{item.itemName}</Text>
+                                <Text>{item.itemDescription}</Text>
+                                {(() => {
+                                    const originalPrice = formatCurrency(item.itemPrice);
+                                    const finalPrice = calcPromo(item.itemPrice, item.itemName);
+                                    const hasDiscount = originalPrice !== finalPrice;
 
-                        </TouchableOpacity>
-                    ))}
-                </View>}
+                                    return (
+                                        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                                            {hasDiscount && (
+                                                <Text
+                                                    style={{
+                                                        textDecorationLine: "line-through",
+                                                        color: colors.lightGray,
+                                                        fontFamily: font.poppins.medium,
+                                                        fontSize: 14,
+                                                    }}
+                                                >
+                                                    {originalPrice}
+                                                </Text>
+                                            )}
+                                            <Text
+                                                style={{
+                                                    color: colors.primary,
+                                                    fontFamily: font.poppins.bold,
+                                                    fontSize: 16,
+                                                }}
+                                            >
+                                                {finalPrice}
+                                            </Text>
+                                        </View>
+                                    );
+                                })()}
+                                <Text>Duração: {item.itemDuration} Minutos</Text>
+
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                }
 
                 <View>
                     <Text style={styles.title}>Especialistas</Text>
@@ -366,7 +529,7 @@ export default function Scheduling({ navigation, route }: any) {
 
 
             </ScrollView>
-            <TabBarButton title='Reservar horário' onPress={() => { selectedSchedule && confirmActions(selectedSchedule); navigation.navigate("ScheduleFinal") }} />
+            <TabBarButton title='Reservar horário' onPress={handleConfirm} />
         </SafeAreaView>
 
 

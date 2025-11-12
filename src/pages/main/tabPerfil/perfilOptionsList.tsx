@@ -16,9 +16,15 @@ import colors from '../../../configs/theme';
 import { styles } from './style';
 import CustomButton from '../../../components/customButton';
 import Icon from 'configs/icons';
+import { useAlert } from 'context/alertContext';
 export default function Perfil({ navigation }: any) {
     const { user, signOut } = useContext(AuthContext)!
-
+    const {showAlert}= useAlert()
+    const logoutHandle = async()=>{
+        const res = await showAlert("Deseja realmete sair?","confirm")
+        if(!res) return;
+        signOut();
+    }
     return (
         <SafeAreaView style={styles.container}>
             {/* HEADER====================================== */}
@@ -59,12 +65,13 @@ export default function Perfil({ navigation }: any) {
                 titleStyle={{ color: colors.secondary }}
                 onPress={() => { navigation.navigate("Home", { screen: "UserEstablishment" }) }}
             />
-            <UserOptions icon={<Icon.AntDesign name='info-circle' size={40} color={colors.secondary} />} title='Central de Ajuda'
+            <UserOptions icon={<Icon.FontAwesome name='credit-card' size={40} color={colors.secondary} />} title='Assinatura'
                 rightIcon={<AntDesign name='right' size={24} color={colors.primary} />}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }}
-                onPress={() => { navigation.navigate("Home", { screen: "UserEstablishment" }) }}
+                onPress={() => { navigation.navigate("Home", { screen: "Assinatura" }) }}
             />
+            
 
 
        
@@ -76,7 +83,7 @@ export default function Perfil({ navigation }: any) {
                 title={"Sair"}
                 style={styles.secondaryOptions}
                 titleStyle={{ color: colors.secondary }}
-                onPress={signOut} />
+                onPress={logoutHandle} />
         </SafeAreaView>
     )
 }

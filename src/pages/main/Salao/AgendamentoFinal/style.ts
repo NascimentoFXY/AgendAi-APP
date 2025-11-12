@@ -62,7 +62,7 @@ export const styles = StyleSheet.create({
         borderWidth: 0.9,
         borderRadius: 20,
         borderColor: "#0000000f",
-        height: 500,
+      
         gap: 20,
         backgroundColor: colors.background,
         justifyContent: 'space-around',
@@ -87,7 +87,8 @@ export const styles = StyleSheet.create({
     },
     labelContainer:{
         justifyContent: "space-between",
-        flexDirection: "row"
+        flexDirection: "row",
+        alignItems: "center"
     },
     title:{
         fontSize: 26,
@@ -100,5 +101,13 @@ export const styles = StyleSheet.create({
         borderRadius: 150,
         justifyContent: "center",
         alignItems: "center"
+    },
+    cupomBtn:{
+        backgroundColor: colors.primary,
+        padding: 5,
+        borderRadius: 5,
+    },
+    cupomBtnText:{
+        color:colors.white
     }
 })

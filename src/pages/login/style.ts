@@ -33,6 +33,7 @@ export const styles = StyleSheet.create({
         height: 50,
         justifyContent: "center",
         textAlign: "center",
+        marginVertical: 10,
     },
     input: {
         borderWidth: 1,

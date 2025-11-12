@@ -24,7 +24,7 @@ const { width } = Dimensions.get("window");
 
 
 export default function EstablishmentServices() {
-    const { addServicesToSalon, updateServices, serviceList, fetchServices, deleteService } =
+    const { addServicesToSalon, updateServices, serviceList, fetchServices, deleteService, fetchSalons } =
         useSalonContext()!;
     const { showAlert } = useAlert();
     const [selectedService, setSelectedService] = useState<Services | null>(null);
@@ -45,7 +45,7 @@ export default function EstablishmentServices() {
 
     useEffect(() => {
         fetchServices();
-    }, []);
+    }, [serviceList, services]);
 
     const handleConfirm = async () => {
         if (!serviceName) return;
@@ -106,6 +106,7 @@ export default function EstablishmentServices() {
         setCustomServiceName("");
         // Atualiza a lista do contexto
         await fetchServices();
+        await fetchSalons();
     };
 
 
@@ -168,8 +169,14 @@ export default function EstablishmentServices() {
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
-                <Text style={styles.title}>Serviços</Text>
+                <View style={{ flexDirection: "row", alignItems: "center", width: "100%", justifyContent: "space-between" }}>
 
+                    <View style={{ marginLeft: "auto", width: 50 }} />
+                    <Text style={[styles.title]}>Serviços</Text>
+                    <TouchableOpacity style={{ marginLeft: "auto", width: 50, marginTop: -20 }}>
+                        <Icon.MaterialCommunityIcons name="reload" size={24} />
+                    </TouchableOpacity>
+                </View>
                 {serviceList.length === 0 && (
                     <Text style={{ fontFamily: font.poppins.medium }}>
                         Você não possui nenhum serviço.
@@ -203,10 +210,12 @@ export default function EstablishmentServices() {
                     <View style={styles.modalOverlay}>
                         <View style={styles.modalContainer}>
                             <Text style={styles.modalTitle}>{selectedService?.serviceName}</Text>
+                            <ScrollView showsVerticalScrollIndicator={false}>
 
-                            {selectedService?.types.map((type) => (
-                                <ServiceTypeCard key={type.itemId} type={type} />
-                            ))}
+                                {selectedService?.types.map((type) => (
+                                    <ServiceTypeCard key={type.itemId} type={type} />
+                                ))}
+                            </ScrollView>
 
                             <View style={styles.modalActions}>
                                 <TouchableOpacity
@@ -466,6 +475,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         padding: 20,
         elevation: 5,
+
     },
     modalTitle: {
         fontSize: 18,

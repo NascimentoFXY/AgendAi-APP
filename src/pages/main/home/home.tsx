@@ -28,6 +28,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useUserLocation } from 'context/userLocation';
 import Catalogo from 'pages/catalogo/catalogo';
 import Icon from 'configs/icons';
+import { normalizeSize } from 'configs/utils';
+import { collection, getDocs, query, where } from '@firebase/firestore';
+import { db } from 'services/firebase';
 
 
 const cardsWidth = 400;
@@ -79,10 +82,42 @@ export function Home({ navigation }: any) {
         // Exiba um carregamento ou redirecione para a tela de login
         return <ActivityIndicator />;
     }
-    const { salon, salonList, loadSalon, getAverageRating, saveSalon, savedList, removeSalon } = salonData
+    const { salon, salonList, loadSalon, saveSalon, savedList, removeSalon } = salonData
     const { createSchedule, schedules, schedule, useSchedule, cancelSchedule, fetchSchedules } = scheduleData!;
+    const [premiumSalonList, setPremiumSalonList] = useState<Salon[] | null>()
 
-
+    const getTopSaloes = async () => {
+        try {
+            //  Buscar todos os usuários premium
+            const usersRef = collection(db, "users");
+            const usersQuery = query(usersRef, where("isPremium", "==", true));
+            const usersSnapshot = await getDocs(usersQuery);
+            
+            // Pegar os IDs dos donos premium
+            const premiumUserIds = usersSnapshot.docs.map(doc => doc.id);
+            
+            if (premiumUserIds.length === 0) {
+                setPremiumSalonList([]);
+                return;
+            }
+            
+            //  Buscar salões cujo dono (ownerId) esteja na lista de premiumUserIds
+            const salonRef = collection(db, "salon");
+            const salonsSnapshot = await getDocs(salonRef);
+            
+            const salons = salonsSnapshot.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter((salon: any) => premiumUserIds.includes(salon.ownerID)); // <-- Filtra
+            
+            setPremiumSalonList(salons as any);
+        } catch (err) {
+            console.error("Erro ao buscar salões de usuários premium:", err);
+        }
+    };
+    
+    useEffect(() => {
+      getTopSaloes();
+    }, [user.id]);
 
 
     const TopSaloesCardsData = ({ rating, name, salonId, image }: any) => {
@@ -100,7 +135,7 @@ export function Home({ navigation }: any) {
                         <FontAwesome5 name='heart' size={30} />
                     </TouchableOpacity>}
                     {isFavorite && <TouchableOpacity style={styles.saloesHeart} onPress={() => { removeSalon(salonId) }}>
-                        <Icon.FontAwesome6 name='heart-circle-minus' size={30} />
+                        <Icon.FontAwesome6 name='heart-circle-minus' size={30} color={colors.primary} />
                     </TouchableOpacity>}
 
                     <LinearGradient
@@ -123,27 +158,8 @@ export function Home({ navigation }: any) {
         )
     }
     const [averageRatings, setAverageRatings] = useState<{ [salonId: string]: number }>({});
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const fetchAllAverages = async () => {
-            if (!salonList || salonList.length === 0) {
-                return;
-            }
-            const ratingsMap: { [salonId: string]: number } = {};
-
-            for (const salon of salonList) {
-                if (!getAverageRating) return;
-                const avg = await getAverageRating(salon);
-                ratingsMap[salon.id!] = avg;
-            }
-
-            setAverageRatings(ratingsMap);
-            setLoading(false);
-        };
-
-        fetchAllAverages();
-    }, [salonList]);
     return (
         <ScrollView contentContainerStyle={styles.container}
 
@@ -163,115 +179,91 @@ export function Home({ navigation }: any) {
 
                 {/* ==================ESPECIAL PRA VOCE======================================= */}
 
-                <View style={styles.contentHeader}>
+                {salonList?.filter((salon) => salon.maxPromo) && (
+                    <>
+                        <View style={styles.contentHeader}>
 
-                    <Text style={styles.contentHeaderTitle}>#EspecialParaVocê</Text>
-                    <TouchableOpacity><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
-
-                </View>
-
-                <Carroussel
-                    cardsWidth={cardsWidth}
-                    cardsGap={20}
-                    contentContainerStyle={{
-                        paddingHorizontal: 20,
-                    }}
-                >
-
-
-                    {salonList?.map((salon, index) => (
-                        <View key={salon.id}>
-
-                            <View
-                                style={styles.especialCards}>
-
-                                <View style={{ flex: 1 }}>
-                                    <Text style={{ backgroundColor: "#fff", width: 120, padding: 8, borderRadius: 20 }}>Tempo Limitado</Text>
-                                </View>
-                                <View style={{ flex: 1 }}>
-                                    <Text style={{ fontWeight: 'bold', color: "#fff", fontSize: 24 }}>{salon.name} com desconto</Text>
-                                    <Text style={{ color: "#fff" }}>De até</Text>
-                                    <Text style={{ color: "#fff" }}>{ }</Text>
-                                </View>
-                                <View style={{ flexDirection: "row", flex: 1, justifyContent: "space-between", paddingTop: 30, alignItems: "center" }}>
-                                    <Text style={{ color: "#fff", fontSize: 12, paddingTop: 20, }}>Localizado em{salon.addres?.split(",")[2]},{salon.addres?.split(",")[1]}</Text>
-                                    <CustomButton
-                                        backcolor={colors.primary}
-                                        border="Circle"
-                                        text='IR'
-                                        color='#fff'
-                                        width={80}
-                                    />
-                                </View>
-                            </View>
+                            <Text style={styles.contentHeaderTitle}>#EspecialParaVocê</Text>
+                            <TouchableOpacity><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
 
                         </View>
 
-                    ))}
-
-                </Carroussel>
-                {/* =========================SERVIÇOS=================================== */}
-
-                <View style={styles.contentHeader}>
-
-                    <Text style={styles.contentHeaderTitle}>Serviços</Text>
-                    <TouchableOpacity><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
-
-                </View>
-
-                <View style={styles.serviceCards}>
-                    <ServicesCards
-
-                        icon={
-                            <Entypo name='scissors' size={40} color={"#3b000084"} />
-                        }
-                        width={75}
-                        onPress={() => navigation.navigate("Catalogo")}
-                        textSize={10}
-                        text='Cortar Cabelo'
-                        color='#000000ff'
+                        <Carroussel
+                            cardsWidth={cardsWidth}
+                            cardsGap={20}
+                            contentContainerStyle={{
+                                paddingHorizontal: 20,
+                            }}
+                        >
 
 
-                    />
-                    <ServicesCards
-
-                        icon={
-                            <MaterialCommunityIcons name="face-mask" size={40} color={"#3b000084"} />
-                        }
-                        width={75}
-
-                        textSize={10}
-                        text='Barbear'
-                        color='#000000ff'
-                    />
-                    <ServicesCards
-
-                        icon={
-                            <FontAwesome5 name="brush" size={40} color={"#3b000084"} />
-                        }
-                        width={75}
-
-                        textSize={10}
-                        text='Maquiagem'
-                        color='#000000ff'
-                    />
-                    <ServicesCards
-
-                        icon={
-                            <Ionicons name="people" size={40} color={"#3b000084"} />
-                        }
-                        width={75}
-
-                        textSize={10}
-                        text='Massagem'
-                        color='#000000ff'
-                    />
+                            {salonList
+                                ?.filter((salao) => salao.maxPromo)
+                                .map((salon, index) => (
 
 
-                </View>
+                                    <View key={salon.id} style={styles.especialCards}>
+
+                                        <View style={{ position: "absolute" }}>
+                                            <ScrollView key={salon.id} horizontal
 
 
-                {/* ============================================saloes=============================== */}
+
+                                                pagingEnabled showsHorizontalScrollIndicator={false} style={{ width: 400, height: 260 }}>
+                                                <View>
+                                                    <Image source={{ uri: salon.image }} style={{ width: 400, height: 260 }} />
+                                                    <LinearGradient
+                                                        colors={['rgba(255, 255, 255, 0)', '#000000d4']}
+                                                        start={{ x: 0, y: 0 }}
+
+                                                        end={{ x: 0, y: 1 }}
+                                                        style={styles.linearGradient}
+                                                    />
+                                                    <View style={{ position: "absolute", top: 70, left: 10 }} >
+                                                        <Text style={{ fontWeight: 'bold', color: "#fff", fontSize: normalizeSize(24) }}>{salon.name} com desconto</Text>
+                                                        <Text style={{ color: "#fff" }}>De até</Text>
+                                                        <Text style={{ color: colors.primary, fontSize: normalizeSize(30), fontFamily: font.poppins.bold }}>{salon.maxPromo?.valor}{salon.maxPromo?.tipoValor == "porcentagem" ? "%" : "R$"}</Text>
+
+                                                    </View>
+                                                </View>
+                                                {salon.promoBannerImages && salon.promoBannerImages.map((image, index) => {
+                                                    return (
+                                                        <Image key={index} source={{ uri: image }} style={{ width: 400, height: 260 }} />
+                                                    )
+                                                })}
+
+                                            </ScrollView>
+                                        </View>
+
+
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={{ backgroundColor: "#fff", width: 120, padding: 8, borderRadius: 20 }}>Tempo Limitado</Text>
+                                        </View>
+
+                                        <View style={{ flexDirection: "row", flex: 1, justifyContent: "space-between", paddingTop: 30, alignItems: "center" }}>
+                                            <Text style={{ color: "#fff", fontSize: 12, paddingTop: 20, }}>Localizado em{salon.addres?.split(",")[2]},{salon.addres?.split(",")[1]}</Text>
+                                            <CustomButton
+                                                backcolor={colors.primary}
+                                                border="Circle"
+                                                text='IR'
+                                                color='#fff'
+                                                width={80}
+                                                onPress={() => { loadSalon(salon.id!), navigation.navigate("Salao") }}
+                                            />
+                                        </View>
+                                    </View>
+
+
+
+                                ))}
+
+                        </Carroussel>
+                    </>
+                )}
+
+
+
+                {/* ============================================Top Saloes=============================== */}
 
                 <View style={styles.contentHeader}>
                     <Text style={styles.contentHeaderTitle}>Top salões</Text>
@@ -286,16 +278,40 @@ export function Home({ navigation }: any) {
                         paddingHorizontal: 20,
 
                     }}>
-                    {!loading && salonList?.map((key) => (
-                        <TopSaloesCardsData key={key.id} name={key.name} rating={
-                            averageRatings[key.id!] === undefined ? (
-                                <ActivityIndicator size="small" color={colors.primary} />
-                            ) : (
-                                (averageRatings[key.id!] ?? 0).toFixed(1)
-                            )} salonId={key.id} image={key.image} />
+                    {!loading && premiumSalonList?.map((key: any) => (
+                        <TopSaloesCardsData key={key.id} name={key.name} rating={key.rating.toFixed(1) || (0).toFixed(1)} salonId={key.id} image={key.image} />
                     ))}
                     {loading && <ActivityIndicator size={70} style={{ width: Dimensions.get("window").width, alignItems: "center" }} color={colors.primary} />}
                 </Carroussel>
+
+
+                {/* =========================FAVORITOS=================================== */}
+
+                {savedList.length > 0 && (
+                    <View>
+
+                        <View style={styles.contentHeader}>
+
+                            <Text style={styles.contentHeaderTitle}>Favoritos</Text>
+                            <TouchableOpacity><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
+
+                        </View>
+
+                        <Carroussel
+                            cardsWidth={300}
+                            cardsGap={20}
+                            contentContainerStyle={{
+                                paddingHorizontal: 20,
+
+                            }}>
+                            {!loading && savedList?.map((key) => (
+                                <TopSaloesCardsData key={key.id} name={key.name} rating={key.rating.toFixed(1) || (0).toFixed(1)} salonId={key.id} image={key.image} />
+                            ))}
+                            {loading && <ActivityIndicator size={70} style={{ width: Dimensions.get("window").width, alignItems: "center" }} color={colors.primary} />}
+                        </Carroussel>
+                    </View>
+                )
+                }
                 <ScrollView>
                     <Catalogo />
                 </ScrollView>

@@ -35,7 +35,8 @@ export const styles = StyleSheet.create({
     borderColor: colors.lightGray
   },
   options: {
-    flexDirection: "row"
+    flexDirection: "row",
+    gap: 10
   },
   others: {
     flex: 1,

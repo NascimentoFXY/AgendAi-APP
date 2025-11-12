@@ -6,6 +6,7 @@
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 import { initializeApp } from "firebase/app";
 
+import * as ImageManipulator from "expo-image-manipulator";
 import { getAuth, getReactNativePersistence, initializeAuth, } from "firebase/auth";
 import { collection, getFirestore, doc, getDoc, addDoc, setDoc } from "@firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -47,36 +48,49 @@ export async function getUserNameById(salonID: string): Promise<string | null> {
   }
 }
 
-// const {user, updateUser} = useContext(AuthContext)!
-export const uploadImageAndSaveToFirestore = async (imageUri: string, salonID?: string) => {
+
+
+
+
+export const uploadImageAndSaveToFirestore = async (imageUri: string, salonID?: string, path?: string) => {
   try {
-    if (!imageUri || !salonID) return console.log("[services]algo não esta sendoo salvo");
-    const response = await fetch(imageUri);
-    const blob = await response.blob(); // Converte o URI da imagem em um Blob
+    if (!imageUri || !salonID || salonID == "_") return;
 
-    // Cria uma referência única no Storage (ex: 'images/salonID/timestamp_imageName.jpg')
-    const imageName = imageUri.substring(imageUri.lastIndexOf('/') + 1);
-    const storageRef = ref(storage, `images/salons/${salonID}/${Date.now()}_${imageName}`);
+    let compress = 1.0;
+    let compressed = await ImageManipulator.manipulateAsync(
+      imageUri,
+      [],
+      { compress, format: ImageManipulator.SaveFormat.JPEG }
+    );
 
-    // Faz o upload da imagem
-    const snapshot = await uploadBytes(storageRef, blob);
-    // alert('Imagem carregada com sucesso!' + JSON.stringify(snapshot));
+    while (true) {
+      const response = await fetch(compressed.uri);
+      const blob = await response.blob();
 
-    // Obtém o URL de download público
-    const downloadURL = await getDownloadURL(snapshot.ref);
-    console.log('Download URL:', downloadURL);
+      if (blob.size <= 500 * 1024 || compress <= 0.1) {
+        const storageRef = ref(storage, path ? path :`images/salons/${salonID}/salonImage.jpg`);
+        await uploadBytes(storageRef, blob);
+        const url = await getDownloadURL(storageRef);
+        console.log("✅ Upload feito com", (blob.size / 1024).toFixed(1), "KB");
+        return url;
+      }
 
-
-    return downloadURL;
+      compress -= 0.1;
+      compressed = await ImageManipulator.manipulateAsync(
+        imageUri,
+        [],
+        { compress, format: ImageManipulator.SaveFormat.JPEG }
+      );
+    }
   } catch (error) {
-    console.error("Erro ao carregar imagem ou salvar no Firestore:", error);
-    throw error;
+    console.error("Erro ao comprimir/enviar imagem:", error);
   }
 };
 
+
 export const uploadUserImage = async (URI: string, userID: string) => {
-  console.log("[services]ID usuario:",userID)
-  console.log("[services]URI: ",URI)
+  console.log("[services]ID usuario:", userID)
+  console.log("[services]URI: ", URI)
   if (!URI || !userID) {
     console.log("[services]deu ruim imagem do usuario")
     return
@@ -95,7 +109,7 @@ export const uploadUserImage = async (URI: string, userID: string) => {
     const downloadURL = await getDownloadURL(snapshot.ref);
     console.log('Download URL:', downloadURL);
     // updateUser({image: downloadURL, isComplete: true})
-    
+
     return downloadURL;
 
   }

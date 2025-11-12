@@ -17,6 +17,7 @@ export interface User {
     isProfessional?: boolean,
     image?: string;
     isComplete?: boolean
+    isPremium?: boolean
 }
 
 interface AuthContextType {
@@ -66,7 +67,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
                     setComplete(parsedResponse.isComplete);
                 } else {
                     console.log("[auth]nao encontrado no AS");
-                }
+                } 
             }
             catch (err) {
                 console.log(err)

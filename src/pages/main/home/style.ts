@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 import colors, { font } from "../../../configs/theme";
 import { LinearGradient } from "expo-linear-gradient";
+import { normalizeSize } from "configs/utils";
 
 export const styles = StyleSheet.create({
 
@@ -43,10 +44,11 @@ export const styles = StyleSheet.create({
     },
     especialCards: {
         backgroundColor: "#242424ff",
-        width: 400,
-        height: 260,
+        width: normalizeSize(400),
+        height: normalizeSize(260),
         borderRadius: 30,
         padding: 12,
+        overflow: "hidden",
     },
     serviceCards: {
         flexDirection: "row",
@@ -70,7 +72,7 @@ export const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection: "row",
     },
-    cardBottom:{
+    cardBottom: {
         flexDirection: "row-reverse",
         justifyContent: "space-between",
         alignItems: "center",
@@ -78,7 +80,7 @@ export const styles = StyleSheet.create({
         padding: 10,
         paddingLeft: 20,
     },
-    cardTitle:{
+    cardTitle: {
         fontFamily: font.poppins.bold,
         fontSize: 15,
         color: colors.white,
@@ -103,13 +105,13 @@ export const styles = StyleSheet.create({
     link: {
         color: colors.primary,
     },
-    linearGradient:{
+    linearGradient: {
         position: "absolute",
         bottom: 0,
         left: 0,
         right: 0,
         height: 100,
-     
+
     }
 })
 

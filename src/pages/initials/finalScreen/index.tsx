@@ -21,9 +21,9 @@ export default function FinalScreen({ navigation }: any) {
       <View style={{justifyContent: "center", alignItems:"center", marginBottom: 200}}>
 
 
-        <View style={{ width: 280, height: 570, }}>
+
           <MainScreen />
-        </View>
+
       </View>
 
 

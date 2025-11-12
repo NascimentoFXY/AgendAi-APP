@@ -22,9 +22,22 @@ interface Salon {
     workSchedule?: any,
     image?: any
     cupons?: Cupon[],
-    melhorCupom?: any
+    maxPromo?: PromoProps,
+    isPremium?: boolean,
+    promoBannerImages: any[],
 
 }
+export interface PromoProps {
+    id: string,
+    salonID: string,
+    valor: any,
+    tipoValor: string,
+    dataInicio: string,
+    dataFim: string,
+    aplicableTo: any,
+    service: any,
+    types: any,
+};
 interface Cupon {
     codigo?: string,
     dataFim?: string,
@@ -51,7 +64,7 @@ export interface Specialist {
     id?: string,
     name: string,
     email: string,
-    rating?: string,
+    ratingAverage?: string,
     services: Services["types"],
     image?: string,
     profession: string
@@ -85,6 +98,7 @@ interface Info {
 }
 interface SalonContextType {
     salon: Salon | null,
+    salonCList: Salon[] | null,
     specialist: Specialist | null,
     salonList: Salon[] | null,
     ratings: Rating[],
@@ -95,14 +109,14 @@ interface SalonContextType {
     setIsValid: (value: boolean) => void,
     addRatingToSalon: (data: Rating) => void,
     setRatingFilter?: (value: string) => void,
-    getAverageRating?: (salon: Salon) => Promise<number>,
     addSpecialistToSalon?: (salonID: string, user: User, service: Services["types"], profession: string) => Promise<any>
     fetchSpecialists: () => Promise<void>,
     addServicesToSalon: (data: Services) => Promise<void>,
     updateServices: (data: Services) => Promise<void>,
+    getAllSalonsWithSubcollections: () => Promise<any>
     deleteService: (data: Services) => Promise<void>,
     fetchServices: () => Promise<void>,
-    fetchCupons: () => Promise<void>,
+    fetchCupons: (salonID?: any) => Promise<void>,
     selectSpecialist: (id: any) => Promise<Specialist | undefined>,
     saveSalon: (salonID: string) => Promise<void>,
     removeSalon: (salonID: string) => Promise<void>,
@@ -115,6 +129,8 @@ interface SalonContextType {
     isValid: Boolean,
     isOwner: Boolean,
     isFavorite: Boolean,
+    promoList: PromoProps[],
+    SalonRef: () => void;
 }
 
 
@@ -129,16 +145,21 @@ type RootStackParamList = {
 export default function SalonProvider({ children }: { children: React.ReactNode }) {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const { user } = useContext(AuthContext)!
-    const authData = useContext(AuthContext)!
     const [salon, setSalon] = useState<Salon | null>(null)
+    const [salonC, setSalonC] = useState<Salon | null>(null)
     const [specialist, setSpecialist] = useState<Specialist | null>(null)
-    const [loading, setLoading] = useState(false)
-    const [salonList, setSalonList] = useState<Salon[]>([])
+
     const [serviceList, setServiceList] = useState<Services[]>([])
-    const [isInputValid, setInputValid] = useState(false)
+    const [salonList, setSalonList] = useState<Salon[]>([])
+    const [salonCList, setSalonCList] = useState<Salon[]>([])
     const [cuponList, setCuponList] = useState<Cupon[]>([]);
     const [savedList, setSavedList] = useState<Salon[]>([])
+    const [promoList, setPromoList] = useState<PromoProps[]>([])
+
+    const [isInputValid, setInputValid] = useState(false)
     const [isFavorite, setIsFavorite] = useState<Boolean>(false)
+
+    const [loading, setLoading] = useState(false)
     const [info, setInfo] = useState<Info>({
         cep: "",
         nome: "",
@@ -151,7 +172,11 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         escala: "",
     })
     // console.log("[salon]lista de saloes", salonList, "\n")
+    useEffect(() => {
 
+        console.log(JSON.stringify(salonC, null, 2));
+
+    }, [salonC]);
     //----------------recebe os dados-----------------------------------//
     const setData = useCallback((data: DataProps) => {
         setInfo((prev) => ({
@@ -165,6 +190,64 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
     const setIsValid = (value: boolean) => {
         setInputValid(value)
     }
+
+    //salao
+    const SalonRef = () => {
+        try {
+            if (!salon) return;
+            const salonRef = doc(db, "salon", salon.id!)
+            return salonRef
+        } catch (er) {
+            console.error("[SalonContext/SalonRef] Erro:", er)
+        }
+    }
+
+    async function getAllSalonsWithSubcollections() {
+    try {
+        const salonsRef = collection(db, "salon");
+        const salonsSnap = await getDocs(salonsRef);
+
+        const salonsData = await Promise.all(
+            salonsSnap.docs.map(async (salonDoc) => {
+                const salonRef = salonDoc.ref;
+
+                // Pega subcoleções em paralelo
+                const [servicesSnap, specialistsSnap, cuponsSnap, promoSnap] = await Promise.all([
+                    getDocs(collection(salonRef, "services")),
+                    getDocs(collection(salonRef, "specialists")),
+                    getDocs(collection(salonRef, "cupons")),
+                    getDocs(collection(salonRef, "promo")),
+                ]);
+
+                // Mapeia dados das subcoleções
+                const services = servicesSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                const specialists = specialistsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                const cupons = cuponsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                const promos = promoSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+                return {
+                    id: salonDoc.id,
+                    ...salonDoc.data(),
+                    services,
+                    specialists,
+                    cupons,
+                    promos,
+                };
+            })
+        );
+
+        // Atualiza o estado com todos os salões completos
+        setSalonCList(salonsData as any);
+        return salonsData;
+    } catch (error) {
+        console.error("❌ Erro ao buscar todos os salões:", error);
+        return [];
+    }
+}
+
+
+
+
     // ----------------------CRIAR SALAO---------------------------------//
     const createSalon = useCallback(async () => {
 
@@ -283,25 +366,48 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         }
     }, [salon?.id])
     //--------------------------------adicionar avaliação--------------------------//
-    const addRatingToSalon = useCallback(async (data: Rating) => {
-        const RatingseRef = doc(collection(db, "salon", salon?.id!, "ratings"))
-        try {
-            await setDoc((RatingseRef), {
-                id: RatingseRef.id,
-                comment: data.comment,
-                senderID: data.sender?.id,
-                sender: data.sender,
-                value: data.value,
-                image: data?.image,
-                salonName: salon?.name,
-                salonID: salon?.id,
-                createdAt: serverTimestamp()
-            })
-            fetchSalonRatings(salon?.id!)
-        } catch (err) {
-            console.log("[salon]erro ao adicionar avaliação: ", err)
-        }
-    }, [salon?.id!, salon?.name])
+    const addRatingToSalon = useCallback(
+        async (data: Rating) => {
+            if (!salon?.id) return;
+
+            const ratingRef = doc(collection(db, "salon", salon.id, "ratings"));
+
+            try {
+                //Adiciona nova avaliação
+                await setDoc(ratingRef, {
+                    id: ratingRef.id,
+                    comment: data.comment,
+                    senderID: data.sender?.id,
+                    sender: data.sender,
+                    value: data.value,
+                    image: data?.image,
+                    salonName: salon.name,
+                    salonID: salon.id,
+                    createdAt: serverTimestamp(),
+                });
+
+                // Busca todas as avaliações do salão
+                const ratingsSnap = await getDocs(collection(db, "salon", salon.id, "ratings"));
+                const ratings = ratingsSnap.docs.map((doc) => doc.data().value);
+
+                //  Calcula a média
+                const average =
+                    ratings.length > 0
+                        ? ratings.reduce((a, b) => a + b, 0) / ratings.length
+                        : 0;
+
+                const salonRef = doc(db, "salon", salon.id);
+                await updateDoc(salonRef, { rating: average });
+                
+                fetchSalonRatings(salon.id);
+
+                console.log(`[salon] Avaliação adicionada. Média atual: ${average}`);
+            } catch (err) {
+                console.log("[salon] Erro ao adicionar avaliação: ", err);
+            }
+        },
+        [salon?.id, salon?.name]
+    );
     //-------------------------------usarSalao----------------------------------//
 
     const loadSalonData = useCallback(async (salonId: string) => {
@@ -342,6 +448,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
 
     const loadSalon = useCallback(async (salonId: string) => {
         await loadSalonData(salonId)
+        await getAllSalonsWithSubcollections()
     }, [])
 
     //=================================================Salvar salão===================================================//
@@ -551,60 +658,46 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             console.error("Erro ao buscar avaliações:", err);
         }
     }, [ratingFilter]);
-    //-----------------------media de avaliações------------------------------//
-    const getAverageRating = useCallback(async (salon: Salon): Promise<number> => {
-        try {
-            if (!salon.id) return 0;
-            const ratingsRef = collection(db, "salon", salon.id, "ratings");
-            const snapshot = await getDocs(ratingsRef);
-
-            if (!snapshot || snapshot.empty) return 0;
-
-            // Pega apenas o campo value de cada rating e garante que seja número
-            const ratings = snapshot.docs.map(doc => {
-                const data = doc.data() as Rating;
-                return Number(data.value) || 0;
-            });
-            if (ratings.length === 0) return 0;
-
-            const total = ratings.reduce((sum, value) => sum + value, 0);
-
-            return total / ratings.length;
-        } catch (err) {
-            console.error("Erro ao calcular média de avaliações:", err);
-            return 0;
-        }
-    }, []);
 
     // -----------------------atualizar----------------------------------//
     useEffect(() => {
         const fetch = async () => {
             await fetchSalons();
-
         }
         fetch()
     }, []);
     // Estado para armazenar os cupons
 
-    // Função para buscar cupons de um salão específico
     const fetchCupons = useCallback(async (salonId?: string) => {
+        const id = salonId ?? salon?.id;
+        if (!id) return console.warn("fetchCupons: nenhum salonId fornecido.");
+
         try {
-            const id = salonId || salon?.id;
-            if (!id) return;
+            const [csnapshot, psnapshot] = await Promise.all([
+                getDocs(collection(db, "salon", id, "cupons")),
+                getDocs(collection(db, "salon", id, "promo")),
+            ]);
 
-            const cuponsRef = collection(db, "salon", id, "cupons");
-            const snapshot = await getDocs(cuponsRef);
+            // Função auxiliar genérica para mapear snapshots
+            const mapDocs = <T,>(snapshot: any): T[] =>
+                snapshot.docs.map((doc: any) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
 
-            const cupons = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-            })) as Cupon[];
+            // Extrai e tipa as listas
+            const cupons = mapDocs<Cupon>(csnapshot);
+            const promos = mapDocs<PromoProps>(psnapshot);
 
+            // Atualiza estados
             setCuponList(cupons);
+            setPromoList(promos);
+
         } catch (error) {
-            console.error("Erro ao buscar cupons:", error);
+            console.error("Erro ao buscar cupons e promoções:", error);
         }
     }, [salon?.id]);
+
 
 
 
@@ -620,6 +713,7 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
             })) as Salon[];
 
             setSalonList(list);
+            setSalonCList(list);
         } catch (error) {
             console.error("Erro ao buscar salões:", error);
         } finally {
@@ -659,7 +753,9 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         specialist: specialist,
         cuponList: cuponList,
         savedList: savedList,
-        isFavorite: isFavorite
+        isFavorite: isFavorite,
+        promoList: promoList,
+        salonCList: salonCList
     }
     const dependences = {
         salon,
@@ -679,7 +775,6 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         setIsValid,
         addRatingToSalon,
         setRatingFilter: setRatingFilter,
-        getAverageRating,
         addSpecialistToSalon,
         fetchSpecialists,
         fetchSalons,
@@ -691,7 +786,9 @@ export default function SalonProvider({ children }: { children: React.ReactNode 
         selectSpecialist,
         saveSalon,
         fetchSaved,
-        removeSalon
+        SalonRef,
+        removeSalon,
+        getAllSalonsWithSubcollections,
 
     }
 

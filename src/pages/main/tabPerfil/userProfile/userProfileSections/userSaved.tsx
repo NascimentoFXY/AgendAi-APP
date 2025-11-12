@@ -26,32 +26,13 @@ const { width, height } = Dimensions.get('window');
 export default function UserSaved() {
 
   const { user } = useAuthContext()!;
-  const { savedList, getAverageRating, salonList, fetchSaved } = useSalonContext()!;
+  const { savedList, salonList, fetchSaved } = useSalonContext()!;
 
   const [averageRatings, setAverageRatings] = useState<{ [salonId: string]: number }>({});
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetchSaved();
   }, []);
-  useEffect(() => {
-    const fetchAllAverages = async () => {
-      if (!salonList || salonList.length === 0) {
-        return;
-      }
-      const ratingsMap: { [salonId: string]: number } = {};
-
-      for (const salon of salonList) {
-        if (!getAverageRating) return;
-        const avg = await getAverageRating(salon);
-        ratingsMap[salon.id!] = avg;
-      }
-
-      setAverageRatings(ratingsMap);
-      setLoading(false);
-    };
-
-    fetchAllAverages();
-  }, [salonList]);
 
   const navigation = useNavigation();
   return (
@@ -64,12 +45,7 @@ export default function UserSaved() {
         {savedList.map((key, index) =>
           <View key={key.id} >
          
-            <TopSaloesCardsData name={key.name} rating={
-              averageRatings[key.id!] === undefined ? (
-                <ActivityIndicator size="small" color={colors.primary} />
-              ) : (
-                (averageRatings[key.id!] ?? 0).toFixed(1)
-              )}
+            <TopSaloesCardsData name={key.name}
               salonId={key.id}
               image={key.image}
               description={key.description}

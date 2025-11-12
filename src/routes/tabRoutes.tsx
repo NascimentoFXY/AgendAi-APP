@@ -34,7 +34,8 @@ export default function TabRoutes() {
         "CreateSalon",
         "EstablishmentTools",
         "UserProfile",
-        "InfoEspecialista"
+        "InfoEspecialista",
+        "Assinatura"
     ];
     const { isOwner } = useSalonContext()!;
     const CustomTabBarButton = (props: any) => (

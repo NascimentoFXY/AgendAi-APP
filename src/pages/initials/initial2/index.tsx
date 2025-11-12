@@ -4,7 +4,8 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View
+    View,
+    Image
 } from "react-native";
 import { styles } from "../style";
 import colors from "../../../configs/theme";
@@ -15,7 +16,7 @@ export default function Initial2({ navigation }: any) {
 
     return (
         <>
-        <View style={{ flex: 3, backgroundColor: "#f5f5f5", width: "100%", marginTop: 50 }}></View>
+        <Image style={{ flex: 3, backgroundColor: "#f5f5f5", width: "100%", marginTop: 50 }}  source={require("../../../../assets/initial2.png")}/>
             <View style={{ flex:  2}}>
                 <Text style={{
                     fontSize: 24,

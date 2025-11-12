@@ -24,6 +24,7 @@ import { useAlert } from 'context/alertContext';
 import CustomButton from 'components/customButton';
 import Icon from 'configs/icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import TabBarButton from 'components/TabBar';
 
 const { width } = Dimensions.get("window");
 interface SelectedService {
@@ -55,8 +56,8 @@ export const CupomCard: React.FC<{ cupom?: any, onPress?: () => void }> = ({ cup
     )
 }
 
-export default function MarketingTools() {
-    const { salon, serviceList } = useSalonContext()!;
+export default function MarketingTools({ saving }: any) {
+    const { salon, serviceList, SalonRef } = useSalonContext()!;
     const { showAlert } = useAlert()!
     // Estados
     const [cupons, setCupons] = useState<any[]>([]);
@@ -80,8 +81,6 @@ export default function MarketingTools() {
     const [dataFim, setDataFim] = useState("");
     const [selectedService, setSelectedService] = useState<SelectedService>()
     const [isDropdownVisible, setIsDropdownVisible] = useState(false)
-
-
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [bannerWidth, setBannerWidth] = useState(0);
@@ -116,6 +115,15 @@ export default function MarketingTools() {
     }, [photoList]);
 
 
+    useEffect(() => {
+        fetch();
+    }, [salon]);
+
+    async function fetch() {
+        setPhotoList(salon?.promoBannerImages)
+
+    }
+
 
     const maxPromo = promo.reduce((max, current) => {
         if (!max) return current;
@@ -124,7 +132,26 @@ export default function MarketingTools() {
         return currentValue > maxValue ? current : max;
     }, null);
 
+    //Salva tudo
 
+    const Saving = async () => {
+        if (!salon?.id) return
+        try {
+            const ref = SalonRef() as any;
+            let data = {
+                promoBannerImages: photoList || [],
+                maxPromo: maxPromo || ""
+
+            }
+            await updateDoc(ref, data)
+        } catch (er) {
+            console.error(er)
+        }
+
+    }
+    if (saving) {
+        Saving();
+    }
     // Criar cupom
     const createCupom = async () => {
         if (!salon?.id) return;
@@ -187,6 +214,7 @@ export default function MarketingTools() {
             service: selectedService?.types?.itemName || "none",
             types: selectedService?.types || null,
         };
+        
 
         try {
             if (isEditing) {
@@ -218,15 +246,6 @@ export default function MarketingTools() {
         setSelectedCupom(cupom);
         editCupom(cupom)
     };
-    useEffect(() => {
-        console.log(selectedCupom?.id)
-    }, [selectedCupom]);
-
-    const handlePickBannerImage = async () => {
-        const result = await pickImage(16, 9);
-        if (result) setBannerImage(result);
-    };
-
     const handlePickConteudoVisual = async (aspect1: number, aspect2: number) => {
         const result = await pickImage(aspect1, aspect2);
         if (result) setPhotoList(prev => [...prev || [], result]);
@@ -362,7 +381,7 @@ export default function MarketingTools() {
                         {/* Conteúdo visual */}
                         <View style={[styles.painelItem, { width: "100%" }]}>
                             <Text style={styles.sectionTitle}>Conteudo Visual</Text>
-                            <Text style={[styles.sectionTitle,{fontSize: 12}]}>(visivel no Banner publicitário)</Text>
+                            <Text style={[styles.sectionTitle, { fontSize: 12 }]}>(visivel no Banner publicitário)</Text>
 
                             <View style={[styles.row, { flexWrap: "wrap", flexGrow: 1 }]}>
                                 <View style={{ width: "45%" }}>
@@ -728,7 +747,7 @@ export default function MarketingTools() {
                 </View>
             </Modal>
 
-
+            <TabBarButton type='button' title='Salvar' onPress={Saving} />
         </SafeAreaView>
     );
 }

@@ -99,11 +99,12 @@ export default function SalaoEspecialistas() {
                         name={capitalizeFirstLetter(item.name)} // nome
                         profession={item.profession} // serviço ex: Corte de Cabelo
                         cardWidth={calcCardsWidth}
+                        rating={Number(item.ratingAverage ?? 5)} 
+
                         onPress={async () => {
                             await selectSpecialist(item.id).then((res) => {
-                                if(!res)return
+                                if (!res) return
                                 navigation.navigate("InfoEspecialista")
-                                console.log("aaa",res.id)
                             })
                         }}
                     />

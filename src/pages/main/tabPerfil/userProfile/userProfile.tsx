@@ -11,6 +11,7 @@ import {
     Dimensions,
     NativeSyntheticEvent,
     NativeScrollEvent,
+    TextInput
 } from 'react-native';
 import UserRatings from './userProfileSections/userRatings';
 import { LoadingModal, normalizeSize, capitalizeFirstLetter } from 'configs/utils';
@@ -19,6 +20,9 @@ import { useAuthContext } from 'context/auth';
 import pickImage from 'configs/pickImage';
 import TabBarButton from 'components/TabBar';
 import UserSaved from './userProfileSections/userSaved';
+import { db, uploadImageAndSaveToFirestore } from 'services/firebase';
+import { doc, updateDoc } from '@firebase/firestore';
+import { useAlert } from 'context/alertContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,9 +36,33 @@ export default function UserProfile() {
     const [hasEdited, setHasEdited] = useState<boolean>(false);
     const scrollRef = useRef<ScrollView>(null);
     const [currentPage, setCurrentPage] = useState(0);
+    const [editName, setEditName] = useState(false)
+    const [editEmail, setEditEmail] = useState(false)
     const pages = [1, 2, 3]
 
+    const alert = useAlert().showAlert
+    const handleSave = async () => {
+        try {
+            const userRef = doc(db, "users", user?.id!);
+            const imagePath = `images/users/${user?.id}/userPhoto.jpg`
+            console.log("[usuario alterou a imagem?", userPhoto != user?.image!)
+            const ImageURL = userPhoto != user?.image && await uploadImageAndSaveToFirestore(userPhoto!, "_", imagePath)
+            console.log(ImageURL);
+            const newData = {
+                image: ImageURL,
+                name: userName,
+                email: userEmail,
 
+            }
+
+            if(user)
+            await updateDoc(userRef, newData);
+            alert("Dados atualizados", "success")
+        } catch (er) {
+            console.error(er)
+        }
+
+    }
     useEffect(() => {
         setLoading(true);
         const loadUserData = async () => {
@@ -42,10 +70,20 @@ export default function UserProfile() {
             setUserPhoto(user?.image!);
             setUserName(user?.name!);
             setUserEmail(user?.email!);
+            setLoading(false);
         };
-        setLoading(false);
         loadUserData();
     }, []);
+
+
+    useEffect(() => {
+        if (userName != user?.name || userEmail != user?.email || userPhoto != user?.image) {
+            setHasEdited(true)
+        }
+        else {
+            setHasEdited(false)
+        }
+    }, [userName, userEmail, userPhoto != user?.image]);
     const pickBannerImageFromGalery = async () => {
         setLoading(true);
         await pickImage(16, 9).then((imageUri) => {
@@ -58,12 +96,12 @@ export default function UserProfile() {
     }
     const pickUserPhotoFromGalery = async () => {
         setLoading(true);
-        await pickImage(1, 1).then((imageUri) => {
-            if (imageUri) {
-                setUserPhoto(imageUri);
-                setHasEdited(true);
-            }
-        });
+        const userRef = doc(db, "users", user?.id!);
+        const path = `images/users/${user?.id}/userPhoto.jpg`
+        const image = await pickImage(1, 1);
+        if(!image) return;
+        console.log("[ImageURL]",image)
+        setUserPhoto(image)
         setLoading(false);
     }
 
@@ -125,10 +163,17 @@ export default function UserProfile() {
 
                             <View style={styles.userInfo}>
                                 <View style={styles.userInfoTextWrapper}>
-                                    <Text style={[styles.userInfoText, { fontSize: normalizeSize(16) }]} numberOfLines={2}>
-                                        {capitalizeFirstLetter(user?.name!) || 'Nome do Usuário'}
-                                    </Text>
-                                    <TouchableOpacity style={styles.editUserInfoButton}>
+
+
+                                    {!editName && <Text style={[styles.userInfoText, { fontSize: normalizeSize(16) }]} numberOfLines={2}>
+                                        {capitalizeFirstLetter(userName!) || 'Nome do Usuário'}
+                                    </Text>}
+                                    {editName &&
+                                        <TextInput style={[styles.userInfoText, { fontSize: normalizeSize(16), borderBottomWidth: 1 }]} value={userName!} onChangeText={setUserName} />
+
+                                    }
+
+                                    <TouchableOpacity style={styles.editUserInfoButton} onPress={() => setEditName(!editName)}>
                                         <Icon.AntDesign
                                             name="edit"
                                             size={normalizeSize(16)}
@@ -137,10 +182,16 @@ export default function UserProfile() {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={styles.userInfoTextWrapper}>
-                                    <Text style={styles.userInfoText} numberOfLines={1}>
-                                        {user?.email!}
-                                    </Text>
-                                    <TouchableOpacity style={styles.editUserInfoButton}>
+                                    {!editEmail && <Text style={[styles.userInfoText, { fontSize: normalizeSize(16) }]} numberOfLines={2}>
+                                        {userEmail || 'Email do Usuário'}
+                                    </Text>}
+                                    {editEmail &&
+                                        <TextInput style={[styles.userInfoText, { fontSize: normalizeSize(16), borderBottomWidth: 1 }]} value={userEmail!} onChangeText={setUserEmail} />
+
+                                    }
+                                    <TouchableOpacity style={styles.editUserInfoButton}
+                                        onPress={() => setEditEmail(!editEmail)}
+                                    >
                                         <Icon.AntDesign
                                             name="edit"
                                             size={normalizeSize(16)}
@@ -171,15 +222,13 @@ export default function UserProfile() {
 
                         {/* Tabs */}
                         <ScrollView horizontal contentContainerStyle={styles.tabsContainer} showsHorizontalScrollIndicator={false}>
-                            <TouchableOpacity onPress={()=>{scrollToPage(0)}}>
+                            <TouchableOpacity onPress={() => { scrollToPage(0) }}>
                                 <Text style={styles.tabText}>Minhas avaliações</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={()=>{scrollToPage(1)}}>
+                            <TouchableOpacity onPress={() => { scrollToPage(1) }}>
                                 <Text style={styles.tabText}>Favoritos</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={()=>{scrollToPage(2)}}>
-                                <Text style={styles.tabText}>Avaliações sobre mim</Text>
-                            </TouchableOpacity>
+
                         </ScrollView>
                     </View>
 
@@ -193,11 +242,11 @@ export default function UserProfile() {
 
                         <UserRatings />
                         <UserSaved />
-                        <UserRatings />
+
                     </ScrollView>
                 </View>
             </ScrollView>
-            {hasEdited && <TabBarButton title='Salvar' />}
+            {hasEdited && <TabBarButton title='Salvar' onPress={handleSave} />}
         </SafeAreaView>
     );
 }

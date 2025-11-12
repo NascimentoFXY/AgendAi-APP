@@ -7,7 +7,8 @@ import {
     TextInput,
     TouchableOpacity,
     ScrollView,
-    ActivityIndicator
+    ActivityIndicator,
+    Modal
 } from 'react-native';
 import { Ionicons, Feather, Entypo, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from '../../../pages/main/home/style';
@@ -16,6 +17,7 @@ import InputWithIcons from '../../../components/InputIcons';
 import { useUserLocation } from 'context/userLocation';
 import { useNotificationContext } from 'context/notificationsContext';
 import colors from 'configs/theme';
+import Catalogo from 'pages/catalogo/catalogo';
 
 
 const cardsWidth = 400;
@@ -27,6 +29,9 @@ export default function MainHeader({ navigation }: any) {
     const [cidade, setCidade] = useState()
     const [bairro, setBairro] = useState()
     const [loadingLocation, setLoadingLocation] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchValue, setSearchValue] = useState("")
+
     useEffect(() => {
         setLoadingLocation(true);
         const loadAddress = async () => {
@@ -44,7 +49,7 @@ export default function MainHeader({ navigation }: any) {
                     console.log("erro localização header", er)
                 }
             }
-            else{
+            else {
                 setCidade(undefined);
                 setBairro(undefined);
                 setLoadingLocation(false);
@@ -55,8 +60,8 @@ export default function MainHeader({ navigation }: any) {
 
     }, [location])
     return (
-        <>
-            {/* ===============HEADER=============== */}
+        <View>
+
             <View style={styles.header}>
                 {/* Linha de cima: localização e sino */}
                 <View style={styles.headerTop}>
@@ -67,8 +72,8 @@ export default function MainHeader({ navigation }: any) {
 
                         <TouchableOpacity onPress={() => { navigation.navigate("Location") }} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
                             <Ionicons name="location-sharp" size={24} color="#d77a7a" />
-                 
-                                <Text style={{ fontSize: 14, fontWeight: '600', marginLeft: 4 }}>{cidade || "Selecione sua localização"} - {bairro|| null}</Text>
+
+                            <Text style={{ fontSize: 14, fontWeight: '600', marginLeft: 4 }}>{cidade || "Selecione sua localização"} - {bairro || null}</Text>
 
                         </TouchableOpacity>
 
@@ -89,6 +94,8 @@ export default function MainHeader({ navigation }: any) {
                     <InputWithIcons
                         style={{ flex: 1 }}
                         leftIcon={<Ionicons name='search' size={20} />}
+                        placeholder='Pesquisar'
+                        onChangeText={(text) => { setIsSearching(!!text.trim()); setSearchValue(text) }}
                     />
 
                     <CustomButton
@@ -99,6 +106,14 @@ export default function MainHeader({ navigation }: any) {
                     />
                 </View>
             </View>
-        </>
+            {isSearching &&
+                <ScrollView nestedScrollEnabled style={{ backgroundColor: colors.background, flex: 1, zIndex: 2, width: "100%" }}>
+                    <Catalogo filtro={searchValue} />
+                </ScrollView>
+            }
+
+
+        </View>
+
     )
 }

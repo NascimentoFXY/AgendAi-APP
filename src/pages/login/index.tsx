@@ -87,24 +87,6 @@ export default function Login({ navigation }: any) {
                     <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>Entrar</Text>
                 </TouchableOpacity>
 
-                <View style={{ width: "100%", flex: 1, alignItems: "center", justifyContent: "center" }}>
-                    <Text>Ou entre com</Text>
-                    <View style={styles.optionsContainer}>
-                        <TouchableOpacity style={styles.options}>
-                            <Text></Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.options}>
-                            <Text></Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.options}>
-                            <Text></Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.options}>
-                            <Text></Text>
-                        </TouchableOpacity>
-                    </View>
-
-                </View>
                 <View style={{ flexDirection: "row", flex: 1 }}>
                     <Text>Não tem uma conta? </Text>
                     <TouchableOpacity onPress={() => navigation.navigate("Cadastro")}>
