@@ -12,6 +12,15 @@ export const styles = StyleSheet.create({
         height: "100%",
 
     },
+    termosTitle:{
+        fontWeight: "800"
+    },
+    termosSubTitle:{
+        fontWeight:"600"
+    },
+    termosText:{
+
+    },
     contentContainer: {
 
         width: "100%",
