@@ -2,6 +2,7 @@ Grupo composto por:
 Gabriel do Nascimento Moreira da Silva
 Gabriely Santos Lopes
 Guilherme Gomes Portugal
+Guilherme Almeida
 Higor Souza Morato
 
 -----------------------------------------------------
