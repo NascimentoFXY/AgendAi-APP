@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { AuthContext } from '../../../context/auth';
 import {
     Dimensions,
@@ -22,7 +22,7 @@ import colors, { font } from '../../../configs/theme';
 import ServicesCards from '../../../components/homeScreenComponents/ServicesCarroussel';
 import MainHeader from '../../../components/homeScreenComponents/header';
 import { EspecialCardsData } from './components';
-import { SalonContext, useSalonContext } from '../../../context/salonContext';
+import { Salon, SalonContext, useSalonContext } from '../../../context/salonContext';
 import { ScheduleContext } from 'context/scheduleContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUserLocation } from 'context/userLocation';
@@ -32,21 +32,14 @@ import { normalizeSize } from 'configs/utils';
 import { collection, getDocs, query, where } from '@firebase/firestore';
 import { db } from 'services/firebase';
 
-
+const width = Dimensions.get('window').width;
 const cardsWidth = 400;
 interface Services {
     type: any,
     id?: string
 
 }
-interface Salon {
 
-    CNPJ: string,
-    name: string,
-    owner: string,
-    opHour?: any,
-    services?: Services,
-}
 
 
 export default function HomeWrapper({ navigation }: any) {
@@ -160,6 +153,151 @@ export function Home({ navigation }: any) {
     const [averageRatings, setAverageRatings] = useState<{ [salonId: string]: number }>({});
     const [loading, setLoading] = useState(false);
 
+
+
+    // =========
+
+    const PromoBanner = ({ salon }: { salon: Salon }) => {
+        const scrollRef = useRef<ScrollView>(null);
+        const [currentIndex, setCurrentIndex] = useState(0);
+
+        const images = [salon.image, ...(salon.promoBannerImages || [])];
+        // console.log("o salão", salon.name, "tem", images.length, "imagens de banner");
+        const hasCarousel = images.length > 1;
+        useEffect(() => {
+            if (!hasCarousel) return;
+            const interval = setInterval(() => {
+                const nextIndex = (currentIndex + 1) % images.length;
+                setCurrentIndex(nextIndex);
+
+                scrollRef.current?.scrollTo({
+                    x: nextIndex * normalizeSize(350),
+                    animated: true,
+                });
+            }, 5000);
+
+            return () => clearInterval(interval);
+        }, [currentIndex]);
+
+
+        return (
+            <View style={styles.especialCards}>
+
+                {/* BANNER INTERNO QUE GIRA */}
+                <View style={{ position: "absolute" }}>
+
+                    <ScrollView
+                        ref={scrollRef}
+                        horizontal
+                        pagingEnabled
+                        showsHorizontalScrollIndicator={false}
+                        style={{ width: normalizeSize(350), height: normalizeSize(250) }}
+                    >
+                        {images.map((img, index) => (
+                            <View
+                                key={index}
+                                style={{ width: normalizeSize(350), height: "100%" }}
+                            >
+                                <Image
+                                    source={{ uri: img }}
+                                    style={{ width: "100%", height: "100%", borderRadius: 14 }}
+                                />
+
+                                {/* Só aparece no primeiro banner */}
+                                {index === 0 && (
+                                    <>
+                                        <LinearGradient
+                                            colors={['rgba(255, 255, 255, 0)', '#000000d4']}
+                                            start={{ x: 0, y: 0 }}
+                                            end={{ x: 0, y: 1 }}
+                                            style={styles.linearGradient}
+                                        />
+
+                                        <View style={{ position: "absolute", top: 70, left: 10 }}>
+                                            <Text style={{
+                                                fontWeight: 'bold',
+                                                color: "#fff",
+                                                fontSize: normalizeSize(24),
+                                                width: "80%",
+                                                textShadowColor: "#0000009b",
+                                                textShadowOffset: { width: 1, height: 1 },
+                                                textShadowRadius: 5
+                                            }}>
+                                                {salon.name} com desconto
+                                            </Text>
+
+                                            <Text style={{
+                                                color: "#fff", textShadowColor: "#0000009b",
+                                                textShadowOffset: { width: 1, height: 1 },
+                                                textShadowRadius: 5
+                                            }}>De até</Text>
+
+                                            <Text style={{
+                                                color: colors.primary,
+                                                fontSize: normalizeSize(30),
+                                                fontFamily: font.poppins.bold,
+                                                textShadowColor: "#f8ff6dff",
+                                                textShadowOffset: { width: 0, height: 0 },
+                                                textShadowRadius: 5
+
+                                            }}>
+                                                {salon.maxPromo?.valor}
+                                                {salon.maxPromo?.tipoValor === "porcentagem" ? "%" : "R$"}
+                                            </Text>
+                                        </View>
+                                    </>
+                                )}
+                            </View>
+                        ))}
+                    </ScrollView>
+                </View>
+
+                {/* Restante do card */}
+                <View style={{ flex: 1 }}>
+                    <Text style={{
+                        backgroundColor: "#fff",
+                        width: 120,
+                        padding: 8,
+                        borderRadius: 20
+                    }}>
+                        Tempo Limitado
+                    </Text>
+                </View>
+
+                <View style={{
+                    flexDirection: "row",
+
+                    justifyContent: "space-between",
+                    paddingTop: "auto",
+                    alignItems: "center"
+                }}>
+                    <Text style={{
+                        color: "#fff",
+                        fontSize: 12,
+                        width: "50%",
+                        textAlignVertical: "center",
+
+                    }}>
+                        Localizado em {salon.addres?.split(",")[2]}, {salon.addres?.split(",")[1]}
+                    </Text>
+
+                    <CustomButton
+                        backcolor={colors.primary}
+                        border="Circle"
+                        text='IR'
+                        color='#fff'
+                        width={80}
+                        onPress={() => {
+                            loadSalon(salon.id!);
+                            navigation.navigate("Salao");
+                        }}
+                    />
+                </View>
+            </View>
+        );
+    };
+
+    //======================== RENDERIZAÇÃO DA PÁGINA INICIAL ==========================
     return (
         <ScrollView contentContainerStyle={styles.container}
 
@@ -187,76 +325,22 @@ export function Home({ navigation }: any) {
                             <TouchableOpacity><Text style={[styles.link, { fontSize: 16 }]}>Ver tudo</Text></TouchableOpacity>
 
                         </View>
-
                         <Carroussel
-                            cardsWidth={cardsWidth}
+                            cardsWidth={normalizeSize(350)}
                             cardsGap={20}
                             contentContainerStyle={{
                                 paddingHorizontal: 20,
                             }}
                         >
-
-
                             {salonList
                                 ?.filter((salao) => salao.maxPromo)
                                 .map((salon, index) => (
 
 
-                                    <View key={salon.id} style={styles.especialCards}>
-
-                                        <View style={{ position: "absolute" }}>
-                                            <ScrollView key={salon.id} horizontal
-
-
-
-                                                pagingEnabled showsHorizontalScrollIndicator={false} style={{ width: 350, height: 250 }}>
-                                                <View>
-                                                    <Image source={{ uri: salon.image }} style={{ width: 350, height: 250 }} />
-                                                    <LinearGradient
-                                                        colors={['rgba(255, 255, 255, 0)', '#000000d4']}
-                                                        start={{ x: 0, y: 0 }}
-
-                                                        end={{ x: 0, y: 1 }}
-                                                        style={styles.linearGradient}
-                                                    />
-                                                    <View style={{ position: "absolute", top: 70, left: 10 }} >
-                                                        <Text style={{ fontWeight: 'bold', color: "#fff", fontSize: normalizeSize(24) }}>{salon.name} com desconto</Text>
-                                                        <Text style={{ color: "#fff" }}>De até</Text>
-                                                        <Text style={{ color: colors.primary, fontSize: normalizeSize(30), fontFamily: font.poppins.bold }}>{salon.maxPromo?.valor}{salon.maxPromo?.tipoValor == "porcentagem" ? "%" : "R$"}</Text>
-
-                                                    </View>
-                                                </View>
-                                                {salon.promoBannerImages && salon.promoBannerImages.map((image, index) => {
-                                                    return (
-                                                        <Image key={index} source={{ uri: image }} style={{ width: 400, height: 260 }} />
-                                                    )
-                                                })}
-
-                                            </ScrollView>
-                                        </View>
-
-
-                                        <View style={{ flex: 1 }}>
-                                            <Text style={{ backgroundColor: "#fff", width: 120, padding: 8, borderRadius: 20 }}>Tempo Limitado</Text>
-                                        </View>
-
-                                        <View style={{ flexDirection: "row", flex: 1, justifyContent: "space-between", paddingTop: 30, alignItems: "center" }}>
-                                            <Text style={{ color: "#fff", fontSize: 12, paddingTop: 20, }}>Localizado em{salon.addres?.split(",")[2]},{salon.addres?.split(",")[1]}</Text>
-                                            <CustomButton
-                                                backcolor={colors.primary}
-                                                border="Circle"
-                                                text='IR'
-                                                color='#fff'
-                                                width={80}
-                                                onPress={() => { loadSalon(salon.id!), navigation.navigate("Salao") }}
-                                            />
-                                        </View>
-                                    </View>
-
+                                    <PromoBanner key={index} salon={salon} />
 
 
                                 ))}
-
                         </Carroussel>
                     </>
                 )}

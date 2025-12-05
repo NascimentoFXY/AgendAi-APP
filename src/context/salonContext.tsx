@@ -6,7 +6,7 @@ import { User } from 'context/auth'
 import { DataProps } from "../pages/main/Salao/CriarSalao/compontents/forms";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 
-interface Salon {
+export interface Salon {
     id?: string
     CNPJ: string,
     ownerID: string,
