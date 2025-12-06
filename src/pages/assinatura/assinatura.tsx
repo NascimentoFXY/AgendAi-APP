@@ -37,7 +37,7 @@ export default function Assinatura() {
     }
 
   }
-
+//   console.log("User data:", user);
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 2, marginBottom: -20 }}>
